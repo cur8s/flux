@@ -33,7 +33,7 @@ kubectl -n "${NAMESPACE}" get deployments -o wide
 
 section "🚀 Bootstrapping cluster..."
 kubectl apply --server-side \
-  -f  https://raw.githubusercontent.com/cur8s/flux/refs/heads/main/src/test-cluster/${VERSION}/sync.yaml
+  -f  https://raw.githubusercontent.com/cur8s/flux/refs/heads/main/src/${VERSION}/test-cluster/sync.yaml
 
 section "🎉 Flux bootstrap phase complete."
 
