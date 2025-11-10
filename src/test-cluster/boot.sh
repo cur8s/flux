@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+NAMESPACE="flux-system"
+
+VERSION="2.7"
+
+# ANSI escape code for bold text
+BOLD=$(tput bold)
+RESET=$(tput sgr0)
+
+section() {
+  echo
+  echo "${BOLD}$1${RESET}"
+  echo
+}
+
+section "🚀 Installing Flux controllers..."
+kubectl apply --server-side \
+  -f  https://raw.githubusercontent.com/cur8s/flux/refs/heads/main/releases/${VERSION}/flux.yaml
+
+section "⏳ Waiting for Flux controllers to be ready..."
+kubectl -n "${NAMESPACE}" wait deploy \
+  --for=condition=Available \
+  --timeout=3m \
+  --all
+
+section "✅ All Flux controllers are available."
+
+section "🔍 Verifying controller versions..."
+kubectl -n "${NAMESPACE}" get deployments -o wide
+
+
+section "🚀 Bootstrapping cluster..."
+kubectl apply --server-side \
+  -f  https://raw.githubusercontent.com/cur8s/flux/refs/heads/main/releases/${VERSION}/sync.yaml
+
+section "🎉 Flux bootstrap phase complete."
+
+section "🚀 flux resources..."
+watch flux get all
