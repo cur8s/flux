@@ -23,7 +23,7 @@ spec:
   ref:
     branch: main
   sparseCheckout:
-    - src/test-cluster
+    - src/2.7/test-cluster
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
