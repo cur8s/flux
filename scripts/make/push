@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# Push the oci/flux/ artifact tree as an OCI artifact.
+#   push k3d <cluster> [tag]     → cluster's local registry (auto-detect port)
+#   push oci <registry> <tag>    → explicit registry (e.g. ghcr.io/cur8s)
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+source "$REPO_ROOT/scripts/lib/display.sh"
+
+MODE="${1:?mode required: k3d|oci}"; shift
+case "$MODE" in
+  k3d)
+    CLUSTER_NAME="${1:?cluster name required}"; TAG="${2:-dev}"
+    "$REPO_ROOT/scripts/cluster" exists "$CLUSTER_NAME" 2>/dev/null || { error "cluster '$CLUSTER_NAME' missing"; exit 1; }
+    eval "$("$REPO_ROOT/scripts/cluster" env "$CLUSTER_NAME")"
+    REGISTRY_URL="localhost:${CLUSTER_REG_PORT}"
+    # The k3d-local registry is anonymous. A globally-configured docker
+    # credential helper (e.g. Docker Desktop's "desktop" credsStore) will be
+    # invoked for it anyway and can hang indefinitely on a localhost registry.
+    # Point this push at a throwaway docker config with no credsStore so the
+    # OCI client uses anonymous auth.
+    DOCKER_CONFIG="$(mktemp -d)"; export DOCKER_CONFIG
+    echo '{"auths":{}}' > "$DOCKER_CONFIG/config.json"
+    trap 'rm -rf "$DOCKER_CONFIG"' EXIT
+    ;;
+  oci)
+    REGISTRY_URL="${1:?registry required}"; TAG="${2:?tag required}"
+    ;;
+  *) error "unknown mode '$MODE' (use k3d|oci)"; exit 1 ;;
+esac
+
+ARTIFACT_PATH="$REPO_ROOT/oci/flux"
+[ -d "$ARTIFACT_PATH" ] || { error "artifact dir not found: $ARTIFACT_PATH (run make build)"; exit 1; }
+
+OCI_URL="oci://${REGISTRY_URL}/flux:${TAG}"
+banner "Pushing flux artifact"
+echo "📦 $OCI_URL"
+flux push artifact "$OCI_URL" \
+  --path="$ARTIFACT_PATH" \
+  --source="$(git config --get remote.origin.url 2>/dev/null || echo 'unknown')" \
+  --revision="$(git branch --show-current 2>/dev/null || echo 'main')@sha1:$(git rev-parse HEAD 2>/dev/null || echo '0000000')" \
+  --timeout=5m
+
+success "pushed $OCI_URL"

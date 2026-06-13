@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# Hand Flux its self-management config: an OCIRepository (environment-specific)
+# pointing at the pushed artifact, plus the Kustomization that reconciles it.
+# After this, bumping the artifact tag is how Flux upgrades itself.
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+source "$REPO_ROOT/scripts/lib/display.sh"
+
+CLUSTER_NAME="${1:?cluster name required}"
+TAG="${2:-dev}"
+CTX="k3d-$CLUSTER_NAME"
+# In-cluster registry DNS (Flux reaches the registry by its docker-network name).
+REG="${CLUSTER_NAME}-registry:5000"
+
+"$REPO_ROOT/scripts/cluster" exists "$CLUSTER_NAME" 2>/dev/null || { error "cluster '$CLUSTER_NAME' missing"; exit 1; }
+kubectl --context "$CTX" get ns flux-system &>/dev/null || { error "Flux not installed (run make init)"; exit 1; }
+
+banner "Applying GitOps configuration"
+echo "📝 OCIRepository flux → oci://${REG}/flux:${TAG} (insecure, dev registry)"
+kubectl --context "$CTX" apply -f - <<EOF
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: flux
+  namespace: flux-system
+spec:
+  interval: 1m
+  url: oci://${REG}/flux
+  ref:
+    tag: "${TAG}"
+  insecure: true
+EOF
+
+kubectl --context "$CTX" apply -f "$REPO_ROOT/oci/flux/sync.yaml"
+success "Flux now self-manages from the OCI artifact"

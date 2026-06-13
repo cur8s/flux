@@ -1,0 +1,8 @@
+# Audit trail for fetched upstream sources. Regenerate with 'make fetch'.
+component: flux
+flux-version: v2.8.8
+cli-version: 2.8.8
+sources:
+  - type: flux-cli-install
+    file: manifests/flux.yaml
+    digest: sha256:c0ca0c5c4a3a6e189aa8df2addb25808da61c9fdf78d5e1222ac95bdcf982f97

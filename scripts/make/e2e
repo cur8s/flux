@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# ─────────────────────────────────────────────────────────────────────────────
+# End-to-end test on an ephemeral k3d cluster:
+#   build → cluster → push → init (bootstrap) → sync (self-manage) → verify
+# On success the cluster is deleted; on failure it is preserved for debugging.
+# ─────────────────────────────────────────────────────────────────────────────
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+source "$REPO_ROOT/scripts/lib/display.sh"
+
+CLUSTER_NAME="${1:-flux-e2e}"
+TAG="test"
+CTX="k3d-$CLUSTER_NAME"
+
+cleanup() {
+  local rc=$?
+  if [ $rc -eq 0 ]; then
+    banner "✅ e2e passed — deleting cluster '$CLUSTER_NAME'"
+    "$REPO_ROOT/scripts/cluster" delete "$CLUSTER_NAME" || true
+  else
+    banner "❌ e2e failed (rc=$rc) — cluster '$CLUSTER_NAME' preserved"
+    echo "  kubectl --context $CTX get all -A"
+    echo "  flux --context $CTX get all -A"
+    echo "  kubectl --context $CTX -n flux-system logs deploy/kustomize-controller"
+    echo "  scripts/cluster delete $CLUSTER_NAME   # when done"
+  fi
+}
+trap cleanup EXIT
+
+banner "E2E 1/6 — build"
+make -C "$REPO_ROOT" build
+
+banner "E2E 2/6 — cluster"
+"$REPO_ROOT/scripts/cluster" create "$CLUSTER_NAME"
+
+banner "E2E 3/6 — push artifact"
+"$REPO_ROOT/scripts/make/push" k3d "$CLUSTER_NAME" "$TAG"
+
+banner "E2E 4/6 — init (bootstrap Flux)"
+"$REPO_ROOT/scripts/make/init" "$CLUSTER_NAME"
+
+banner "E2E 5/6 — sync (self-management)"
+"$REPO_ROOT/scripts/make/sync" "$CLUSTER_NAME" "$TAG"
+
+banner "E2E — waiting for self-managed reconciliation"
+elapsed=0; timeout=180
+while [ $elapsed -lt $timeout ]; do
+  src=$(kubectl --context "$CTX" -n flux-system get ocirepository flux \
+        -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' 2>/dev/null || echo "")
+  ks=$(kubectl --context "$CTX" -n flux-system get kustomization flux \
+        -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' 2>/dev/null || echo "")
+  printf "[%3ds] OCIRepository=%s Kustomization=%s\n" "$elapsed" "${src:-?}" "${ks:-?}"
+  [ "$src" = "True" ] && [ "$ks" = "True" ] && { echo "✅ self-managed reconciliation Ready"; break; }
+  sleep 5; elapsed=$((elapsed + 5))
+done
+if [ "${src:-}" != "True" ] || [ "${ks:-}" != "True" ]; then
+  error "self-management did not become Ready in ${timeout}s"
+  flux --context "$CTX" get all -A || true
+  exit 1
+fi
+
+banner "E2E 6/6 — verify"
+"$REPO_ROOT/scripts/make/verify" "$CLUSTER_NAME"
+
+banner "E2E — flux state"
+flux --context "$CTX" get all -A || true

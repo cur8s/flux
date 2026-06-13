@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# Report whether a newer upstream Flux release exists than the tracked VERSION.
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+source "$REPO_ROOT/scripts/lib/display.sh"
+
+CURRENT="$(cat "$REPO_ROOT/VERSION")"
+LATEST="$(curl -fsSL https://api.github.com/repos/fluxcd/flux2/releases/latest | jq -r '.tag_name')"
+
+echo "tracked: $CURRENT"
+echo "latest:  $LATEST"
+if [ "$CURRENT" = "$LATEST" ]; then
+  success "up to date"
+else
+  warn "update available: $CURRENT → $LATEST  (bump VERSION, run make build && make e2e)"
+fi
