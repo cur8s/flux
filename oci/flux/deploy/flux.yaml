@@ -5,6 +5,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
     pod-security.kubernetes.io/warn: restricted
     pod-security.kubernetes.io/warn-version: latest
   name: flux-system
@@ -16,6 +17,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: allow-egress
   namespace: flux-system
 spec:
@@ -36,6 +38,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: allow-scraping
   namespace: flux-system
 spec:
@@ -56,6 +59,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: allow-webhooks
   namespace: flux-system
 spec:
@@ -75,6 +79,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: critical-pods-flux-system
   namespace: flux-system
 spec:
@@ -95,6 +100,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: crd-controller-flux-system
 rules:
 - apiGroups:
@@ -201,6 +207,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
   name: flux-edit-flux-system
@@ -228,6 +235,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
     rbac.authorization.k8s.io/aggregate-to-admin: "true"
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
     rbac.authorization.k8s.io/aggregate-to-view: "true"
@@ -254,6 +262,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: cluster-reconciler-flux-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -274,6 +283,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: crd-controller-flux-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -312,6 +322,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: buckets.source.toolkit.fluxcd.io
 spec:
   group: source.toolkit.fluxcd.io
@@ -703,6 +714,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: externalartifacts.source.toolkit.fluxcd.io
 spec:
   group: source.toolkit.fluxcd.io
@@ -905,6 +917,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: gitrepositories.source.toolkit.fluxcd.io
 spec:
   group: source.toolkit.fluxcd.io
@@ -1399,6 +1412,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: helmcharts.source.toolkit.fluxcd.io
 spec:
   group: source.toolkit.fluxcd.io
@@ -1762,6 +1776,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: helmrepositories.source.toolkit.fluxcd.io
 spec:
   group: source.toolkit.fluxcd.io
@@ -2092,6 +2107,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: ocirepositories.source.toolkit.fluxcd.io
 spec:
   group: source.toolkit.fluxcd.io
@@ -2523,6 +2539,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: source-controller
   namespace: flux-system
 ---
@@ -2535,6 +2552,7 @@ metadata:
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
     control-plane: controller
+    cur8s.io/component: flux
   name: source-controller
   namespace: flux-system
 spec:
@@ -2556,6 +2574,7 @@ metadata:
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
     control-plane: controller
+    cur8s.io/component: flux
   name: source-controller
   namespace: flux-system
 spec:
@@ -2663,6 +2682,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: kustomizations.kustomize.toolkit.fluxcd.io
 spec:
   group: kustomize.toolkit.fluxcd.io
@@ -3475,6 +3495,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: kustomize-controller
   namespace: flux-system
 ---
@@ -3487,6 +3508,7 @@ metadata:
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
     control-plane: controller
+    cur8s.io/component: flux
   name: kustomize-controller
   namespace: flux-system
 spec:
@@ -3581,6 +3603,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: alerts.notification.toolkit.fluxcd.io
 spec:
   group: notification.toolkit.fluxcd.io
@@ -3752,6 +3775,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: providers.notification.toolkit.fluxcd.io
 spec:
   group: notification.toolkit.fluxcd.io
@@ -3962,6 +3986,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: receivers.notification.toolkit.fluxcd.io
 spec:
   group: notification.toolkit.fluxcd.io
@@ -4336,6 +4361,7 @@ metadata:
     app.kubernetes.io/instance: flux-system
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
+    cur8s.io/component: flux
   name: notification-controller
   namespace: flux-system
 ---
@@ -4348,6 +4374,7 @@ metadata:
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
     control-plane: controller
+    cur8s.io/component: flux
   name: notification-controller
   namespace: flux-system
 spec:
@@ -4369,6 +4396,7 @@ metadata:
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
     control-plane: controller
+    cur8s.io/component: flux
   name: webhook-receiver
   namespace: flux-system
 spec:
@@ -4390,6 +4418,7 @@ metadata:
     app.kubernetes.io/part-of: flux
     app.kubernetes.io/version: v2.9.0
     control-plane: controller
+    cur8s.io/component: flux
   name: notification-controller
   namespace: flux-system
 spec:

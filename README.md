@@ -98,6 +98,7 @@ src/flux/
   config/                   # VERSION, sync.yaml, notes.md, overlays/deploy (the opinion)
   artifacts/                # FETCH.lock + fetched upstream (vendored, audit trail)
 oci/flux/                   # rendered artifact tree (committed — git diff = review surface)
+  cur8s.yaml                #   release descriptor (inert — the artifact's identity)
   deploy/flux.yaml          #   install manifest (what bootstrap applies)
   sync.yaml                 #   self-management Kustomization
 ```

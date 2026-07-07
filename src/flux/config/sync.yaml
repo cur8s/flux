@@ -6,9 +6,14 @@
 # bumping the artifact tag is how Flux upgrades itself.
 #
 # The OCIRepository named `flux` it sources from is environment-specific (dev =
-# local k3d registry, prod = ghcr.io) and is applied alongside this file by
-# `scripts/make/sync`. This file ships INSIDE the artifact (oci/flux/sync.yaml)
-# so the artifact is self-describing.
+# local k3d registry, prod = ghcr.io) and is applied alongside this file — by
+# the cluster:sync task in dev, by the cluster's composition in production.
+# This file ships INSIDE the artifact (oci/flux/sync.yaml) so the artifact is
+# self-describing.
+#
+# The cur8s.io/* annotations are the component's cluster-side calling card
+# (flagship RFC-013): constants only — version-bearing facts live in the
+# artifact's cur8s.yaml descriptor and its OCI manifest annotations.
 # ─────────────────────────────────────────────────────────────────────────────
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
@@ -16,6 +21,9 @@ kind: Kustomization
 metadata:
   name: flux
   namespace: flux-system
+  annotations:
+    cur8s.io/docs: https://github.com/cur8s/flux
+    cur8s.io/upstream: fluxcd/flux2
 spec:
   interval: 10m
   path: ./deploy
