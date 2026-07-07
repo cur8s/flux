@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+#MISE description="Create a k3d cluster + local OCI registry (name arg optional)"
+set -euo pipefail
+REPO_ROOT="$MISE_CONFIG_ROOT"
+source "$REPO_ROOT/scripts/lib/display.sh"
+source "$REPO_ROOT/mise-tasks/cluster/k3d.sh"
+
+NAME="${1:-$CLUSTER_NAME}"
+require_docker
+
+if cluster_exists "$NAME"; then
+  if [ ! -t 0 ]; then
+    warn "cluster '$NAME' exists — non-interactive mode, recreating" >&2
+    k3d cluster delete "$NAME" 2>/dev/null || true
+    k3d registry delete "${NAME}-registry" 2>/dev/null || true
+  else
+    read -p "Cluster '$NAME' exists. Delete and recreate? [y/N]: " -n 1 -r; echo >&2
+    [[ $REPLY =~ ^[Yy]$ ]] || { error "aborted"; exit 1; }
+    k3d cluster delete "$NAME" 2>/dev/null || true
+    k3d registry delete "${NAME}-registry" 2>/dev/null || true
+  fi
+fi
+
+REGISTRY_CONTAINER="${NAME}-registry"
+banner "Creating cluster '$NAME' (+ registry $REGISTRY_CONTAINER)" >&2
+k3d cluster create "$NAME" \
+  --config "$REPO_ROOT/mise-tasks/cluster/k3d-config.yaml" \
+  --registry-create "$REGISTRY_CONTAINER" >&2
+
+echo "⏳ waiting for API..." >&2
+elapsed=0
+while [ $elapsed -lt 60 ]; do
+  kubectl --context "k3d-$NAME" cluster-info &>/dev/null && break
+  sleep 2; elapsed=$((elapsed + 2))
+done
+[ $elapsed -lt 60 ] || { error "cluster not ready in 60s"; exit 1; }
+
+echo "⏳ waiting for registry..." >&2
+elapsed=0
+while [ $elapsed -lt 60 ]; do
+  REG_PORT=$(get_registry_port "$REGISTRY_CONTAINER")
+  if [ "$REG_PORT" != "unknown" ] && curl -sf "http://localhost:${REG_PORT}/v2/" >/dev/null 2>&1; then
+    break
+  fi
+  sleep 2; elapsed=$((elapsed + 2))
+done
+[ $elapsed -lt 60 ] || { error "registry not ready in 60s"; exit 1; }
+
+banner "Cluster ready" >&2
+echo "Cluster:      $NAME"          >&2
+echo "Context:      k3d-$NAME"      >&2
+echo "Registry:     localhost:$REG_PORT  (in-cluster: $REGISTRY_CONTAINER:5000)" >&2
+success "ready — next: mise run artifact:push, then mise run cluster:init" >&2

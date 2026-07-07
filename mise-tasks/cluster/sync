@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
+#MISE description="Hand Flux its self-management config (OCIRepository + Kustomization)"
 set -euo pipefail
-# Hand Flux its self-management config: an OCIRepository (environment-specific)
-# pointing at the pushed artifact, plus the Kustomization that reconciles it.
 # After this, bumping the artifact tag is how Flux upgrades itself.
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+REPO_ROOT="$MISE_CONFIG_ROOT"
 source "$REPO_ROOT/scripts/lib/display.sh"
+source "$REPO_ROOT/mise-tasks/cluster/k3d.sh"
 
-CLUSTER_NAME="${1:?cluster name required}"
+NAME="${1:-$CLUSTER_NAME}"
 TAG="${2:-dev}"
-CTX="k3d-$CLUSTER_NAME"
+CTX="k3d-$NAME"
 # In-cluster registry DNS (Flux reaches the registry by its docker-network name).
-REG="${CLUSTER_NAME}-registry:5000"
+REG="${NAME}-registry:5000"
 
-"$REPO_ROOT/scripts/cluster" exists "$CLUSTER_NAME" 2>/dev/null || { error "cluster '$CLUSTER_NAME' missing"; exit 1; }
-kubectl --context "$CTX" get ns flux-system &>/dev/null || { error "Flux not installed (run make init)"; exit 1; }
+cluster_exists "$NAME" || { error "cluster '$NAME' missing (run 'mise run cluster:create')"; exit 1; }
+kubectl --context "$CTX" get ns flux-system &>/dev/null || { error "Flux not installed (run 'mise run cluster:init')"; exit 1; }
 
 banner "Applying GitOps configuration"
 echo "📝 OCIRepository flux → oci://${REG}/flux:${TAG} (insecure, dev registry)"

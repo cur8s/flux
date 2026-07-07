@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
+#MISE description="Validate the rendered manifests with kubeconform"
 set -euo pipefail
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+REPO_ROOT="$MISE_CONFIG_ROOT"
 source "$REPO_ROOT/scripts/lib/display.sh"
 
 KUBE_VERSION="${KUBE_VERSION:-1.33.0}"
 MANIFEST="$REPO_ROOT/oci/flux/deploy/flux.yaml"
 
 banner "Validating rendered manifests (k8s $KUBE_VERSION)"
-[ -f "$MANIFEST" ] || { error "not rendered: $MANIFEST (run make render)"; exit 1; }
+[ -f "$MANIFEST" ] || { error "not rendered: $MANIFEST (run 'mise run artifact:render')"; exit 1; }
 
 kubeconform \
   -strict \

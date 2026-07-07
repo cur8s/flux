@@ -22,6 +22,11 @@ immutable OCI artifact.
   only — helm-controller and the image-automation controllers are
   forbidden (flagship RFC-006). Flux comes up on a bare cluster: zero
   pre-existing secrets, no `imagePullSecrets`.
+- **mise is the task runner** (`mise install`, `mise tasks`). Task
+  grammar is `<object>:<action>`; the `mise.toml` header is
+  authoritative. The pinned `[tools]` are the build's reproducibility
+  contract — the flux pin tracks `VERSION`, and `test:drift` proves
+  the committed `oci/` tree matches what the pins produce.
 - **Conventional Commits.**
 - **Never push commits and never publish artifacts to a remote
   registry unless explicitly asked.**

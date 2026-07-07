@@ -1,46 +1,43 @@
 #!/usr/bin/env bash
+#MISE description="Full ephemeral proof: build → cluster → push → bootstrap → self-manage → verify"
 set -euo pipefail
-# ─────────────────────────────────────────────────────────────────────────────
-# End-to-end test on an ephemeral k3d cluster:
-#   build → cluster → push → init (bootstrap) → sync (self-manage) → verify
 # On success the cluster is deleted; on failure it is preserved for debugging.
-# ─────────────────────────────────────────────────────────────────────────────
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+REPO_ROOT="$MISE_CONFIG_ROOT"
 source "$REPO_ROOT/scripts/lib/display.sh"
 
-CLUSTER_NAME="${1:-flux-e2e}"
+CLUSTER="${1:-flux-e2e}"
 TAG="test"
-CTX="k3d-$CLUSTER_NAME"
+CTX="k3d-$CLUSTER"
 
 cleanup() {
   local rc=$?
   if [ $rc -eq 0 ]; then
-    banner "✅ e2e passed — deleting cluster '$CLUSTER_NAME'"
-    "$REPO_ROOT/scripts/cluster" delete "$CLUSTER_NAME" || true
+    banner "✅ e2e passed — deleting cluster '$CLUSTER'"
+    mise run cluster:delete "$CLUSTER" || true
   else
-    banner "❌ e2e failed (rc=$rc) — cluster '$CLUSTER_NAME' preserved"
+    banner "❌ e2e failed (rc=$rc) — cluster '$CLUSTER' preserved"
     echo "  kubectl --context $CTX get all -A"
     echo "  flux --context $CTX get all -A"
     echo "  kubectl --context $CTX -n flux-system logs deploy/kustomize-controller"
-    echo "  scripts/cluster delete $CLUSTER_NAME   # when done"
+    echo "  mise run cluster:delete $CLUSTER   # when done"
   fi
 }
 trap cleanup EXIT
 
 banner "E2E 1/6 — build"
-make -C "$REPO_ROOT" build
+mise run artifact:build
 
 banner "E2E 2/6 — cluster"
-"$REPO_ROOT/scripts/cluster" create "$CLUSTER_NAME"
+mise run cluster:create "$CLUSTER"
 
 banner "E2E 3/6 — push artifact"
-"$REPO_ROOT/scripts/make/push" k3d "$CLUSTER_NAME" "$TAG"
+mise run artifact:push k3d "$CLUSTER" "$TAG"
 
 banner "E2E 4/6 — init (bootstrap Flux)"
-"$REPO_ROOT/scripts/make/init" "$CLUSTER_NAME"
+mise run cluster:init "$CLUSTER"
 
 banner "E2E 5/6 — sync (self-management)"
-"$REPO_ROOT/scripts/make/sync" "$CLUSTER_NAME" "$TAG"
+mise run cluster:sync "$CLUSTER" "$TAG"
 
 banner "E2E — waiting for self-managed reconciliation"
 elapsed=0; timeout=180
@@ -60,7 +57,7 @@ if [ "${src:-}" != "True" ] || [ "${ks:-}" != "True" ]; then
 fi
 
 banner "E2E 6/6 — verify"
-"$REPO_ROOT/scripts/make/verify" "$CLUSTER_NAME"
+mise run cluster:verify "$CLUSTER"
 
 banner "E2E — flux state"
 flux --context "$CTX" get all -A || true

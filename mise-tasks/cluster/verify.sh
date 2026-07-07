@@ -12,8 +12,8 @@
 if [ -n "${__FLUX_VERIFY_LIB_SOURCED:-}" ]; then return 0; fi
 __FLUX_VERIFY_LIB_SOURCED=1
 
-REPO_ROOT="${REPO_ROOT:-$(git rev-parse --show-toplevel)}"
-# shellcheck source=display.sh
+REPO_ROOT="${MISE_CONFIG_ROOT:-$(git rev-parse --show-toplevel)}"
+# shellcheck source=../../scripts/lib/display.sh
 source "$REPO_ROOT/scripts/lib/display.sh"
 
 verify_init() {

@@ -43,47 +43,57 @@ The same rendered manifest is published two ways
 
 ## Quickstart (local)
 
-Requires: `docker`, `k3d`, `kubectl`, `flux`, `kustomize`, `kubeconform`.
+Requires: `docker` and [mise](https://mise.jdx.dev) — `mise install`
+fetches the rest of the toolchain at pinned versions (flux, kustomize,
+kubeconform, kubectl, k3d, jq).
 
 ```bash
-make build      # fetch (flux install --export) → render → validate
-make e2e        # ephemeral k3d cluster: build → push → bootstrap → self-manage → verify
+mise install              # pinned toolchain (one-time)
+mise run artifact:build   # fetch (flux install --export) → render → validate
+mise run test:e2e         # ephemeral k3d cluster: build → push → bootstrap → self-manage → verify
 ```
 
 Or step by step against a persistent dev cluster:
 
 ```bash
-make cluster    # create k3d cluster + local registry
-make push       # build + push the OCI artifact to the local registry
-make init       # bootstrap Flux (kubectl apply of the rendered manifest)
-make sync       # apply OCIRepository + Kustomization → Flux self-manages
-make verify     # controllers + self-management Ready?
+mise run cluster:create   # create k3d cluster + local registry
+mise run artifact:build   # build the artifact tree
+mise run artifact:push    # push the OCI artifact to the cluster's local registry
+mise run cluster:init     # bootstrap Flux (kubectl apply of the rendered manifest)
+mise run cluster:sync     # apply OCIRepository + Kustomization → Flux self-manages
+mise run cluster:verify   # controllers + self-management Ready?
 ```
 
-`make help` lists every target.
+`mise tasks` lists every task; the task grammar is documented in the
+[`mise.toml`](mise.toml) header.
 
 ## Tracking upstream Flux
 
 ```bash
-make check-update   # is there a newer upstream Flux release than VERSION?
+mise run upstream:check   # is there a newer upstream Flux release than VERSION?
 ```
 
 The opinionated configuration is the stable part; the Flux version in
-[`VERSION`](VERSION) advances under it. Each version is qualified by `make e2e`
-before publication ([RFC-009](docs/rfc/RFC-009-semantic-versioning-and-upstream-tracking.md)).
+[`VERSION`](VERSION) advances under it (the `mise.toml` flux pin tracks it).
+Each version is qualified by `mise run test:e2e` before publication
+([RFC-009](docs/rfc/RFC-009-semantic-versioning-and-upstream-tracking.md)).
 
 ## Layout
 
 ```
 VERSION                     # the upstream Flux version this repo tracks
-Makefile                    # fetch → render → validate → cluster/init/push/sync/verify/e2e
+mise.toml                   # pinned toolchain + task grammar (see its header)
+mise-tasks/
+  artifact/                 # clean, fetch, render, validate, build, push
+  cluster/                  # create, delete, status, init, sync, verify, watch (+ k3d lib/config)
+  test/                     # e2e (ephemeral full loop), drift (committed tree == fresh build)
+  upstream/                 # check (newer upstream release?)
+  release                   # build + publish the versioned artifact
 docs/
   rfc/                      # the foundation's RFCs (001–015) — see docs/rfc/README.md
   why/                      # the philosophy the RFCs encode
 scripts/
-  cluster                   # k3d lifecycle (create/delete/env/status)
-  lib/                      # display + verify helpers
-  make/                     # init, push, sync, verify, validate, e2e, check-update
+  lib/display.sh            # shared display vocabulary for all tasks
 src/flux/
   config/                   # VERSION, sync.yaml, notes.md, overlays/deploy (the opinion)
   artifacts/                # FETCH.lock + fetched upstream (vendored, audit trail)
@@ -98,6 +108,7 @@ will be deployed ([RFC-006](docs/rfc/RFC-006-static-runtime-manifests.md)).
 
 ## Status
 
-Built and validated end-to-end on a live k3d cluster: opinionated v2.8.8 config
-renders and validates, publishes as an OCI artifact, bootstraps, self-manages,
-and self-upgrades (re-push → Flux reconciles the change into its own install).
+Built and validated end-to-end on a live k3d cluster: the opinionated config
+for the tracked [`VERSION`](VERSION) renders and validates, publishes as an
+OCI artifact, bootstraps, self-manages, and self-upgrades (re-push → Flux
+reconciles the change into its own install).

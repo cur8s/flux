@@ -1,4 +1,4 @@
-# Audit trail for fetched upstream sources. Regenerate with 'make fetch'.
+# Audit trail for fetched upstream sources. Regenerate with 'mise run artifact:fetch'.
 component: flux
 flux-version: v2.9.0
 cli-version: 2.9.0

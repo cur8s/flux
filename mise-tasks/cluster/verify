@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
+#MISE description="Verify the controllers + self-management Kustomization are Ready"
 set -uo pipefail
 # Verify what this repo owns: the three controllers and the self-management
 # Kustomization. Exit code = number of failed checks (0 = all good).
-REPO_ROOT="$(git rev-parse --show-toplevel)"
-source "$REPO_ROOT/scripts/lib/verify.sh"
+REPO_ROOT="$MISE_CONFIG_ROOT"
+source "$REPO_ROOT/mise-tasks/cluster/verify.sh"
 
 verify_init "${1:-}"
 

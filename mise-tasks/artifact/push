@@ -1,18 +1,21 @@
 #!/usr/bin/env bash
+#MISE description="Push oci/flux/ as an OCI artifact: [k3d [cluster] [tag] | oci <registry> <tag>] (default: dev cluster, tag dev)"
 set -euo pipefail
-# Push the oci/flux/ artifact tree as an OCI artifact.
-#   push k3d <cluster> [tag]     → cluster's local registry (auto-detect port)
-#   push oci <registry> <tag>    → explicit registry (e.g. ghcr.io/cur8s)
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+# Every artifact that leaves this repo — dev push or release — goes
+# through this task: the single insertion point for OCI metadata.
+REPO_ROOT="$MISE_CONFIG_ROOT"
 source "$REPO_ROOT/scripts/lib/display.sh"
+source "$REPO_ROOT/mise-tasks/cluster/k3d.sh"
 
-MODE="${1:?mode required: k3d|oci}"; shift
+MODE="${1:-k3d}"
+[ $# -gt 0 ] && shift
 case "$MODE" in
   k3d)
-    CLUSTER_NAME="${1:?cluster name required}"; TAG="${2:-dev}"
-    "$REPO_ROOT/scripts/cluster" exists "$CLUSTER_NAME" 2>/dev/null || { error "cluster '$CLUSTER_NAME' missing"; exit 1; }
-    eval "$("$REPO_ROOT/scripts/cluster" env "$CLUSTER_NAME")"
-    REGISTRY_URL="localhost:${CLUSTER_REG_PORT}"
+    NAME="${1:-$CLUSTER_NAME}"; TAG="${2:-dev}"
+    cluster_exists "$NAME" || { error "cluster '$NAME' missing (run 'mise run cluster:create')"; exit 1; }
+    REG_PORT="$(get_registry_port "${NAME}-registry")"
+    [ "$REG_PORT" != "unknown" ] || { error "registry for cluster '$NAME' not found"; exit 1; }
+    REGISTRY_URL="localhost:${REG_PORT}"
     # The k3d-local registry is anonymous. A globally-configured docker
     # credential helper (e.g. Docker Desktop's "desktop" credsStore) will be
     # invoked for it anyway and can hang indefinitely on a localhost registry.
@@ -29,7 +32,7 @@ case "$MODE" in
 esac
 
 ARTIFACT_PATH="$REPO_ROOT/oci/flux"
-[ -d "$ARTIFACT_PATH" ] || { error "artifact dir not found: $ARTIFACT_PATH (run make build)"; exit 1; }
+[ -d "$ARTIFACT_PATH" ] || { error "artifact dir not found: $ARTIFACT_PATH (run 'mise run artifact:build')"; exit 1; }
 
 OCI_URL="oci://${REGISTRY_URL}/flux:${TAG}"
 banner "Pushing flux artifact"

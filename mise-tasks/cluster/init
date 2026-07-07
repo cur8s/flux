@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#MISE description="Bootstrap Flux into the cluster (kubectl apply of the rendered manifest)"
+set -euo pipefail
+# Server-side apply handles the large CRDs cleanly.
+REPO_ROOT="$MISE_CONFIG_ROOT"
+source "$REPO_ROOT/scripts/lib/display.sh"
+source "$REPO_ROOT/mise-tasks/cluster/k3d.sh"
+
+NAME="${1:-$CLUSTER_NAME}"
+CTX="k3d-$NAME"
+MANIFEST="$REPO_ROOT/oci/flux/deploy/flux.yaml"
+
+[ -f "$MANIFEST" ] || { error "not built: $MANIFEST (run 'mise run artifact:build')"; exit 1; }
+cluster_exists "$NAME" || { error "cluster '$NAME' missing (run 'mise run cluster:create')"; exit 1; }
+
+banner "Installing Flux controllers"
+kubectl --context "$CTX" apply --server-side -f "$MANIFEST"
+
+echo "⏳ waiting for controllers to be Available..."
+kubectl --context "$CTX" -n flux-system wait deploy --for=condition=Available --timeout=3m --all
+success "Flux controllers ready (idle — run 'mise run cluster:sync' to start self-management)"

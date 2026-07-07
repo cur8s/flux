@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#MISE description="Generate the Flux install manifest for VERSION (offline, via flux CLI) + FETCH.lock"
+set -euo pipefail
+REPO_ROOT="$MISE_CONFIG_ROOT"
+
+FLUX_VERSION="$(cat "$REPO_ROOT/VERSION")"
+echo "🔽 Generating Flux $FLUX_VERSION install manifest (source/kustomize/notification)..."
+mkdir -p "$REPO_ROOT/src/flux/artifacts/fetched/manifests"
+flux install \
+  --components=source-controller,kustomize-controller,notification-controller \
+  --namespace=flux-system \
+  --version="$FLUX_VERSION" \
+  --export > "$REPO_ROOT/src/flux/artifacts/fetched/manifests/flux.yaml"
+
+digest=$(openssl dgst -sha256 "$REPO_ROOT/src/flux/artifacts/fetched/manifests/flux.yaml" | awk '{print $NF}')
+{
+  echo "# Audit trail for fetched upstream sources. Regenerate with 'mise run artifact:fetch'."
+  echo "component: flux"
+  echo "flux-version: $FLUX_VERSION"
+  echo "cli-version: $(flux --version | awk '{print $NF}')"
+  echo "sources:"
+  echo "  - type: flux-cli-install"
+  echo "    file: manifests/flux.yaml"
+  echo "    digest: sha256:$digest"
+} > "$REPO_ROOT/src/flux/artifacts/FETCH.lock"
+echo "   ✅ src/flux/artifacts/fetched/manifests/flux.yaml"

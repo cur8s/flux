@@ -1,0 +1,40 @@
+# Pinned toolchain for the artifact pipeline: mise installs exact
+# versions so a fetch → render → validate run reproduces byte-for-byte
+# on any workstation and in CI. docker is the one deliberate outsider
+# (the daemon belongs to the host); git and openssl ride the system.
+# The flux pin tracks the repo-root VERSION file — a version bump edits
+# both, and FETCH.lock records the cli-version as proof.
+#
+# Tasks are file tasks under mise-tasks/ (directories namespace the
+# names: mise-tasks/artifact/fetch -> artifact:fetch). Grammar:
+# <object>:<action>. Objects are artifact (the OCI artifact tree:
+# src/ fetch + render -> committed oci/ -> push; artifact:push is the
+# single choke point through which every artifact leaves the repo),
+# cluster (a local k3d dev cluster and what runs on it), test (the
+# product contract: test:e2e proves the full bootstrap -> self-manage
+# loop on an ephemeral cluster, test:drift proves the committed oci/
+# tree matches a fresh build), upstream (the tracked Flux release).
+# release — the repo-level act of publishing the versioned artifact —
+# takes no object segment. A namespace must have multiple real members.
+# Task scripts must be executable or mise silently ignores them;
+# non-executable files beside them are a namespace's own support files
+# (cluster/k3d.sh lifecycle library, cluster/verify.sh check helpers,
+# cluster/k3d-config.yaml). The display vocabulary every task shares
+# is scripts/lib/display.sh.
+
+[tools]
+flux2 = "2.9.0"
+kustomize = "5.8.1"
+kubeconform = "0.8.0"
+kubectl = "1.36.2"
+k3d = "5.9.0"
+jq = "1.8.2"
+
+[env]
+# Kubernetes API version kubeconform validates the render against.
+KUBE_VERSION = "1.33.0"
+# Production registry (release publishes here; dev pushes go to the
+# k3d cluster's local registry).
+REGISTRY = "ghcr.io/cur8s"
+# Default dev cluster; every cluster task also accepts a name argument.
+CLUSTER_NAME = "flux-dev"

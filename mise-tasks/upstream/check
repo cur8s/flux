@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
+#MISE description="Report whether a newer upstream Flux release exists than the tracked VERSION"
 set -euo pipefail
-# Report whether a newer upstream Flux release exists than the tracked VERSION.
-REPO_ROOT="$(git rev-parse --show-toplevel)"
+REPO_ROOT="$MISE_CONFIG_ROOT"
 source "$REPO_ROOT/scripts/lib/display.sh"
 
 CURRENT="$(cat "$REPO_ROOT/VERSION")"
@@ -12,5 +12,5 @@ echo "latest:  $LATEST"
 if [ "$CURRENT" = "$LATEST" ]; then
   success "up to date"
 else
-  warn "update available: $CURRENT → $LATEST  (bump VERSION, run make build && make e2e)"
+  warn "update available: $CURRENT → $LATEST  (bump VERSION + the mise.toml flux pin, then 'mise run artifact:build' and 'mise run test:e2e')"
 fi

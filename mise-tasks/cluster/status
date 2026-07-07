@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#MISE description="Show a k3d cluster's state and registry endpoint (name arg optional)"
+set -euo pipefail
+REPO_ROOT="$MISE_CONFIG_ROOT"
+source "$REPO_ROOT/scripts/lib/display.sh"
+source "$REPO_ROOT/mise-tasks/cluster/k3d.sh"
+
+NAME="${1:-$CLUSTER_NAME}"
+require_docker
+STATE=$(get_cluster_state "$NAME")
+echo "Cluster: $NAME"
+echo "State:   $STATE"
+echo "Context: k3d-$NAME"
+[ "$STATE" = "missing" ] && exit 0
+echo "Registry: localhost:$(get_registry_port "${NAME}-registry")  (in-cluster: ${NAME}-registry:5000)"
