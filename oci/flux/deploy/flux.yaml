@@ -3513,7 +3513,6 @@ spec:
         - --log-level=info
         - --log-encoding=json
         - --enable-leader-election
-        - --feature-gates=ExternalArtifact=true
         env:
         - name: RUNTIME_NAMESPACE
           valueFrom:

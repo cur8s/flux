@@ -18,8 +18,8 @@ repositories and build on the contracts defined here.
 - **Three controllers only:** source, kustomize, notification.
 - **Forbidden:** helm-controller (in-cluster templating) and the
   image-automation controllers (would let Flux *select* versions).
-- **ExternalArtifact feature gate** enabled on kustomize-controller (qualified
-  per Flux version).
+- **No feature gates** — the install is exactly what `flux install --export`
+  produces for the three controllers.
 - Comes up on a **bare cluster with zero pre-existing secrets**; images from
   `ghcr.io`; no `imagePullSecrets`.
 

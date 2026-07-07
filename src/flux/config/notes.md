@@ -16,16 +16,12 @@ A new upstream Flux release becomes a new value here and a new published artifac
   reconcile forever").
 - `image-reflector` / `image-automation` — would let Flux *select* versions;
   version advancement here is always explicit and external.
-- `source-watcher` — a sample/demo controller, not a production component. The
-  ExternalArtifact *capability* is enabled via feature gate (below) without it.
+- `source-watcher` — a sample/demo controller, not a production component.
 
-**ExternalArtifact feature gate:** enabled on `kustomize-controller` via an
-overlay patch (`--feature-gates=ExternalArtifact=true`). Per-version
-qualification status:
-
-- **v2.8.8 — qualified ✓** — kustomize-controller accepts the flag (pod healthy,
-  0 restarts); `externalartifacts.source.toolkit.fluxcd.io` CRD is present;
-  full e2e green (bootstrap → self-manage → self-upgrade).
+No feature gates: the install is exactly what `flux install --export`
+produces for the three controllers. (An ExternalArtifact gate existed
+through v2.8.8 for a since-deleted ArtifactGenerator experiment; the
+platform consumes plain OCIRepositories, so it was dropped.)
 
 **Bootstrap:** controllers come up on a bare cluster with zero pre-existing
 secrets; images pulled from `ghcr.io` (no rate-limited registries, no
