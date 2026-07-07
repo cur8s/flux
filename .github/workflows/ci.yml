@@ -1,0 +1,34 @@
+# CI — every push and PR proves the two product contracts:
+#   test:drift  — the committed oci/ tree matches a fresh build
+#   test:e2e    — the artifact bootstraps, self-manages, and verifies
+#                 on a disposable k3d cluster
+# The toolchain comes from mise.toml [tools]; 'flux install --export'
+# is offline (CLI-embedded manifests), so the build needs no upstream
+# network access.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  drift:
+    name: build + drift gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+      - run: mise run test:drift
+
+  e2e:
+    name: e2e on k3d
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+      - run: mise run test:e2e
