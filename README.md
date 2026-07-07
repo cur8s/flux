@@ -1,17 +1,14 @@
-# flux — foundation + GitOps engine
+# flux — the cur8s GitOps engine package
 
-This repository plays two roles:
+This repository packages a specific, constrained configuration of
+[Flux](https://fluxcd.io) — the GitOps engine every cur8s cluster runs — and
+publishes it as an immutable OCI artifact. A new upstream Flux release becomes
+a new published artifact.
 
-1. **The foundation.** It holds the cross-cutting architectural philosophy —
-   the [RFCs](docs/rfc/README.md) — that every other component repository built
-   on top of it inherits.
-2. **One component: an opinionated Flux.** It packages a specific, constrained
-   configuration of [Flux](https://fluxcd.io) and publishes it as an OCI
-   artifact. A new upstream Flux release becomes a new published artifact.
-
-It is an independent, single-purpose repository. Other layers (routing,
-external-secrets, cert-manager, postgres, observability, …) live in their own
-repositories and build on the contracts defined here.
+It is one component repository of the [cur8s](https://github.com/cur8s/cur8s)
+platform. Org-wide law — the architecture RFCs, the engine choice, component
+versioning, the release model — lives in the flagship; this repo keeps only
+[its own contracts](docs/rfc/README.md).
 
 ## The opinionated Flux
 
@@ -23,22 +20,26 @@ repositories and build on the contracts defined here.
 - Comes up on a **bare cluster with zero pre-existing secrets**; images from
   `ghcr.io`; no `imagePullSecrets`.
 
-The *why* behind each of these is in the RFCs — start with
-[RFC-015: Flux as the GitOps Engine](docs/rfc/RFC-015-flux-as-the-gitops-engine.md).
+The *what* is this repo's
+[RFC-001: The Opinionated Flux Configuration](docs/rfc/RFC-001-opinionated-flux-configuration.md);
+the *why* is the flagship's
+[RFC-006: Flux as the GitOps Engine](https://github.com/cur8s/cur8s/blob/main/docs/rfc/RFC-006-flux-as-the-gitops-engine.md).
 
 ## How it is distributed (dual-publish)
 
 The same rendered manifest is published two ways
-([RFC-011](docs/rfc/RFC-011-bootstrap-contract.md)):
+([RFC-002](docs/rfc/RFC-002-flux-bootstrap-contract.md)):
 
-- **OCI artifact** `oci://<registry>/flux:<version>` — the steady-state channel.
-  Once Flux runs, an `OCIRepository` + `Kustomization` make it **self-manage**
-  from this artifact; bumping the tag is how Flux upgrades itself.
-- **HTTP-addressable install manifest** — for first-touch bootstrap, since
-  `kubectl` cannot apply an `oci://` reference directly:
+- **OCI artifact** `oci://ghcr.io/cur8s/flux:<version>` — the steady-state
+  channel. Once Flux runs, an `OCIRepository` + `Kustomization` make it
+  **self-manage** from this artifact; bumping the tag is how Flux upgrades
+  itself.
+- **GitHub release asset** — for first-touch bootstrap, since `kubectl`
+  cannot apply an `oci://` reference directly:
 
   ```bash
-  kubectl apply --server-side -f https://<host>/flux/releases/download/<version>/install.yaml
+  kubectl apply --server-side -f \
+    https://github.com/cur8s/flux/releases/download/<version>/install.yaml
   ```
 
 ## Quickstart (local)
@@ -75,8 +76,9 @@ mise run upstream:check   # is there a newer upstream Flux release than VERSION?
 
 The opinionated configuration is the stable part; the Flux version in
 [`VERSION`](VERSION) advances under it (the `mise.toml` flux pin tracks it).
-Each version is qualified by `mise run test:e2e` before publication
-([RFC-009](docs/rfc/RFC-009-semantic-versioning-and-upstream-tracking.md)).
+Each version is qualified by `mise run test:e2e` before publication, per the
+flagship's
+[RFC-011: Component Versioning](https://github.com/cur8s/cur8s/blob/main/docs/rfc/RFC-011-component-versioning.md).
 
 ## Layout
 
@@ -90,8 +92,7 @@ mise-tasks/
   upstream/                 # check (newer upstream release?)
   release                   # build + publish the versioned artifact
 docs/
-  rfc/                      # the foundation's RFCs (001–015) — see docs/rfc/README.md
-  why/                      # the philosophy the RFCs encode
+  rfc/                      # this package's own contracts — see docs/rfc/README.md
 scripts/
   lib/display.sh            # shared display vocabulary for all tasks
 src/flux/
@@ -105,7 +106,8 @@ oci/flux/                   # rendered artifact tree (committed — git diff = r
 
 The rendered output under `oci/` is committed deliberately: every version bump
 or config change shows up as a reviewable `git diff` of the exact bytes that
-will be deployed ([RFC-006](docs/rfc/RFC-006-static-runtime-manifests.md)).
+will be deployed (the flagship's
+[RFC-005: Static Runtime Manifests](https://github.com/cur8s/cur8s/blob/main/docs/rfc/RFC-005-static-runtime-manifests.md)).
 
 ## Status
 

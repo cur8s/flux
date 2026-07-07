@@ -12,7 +12,8 @@ immutable OCI artifact.
 - **Org-wide law lives in the flagship** ([cur8s/cur8s
   `docs/rfc/`](https://github.com/cur8s/cur8s/tree/main/docs/rfc)) —
   link to it, never copy it. This repo keeps only its own contracts
-  in `docs/rfc/`: the bootstrap contract and the controller policy.
+  in `docs/rfc/`: RFC-001 (the opinionated configuration + API
+  surface) and RFC-002 (the bootstrap contract).
 - **Versioning** follows flagship RFC-011 (component versioning): the
   version is the upstream Flux version, with a `-<n>` config revision
   when the opinion changes on the same upstream (`v2.9.0`,
