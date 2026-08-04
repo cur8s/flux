@@ -35,16 +35,16 @@ manifest; from then on Flux self-manages from the OCI artifact.**
 
 ## The Dual-Publish Mechanism
 
-A release publishes the same rendered bytes through two channels:
+A release publishes one rendered artifact through two channels:
 
 1. **OCI artifact** — `oci://ghcr.io/cur8s/flux:<version>`, the
    steady-state channel. Once the engine runs, an `OCIRepository` +
    the artifact's own `sync.yaml` Kustomization make it continuously
    **self-manage** from this artifact; advancing the tag is how Flux
    upgrades itself.
-2. **GitHub release asset** — `oci/flux/deploy/flux.yaml` attached to
-   the versioned GitHub release as `install.yaml`, so first-touch
-   bootstrap is a single command:
+2. **GitHub release asset** — an exact copy of
+   `oci/flux/deploy/flux.yaml` attached to the versioned GitHub release
+   as `install.yaml`, so first-touch bootstrap is a single command:
 
    ```bash
    kubectl apply --server-side -f \
@@ -55,8 +55,9 @@ A release publishes the same rendered bytes through two channels:
    to maintain — `kubectl` cannot apply `oci://`, and this is the one
    blessed HTTP path.
 
-Both channels carry the same rendered bytes from the same build; they
-cannot diverge.
+The tag-triggered release workflow builds and pushes the full OCI artifact,
+then copies that build's `deploy/flux.yaml` to the GitHub release unchanged as
+`install.yaml`.
 
 The bootstrap sequence: **apply the release asset once** (controllers
 come up idle), **then apply the `OCIRepository` + `sync.yaml`** (the

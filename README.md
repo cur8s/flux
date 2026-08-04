@@ -27,20 +27,25 @@ the *why* is the flagship's
 
 ## How it is distributed (dual-publish)
 
-The same rendered manifest is published two ways
+The tag-triggered release workflow publishes one render through two channels
 ([RFC-002](docs/rfc/RFC-002-flux-bootstrap-contract.md)):
 
 - **OCI artifact** `oci://ghcr.io/cur8s/flux:<version>` — the steady-state
   channel. Once Flux runs, an `OCIRepository` + `Kustomization` make it
   **self-manage** from this artifact; bumping the tag is how Flux upgrades
   itself.
-- **GitHub release asset** — for first-touch bootstrap, since `kubectl`
-  cannot apply an `oci://` reference directly:
+- **GitHub release asset** — an exact copy of the artifact's
+  `deploy/flux.yaml`, named `install.yaml` for first-touch bootstrap because
+  `kubectl` cannot apply an `oci://` reference directly:
 
   ```bash
   kubectl apply --server-side -f \
     https://github.com/cur8s/flux/releases/download/<version>/install.yaml
   ```
+
+`mise run release` builds and pushes the OCI channel. The tag-triggered
+GitHub Actions workflow runs that task and then creates the GitHub release
+with `install.yaml`.
 
 ## Quickstart (local)
 
@@ -114,7 +119,6 @@ will be deployed (the flagship's
 
 ## Status
 
-Built and validated end-to-end on a live k3d cluster: the opinionated config
-for the tracked [`VERSION`](VERSION) renders and validates, publishes as an
-OCI artifact, bootstraps, self-manages, and self-upgrades (re-push → Flux
-reconciles the change into its own install).
+The end-to-end test renders and validates the tracked [`VERSION`](VERSION),
+pushes it to a local OCI registry, bootstraps it on k3d, and verifies that its
+self-managed reconciliation becomes Ready.

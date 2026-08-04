@@ -1,4 +1,4 @@
-# CI — every push and PR proves the two product contracts:
+# CI — every push to main and every PR proves the two product contracts:
 #   test:drift  — the committed oci/ tree matches a fresh build
 #   test:e2e    — the artifact bootstraps, self-manages, and verifies
 #                 on a disposable k3d cluster

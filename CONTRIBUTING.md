@@ -29,7 +29,11 @@ the objects, the grammar, and the pinned toolchain.
 | `mise run test:e2e` | Prove the full bootstrap → self-manage loop on an ephemeral k3d cluster. |
 | `mise run cluster:<action>` | Drive a persistent k3d dev cluster (see the README quickstart). |
 | `mise run upstream:check` | Report whether upstream Flux has a newer release than `VERSION`. |
-| `mise run release` | Build and publish the versioned artifact — only when explicitly asked. |
+| `mise run release` | Build and publish the versioned OCI artifact — only when explicitly asked. |
+
+The tag-triggered [release workflow](.github/workflows/release.yml) performs
+the complete dual-channel publication: it runs the end-to-end gate, invokes
+`mise run release`, and creates the GitHub release with `install.yaml`.
 
 ## Testing
 
@@ -77,8 +81,8 @@ For a change that alters the rendered artifact or bootstrap behavior
 mise run test:e2e
 ```
 
-CI runs both gates on every push; a change is not done while either
-is red.
+CI runs both gates for pull requests and pushes to `main`; a change is not
+done while either is red.
 
 ## Commit Messages
 
