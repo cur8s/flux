@@ -3,7 +3,7 @@
 **Purpose:** GitOps continuous delivery. This is the engine every other
 cur8s component depends on to reach the cluster.
 
-**Tracked version:** see [`VERSION`](VERSION) (mirrors the repo-root `VERSION`).
+**Tracked version:** see the repo-root [`VERSION`](../../../VERSION).
 A new upstream Flux release becomes a new value here and a new published artifact.
 
 **Controllers (opinionated set):**

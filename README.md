@@ -104,7 +104,7 @@ work/                       # lightweight work notes (ideas/todo/parked) — see
 scripts/
   lib/display.sh            # shared display vocabulary for all tasks
 src/flux/
-  config/                   # VERSION, sync.yaml, notes.md, overlays/deploy (the opinion)
+  config/                   # sync.yaml, notes.md, overlays/deploy (the opinion)
   artifacts/                # FETCH.lock + fetched upstream (vendored, audit trail)
 oci/flux/                   # rendered artifact tree (committed — git diff = review surface)
   cur8s.yaml                #   release descriptor (inert — the artifact's identity)
