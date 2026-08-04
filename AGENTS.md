@@ -28,6 +28,10 @@ immutable OCI artifact.
   authoritative. The pinned `[tools]` are the build's reproducibility
   contract — the flux pin tracks `VERSION`, and `test:drift` proves
   the committed `oci/` tree matches what the pins produce.
-- **Conventional Commits.**
+- **`CONTRIBUTING.md` is the contribution contract** — setup,
+  commands, verification, Conventional Commits. Durable knowledge
+  lives in `docs/` (`docs/README.md` governs it), lightweight work
+  notes in `work/` (`work/README.md` governs it); the README closest
+  to the files you change governs.
 - **Never push commits and never publish artifacts to a remote
   registry unless explicitly asked.**

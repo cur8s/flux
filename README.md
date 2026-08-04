@@ -84,6 +84,7 @@ flagship's
 
 ```
 VERSION                     # the upstream Flux version this repo tracks
+CONTRIBUTING.md             # how to develop, verify, and commit changes
 mise.toml                   # pinned toolchain + task grammar (see its header)
 mise-tasks/
   artifact/                 # clean, fetch, render, validate, build, push
@@ -92,7 +93,9 @@ mise-tasks/
   upstream/                 # check (newer upstream release?)
   release                   # build + publish the versioned artifact
 docs/
+  vision.md                 # why this package exists — durable intent
   rfc/                      # this package's own contracts — see docs/rfc/README.md
+work/                       # lightweight work notes (ideas/todo/parked) — see work/README.md
 scripts/
   lib/display.sh            # shared display vocabulary for all tasks
 src/flux/

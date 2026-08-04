@@ -166,6 +166,9 @@ $RECYCLE.BIN/
 .env.*.local
 
 ###############################################################################
-#  Coding Agents
+#  Coding Agents — session/local state; shared instruction files
+#  (AGENTS.md, .agents/, the .claude/skills symlink) are committed
 ###############################################################################
-.claude/
+.claude/*
+!.claude/skills
+CLAUDE.local.md
