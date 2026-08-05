@@ -76,25 +76,26 @@ mise run cluster:verify   # controllers + self-management Ready?
 ## Tracking upstream Flux
 
 ```bash
-mise run upstream:check   # is there a newer upstream Flux release than VERSION?
+mise run upstream:check   # is there a newer upstream Flux release than tracked?
 ```
 
-The opinionated configuration is the stable part; the Flux version in
-[`VERSION`](VERSION) advances under it (the `mise.toml` flux pin tracks it).
-Each version is qualified by `mise run test:e2e` before publication, per the
+The opinionated configuration is the stable part. [`version.env`](version.env)
+is the single authored source: raise `FLUX_VERSION` for an upstream release or
+increment `CUR8S_FLUX_REVISION` for an opinion-only release. Each package
+version is qualified by `mise run test:e2e` before publication, per the
 flagship's
 [RFC-011: Component Versioning](https://github.com/cur8s/cur8s/blob/main/docs/rfc/RFC-011-component-versioning.md).
 
 ## Layout
 
 ```
-VERSION                     # the upstream Flux version this repo tracks
+version.env                 # upstream Flux version + cur8s config revision
 CONTRIBUTING.md             # how to develop, verify, and commit changes
 mise.toml                   # pinned toolchain + task grammar (see its header)
 mise-tasks/
   artifact/                 # clean, fetch, render, validate, build, push
   cluster/                  # create, delete, status, init, sync, verify, watch (+ k3d lib/config)
-  test/                     # e2e (ephemeral full loop), drift (committed tree == fresh build)
+  test/                     # version, e2e (ephemeral full loop), drift (committed tree == fresh build)
   upstream/                 # check (newer upstream release?)
   release                   # build + publish the versioned artifact
 docs/
@@ -119,6 +120,6 @@ will be deployed (the flagship's
 
 ## Status
 
-The end-to-end test renders and validates the tracked [`VERSION`](VERSION),
+The end-to-end test renders and validates the tracked package version,
 pushes it to a local OCI registry, bootstraps it on k3d, and verifies that its
 self-managed reconciliation becomes Ready.

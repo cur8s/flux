@@ -28,7 +28,8 @@ the objects, the grammar, and the pinned toolchain.
 | `mise run test:drift` | Prove the committed `oci/` tree matches a fresh build. |
 | `mise run test:e2e` | Prove the full bootstrap → self-manage loop on an ephemeral k3d cluster. |
 | `mise run cluster:<action>` | Drive a persistent k3d dev cluster (see the README quickstart). |
-| `mise run upstream:check` | Report whether upstream Flux has a newer release than `VERSION`. |
+| `mise run upstream:check` | Report whether upstream Flux has a newer release than the tracked version. |
+| `mise run test:version` | Validate version.env inputs and package-version construction. |
 | `mise run release` | Build and publish the versioned OCI artifact — only when explicitly asked. |
 
 The tag-triggered [release workflow](.github/workflows/release.yml) performs
@@ -75,7 +76,7 @@ git diff --check
 ```
 
 For a change that alters the rendered artifact or bootstrap behavior
-(`src/`, `VERSION`, the `mise.toml` tool pins), also run:
+(`src/`, `version.env`, the `mise.toml` tool pins), also run:
 
 ```sh
 mise run test:e2e

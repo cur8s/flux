@@ -48,9 +48,9 @@ flux push artifact "$OCI_URL" \
   --source="$(git config --get remote.origin.url 2>/dev/null || echo 'unknown')" \
   --revision="$(git branch --show-current 2>/dev/null || echo 'main')@sha1:$(git rev-parse HEAD 2>/dev/null || echo '0000000')" \
   --annotations="cur8s.io/component=${CUR8S_COMPONENT}" \
-  --annotations="cur8s.io/version=${CUR8S_VERSION}" \
+  --annotations="cur8s.io/version=${CUR8S_FLUX_VERSION}" \
   --annotations="cur8s.io/upstream=${CUR8S_UPSTREAM_PROJECT}" \
-  --annotations="cur8s.io/upstream-version=${CUR8S_UPSTREAM_VERSION}" \
+  --annotations="cur8s.io/upstream-version=${FLUX_TAG}" \
   --annotations="cur8s.io/docs=${CUR8S_DOCS}" \
   --timeout=5m
 

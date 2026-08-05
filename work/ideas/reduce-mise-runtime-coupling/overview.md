@@ -17,7 +17,7 @@ The investigation should cover:
 - which leaf tasks can reasonably support direct execution and which orchestration tasks should
   continue invoking `mise run`;
 - how to avoid duplicated defaults or competing configuration sources; and
-- whether the sourceable [`version.env` design](../../todo/build-up-flux-versioning/overview.md) should
+- whether the sourceable [`version.env` design](../../../version.env) should
   establish the pattern for other non-secret repository configuration.
 
 Any proposal should preserve the pinned toolchain and the documented `mise run` interface while

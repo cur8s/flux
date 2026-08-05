@@ -3,8 +3,9 @@
 **Purpose:** GitOps continuous delivery. This is the engine every other
 cur8s component depends on to reach the cluster.
 
-**Tracked version:** see the repo-root [`VERSION`](../../../VERSION).
-A new upstream Flux release becomes a new value here and a new published artifact.
+**Tracked version:** see the repo-root [`version.env`](../../../version.env).
+A new upstream Flux release changes `FLUX_VERSION`; an opinion-only release
+increments `CUR8S_FLUX_REVISION`.
 
 **Controllers (opinionated set):**
 - `source-controller` — fetches versioned artifacts (OCI, Git).

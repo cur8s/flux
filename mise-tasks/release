@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 #MISE description="Build and publish the versioned artifact to the production registry"
 set -euo pipefail
-# Publication is gated on a green test:e2e for this VERSION (flagship
+# Publication is gated on a green test:e2e for this package version (flagship
 # RFC-011) and happens only on an explicit ask (AGENTS.md).
-FLUX_VERSION="$(cat "$MISE_CONFIG_ROOT/VERSION")"
+source "$MISE_CONFIG_ROOT/scripts/lib/version.sh"
+load_flux_version "$MISE_CONFIG_ROOT/version.env"
 mise run artifact:build
-mise run artifact:push oci "$REGISTRY" "$FLUX_VERSION"
+mise run artifact:push oci "$REGISTRY" "$CUR8S_FLUX_VERSION"

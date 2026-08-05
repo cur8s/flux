@@ -2,8 +2,9 @@
 # versions so a fetch → render → validate run reproduces byte-for-byte
 # on any workstation and in CI. docker is the one deliberate outsider
 # (the daemon belongs to the host); git and openssl ride the system.
-# The flux pin tracks the repo-root VERSION file — a version bump edits
-# both, and FETCH.lock records the cli-version as proof.
+# version.env is the release unit's single authored version source; mise loads
+# it below and the Flux pin follows FLUX_VERSION. FETCH.lock records the CLI
+# version as proof.
 #
 # Tasks are file tasks under mise-tasks/ (directories namespace the
 # names: mise-tasks/artifact/fetch -> artifact:fetch). Grammar:
@@ -23,7 +24,7 @@
 # is scripts/lib/display.sh.
 
 [tools]
-flux2 = "2.9.0"
+flux2 = "{{env.FLUX_VERSION}}"
 kustomize = "5.8.1"
 kubeconform = "0.8.0"
 kubectl = "1.36.2"
@@ -31,6 +32,7 @@ k3d = "5.9.0"
 jq = "1.8.2"
 
 [env]
+_.file = "version.env"
 # Kubernetes API version kubeconform validates the render against.
 KUBE_VERSION = "1.33.0"
 # Production registry (release publishes here; dev pushes go to the

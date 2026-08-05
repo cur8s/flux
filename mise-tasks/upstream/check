@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
-#MISE description="Report whether a newer upstream Flux release exists than the tracked VERSION"
+#MISE description="Report whether a newer upstream Flux release exists than the tracked version"
 set -euo pipefail
 REPO_ROOT="$MISE_CONFIG_ROOT"
 source "$REPO_ROOT/scripts/lib/display.sh"
 
-CURRENT="$(cat "$REPO_ROOT/VERSION")"
+source "$REPO_ROOT/scripts/lib/version.sh"
+load_flux_version "$REPO_ROOT/version.env"
 LATEST="$(curl -fsSL https://api.github.com/repos/fluxcd/flux2/releases/latest | jq -r '.tag_name')"
 
-echo "tracked: $CURRENT"
+echo "tracked: $FLUX_TAG"
 echo "latest:  $LATEST"
-if [ "$CURRENT" = "$LATEST" ]; then
+if [ "$FLUX_TAG" = "$LATEST" ]; then
   success "up to date"
 else
-  warn "update available: $CURRENT → $LATEST  (bump VERSION + the mise.toml flux pin, then 'mise run artifact:build' and 'mise run test:e2e')"
+  warn "update available: $FLUX_TAG → $LATEST  (bump FLUX_VERSION in version.env, then 'mise run artifact:build' and 'mise run test:e2e')"
 fi
