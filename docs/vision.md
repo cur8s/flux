@@ -1,9 +1,17 @@
 # Vision
 
-Cur8s gives independent builders a durable way to operate the software they put on the internet. DNS, certificates, secrets, data, routing, observability, and recovery are permanent responsibilities: outsourcing them can be useful, but cannot make them disappear. The platform gives those responsibilities one Kubernetes-based operating model, so the skills and decisions behind a product compound as it grows.
+The Cur8s Flux package provides an opinionated configuration of Flux. It configures Flux to
+continuously reconcile static manifests only. In-cluster templating, including the Flux Helm
+Controller, is deliberately excluded because it constructs the desired state inside the cluster
+rather than before it reaches the cluster.
 
-This package supplies the GitOps engine that keeps that model external to the cluster. A cluster should not be an operational surface where people, scripts, or controllers decide what to do next. Its desired state is recorded outside the cluster, reviewed, versioned, and then mechanically reconciled. Flux is deliberately a small, headless executor of that intent: it gives operators the Kubernetes API rather than a separate dashboard or workflow.
+In-cluster templating makes the final desired state impossible to determine from the source
+artifacts alone. A Helm chart rendered inside the cluster may produce different manifests depending
+on the Kubernetes version, installed APIs, or existing cluster state. The same chart and values can
+therefore produce different results across clusters or over time, making failures and differences
+harder to understand, reproduce, and recover from.
 
-Success is a bare cluster becoming a predictable, self-managing Flux installation from one immutable artifact. An operator can inspect the exact manifests the cluster will reconcile, reproduce them with the pinned tools, and recover the engine without hidden prerequisites. Advancing it is an explicit, versioned decision, never an in-cluster discovery.
-
-The package is not a general-purpose Flux distribution, a deployment UI, or a place to decide what applications and platform components a cluster should run. It owns one constrained engine configuration; the broader platform architecture and its laws remain authoritative in the [cur8s flagship RFCs](https://github.com/cur8s/cur8s/tree/main/docs/rfc).
+By reconciling only static manifests, the complete desired state is explicit and inspectable before
+it reaches the cluster. Operators can determine exactly what Flux will reconcile, compare the
+intended state across environments, reproduce installations from immutable artifacts, and recover
+the GitOps engine without relying on hidden runtime decisions.
