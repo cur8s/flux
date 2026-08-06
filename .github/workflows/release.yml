@@ -1,5 +1,5 @@
 # Release — a version tag publishes the dual channels from one build
-# (RFC-002): the OCI artifact to ghcr.io/cur8s/flux:<version> and the
+# (documented in docs/user-guide.md): the OCI artifact to ghcr.io/cur8s/flux:<version> and the
 # rendered install manifest as the GitHub release asset install.yaml.
 # Publication is gated on a green e2e for the tagged commit (flagship
 # RFC-011: no version is published without a green end-to-end run).
@@ -49,4 +49,4 @@ jobs:
           cp oci/flux/deploy/flux.yaml install.yaml
           gh release create "${GITHUB_REF_NAME}" install.yaml \
             --title "flux ${GITHUB_REF_NAME}" \
-            --notes "Opinionated Flux ${GITHUB_REF_NAME}. Artifact: oci://ghcr.io/cur8s/flux:${GITHUB_REF_NAME} — first touch: kubectl apply --server-side -f https://github.com/cur8s/flux/releases/download/${GITHUB_REF_NAME}/install.yaml (RFC-002)."
+            --notes "Opinionated Flux ${GITHUB_REF_NAME}. Artifact: oci://ghcr.io/cur8s/flux:${GITHUB_REF_NAME} — first touch: kubectl apply --server-side -f https://github.com/cur8s/flux/releases/download/${GITHUB_REF_NAME}/install.yaml."

@@ -1,40 +1,9 @@
 # Vision
 
-This document explains why the flux package exists, who it serves,
-what success means, and what is outside its scope. It records durable
-intent, not implementation detail or current work.
+Cur8s gives independent builders a durable way to operate the software they put on the internet. DNS, certificates, secrets, data, routing, observability, and recovery are permanent responsibilities: outsourcing them can be useful, but cannot make them disappear. The platform gives those responsibilities one Kubernetes-based operating model, so the skills and decisions behind a product compound as it grows.
 
-## Problem
+This package supplies the GitOps engine that keeps that model external to the cluster. A cluster should not be an operational surface where people, scripts, or controllers decide what to do next. Its desired state is recorded outside the cluster, reviewed, versioned, and then mechanically reconciled. Flux is deliberately a small, headless executor of that intent: it gives operators the Kubernetes API rather than a separate dashboard or workflow.
 
-Every cur8s cluster runs Flux as its GitOps engine, and every cluster
-must run the *same* Flux: same controllers, same configuration, same
-bytes. Installing Flux ad hoc — helm charts, `flux bootstrap`,
-hand-tuned manifests — produces drift between clusters, upgrades that
-cannot be reviewed as diffs, and an engine whose capabilities quietly
-exceed what the platform permits.
+Success is a bare cluster becoming a predictable, self-managing Flux installation from one immutable artifact. An operator can inspect the exact manifests the cluster will reconcile, reproduce them with the pinned tools, and recover the engine without hidden prerequisites. Advancing it is an explicit, versioned decision, never an in-cluster discovery.
 
-## Audience
-
-The cur8s platform itself: the bootstrap tooling that brings clusters
-up and the platform operators who run it. This is one component
-repository of the [cur8s](https://github.com/cur8s/cur8s) platform,
-not a general-purpose Flux distribution.
-
-## Success
-
-One immutable OCI artifact per version that takes a bare cluster —
-zero pre-existing secrets — to a self-managing Flux installation, and
-that upgrades itself when the tag advances. Every published version
-is byte-for-byte reproducible from the pinned toolchain and proven by
-a green end-to-end run before publication. Every change, including an
-upstream version bump, is reviewable as a plain `git diff` of the
-rendered tree.
-
-## Out of Scope
-
-Choosing what the engine deploys — that is the platform's job.
-helm-controller and the image-automation controllers, forbidden by
-the flagship's RFC-006. Configurable or multi-flavor installs: there
-is one opinion, and it is the artifact. Org-wide policy — component
-versioning law, the release model, the engine choice itself — which
-lives in the flagship and is linked, never copied.
+The package is not a general-purpose Flux distribution, a deployment UI, or a place to decide what applications and platform components a cluster should run. It owns one constrained engine configuration; the broader platform architecture and its laws remain authoritative in the [cur8s flagship RFCs](https://github.com/cur8s/cur8s/tree/main/docs/rfc).

@@ -1,46 +1,12 @@
 # Durable Project Knowledge
 
-This directory contains durable, current-state knowledge about the
-flux package. Its documents explain what is true now and are rewritten
-when that truth changes; git history preserves previous versions, so
-none of them becomes a chronological log.
+This directory records durable, current-state knowledge about the Flux package. Rewrite a document when its subject changes; Git history preserves the old state. Temporary investigation and planning belong in a work note under [`work/`](../work/README.md). Platform-wide law belongs in the [cur8s flagship RFCs](https://github.com/cur8s/cur8s/tree/main/docs/rfc) and is linked here rather than copied.
 
-The README closest to a directory governs how that directory is used;
-this file governs `docs/`. Temporary investigation and planning belong
-in a work note under [`work/`](../work/README.md). Org-wide law lives
-in the flagship
-([cur8s/cur8s `docs/rfc/`](https://github.com/cur8s/cur8s/tree/main/docs/rfc))
-and is linked, never copied.
+| Document | Responsibility |
+| --- | --- |
+| [`vision.md`](vision.md) | Why this package exists, its audience, success, and boundaries. |
+| [`user-guide.md`](user-guide.md) | Consumer-facing philosophy, supported surface, bootstrap, operation, upgrades, verification, and limits. |
+| [`architecture.md`](architecture.md) | How the source-to-artifact pipeline, decision boundary, task lifecycle, publication, and self-management work. |
+| [`../CONTRIBUTING.md`](../CONTRIBUTING.md) | How contributors set up, author, verify, and change the repository. |
 
-## Documents
-
-| Document | Required | Responsibility |
-| --- | --- | --- |
-| [`vision.md`](vision.md) | Yes | Why this package exists, who it serves, what success means, and what is outside its scope. |
-| [`rfc/`](rfc/README.md) | Yes | This package's own normative contracts; [`rfc/README.md`](rfc/README.md) governs the directory. |
-| [`../CONTRIBUTING.md`](../CONTRIBUTING.md) | Yes | How contributors and coding agents develop, verify, and change the repository. |
-
-RFCs are this repository's normative genre: a contract another party
-can depend on — the opinionated configuration, the bootstrap contract
-— becomes an RFC under `rfc/`. Material that merely orients a reader
-belongs in the README or an optional document, never in an RFC.
-
-## Optional Documents
-
-Add these only after a concrete need is demonstrated, and rewrite
-them when the truth they record changes:
-
-- `architecture.md` — how the current system works: components,
-  responsibilities, data flows, constraints. Add it when the pipeline
-  grows past what the root README's layout section explains clearly.
-- `principles.md` — enduring principles used to choose between design
-  alternatives. Normally introduced together with `architecture.md`.
-- `user-guide.md` — how consumers use the published artifact, when
-  that outgrows the README and the RFCs. It must not explain how to
-  contribute changes.
-- `glossary.md` — normative definitions, added when a domain term
-  needs one precise meaning across docs, discussion, and code.
-
-`vision.md` records durable intent in roughly 200–300 words: the
-problem, the audience, what success means, and the boundaries. It
-contains no implementation plans, task lists, or progress updates.
+Keep one authoritative home for each subject. The root README is only the orientation and route map; `mise.toml` remains the command reference. Do not create local RFCs for current behavior: explain component-specific consequences in the guide or architecture and link to a flagship RFC whenever the rule is organization-wide.

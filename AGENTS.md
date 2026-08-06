@@ -11,9 +11,9 @@ immutable OCI artifact.
   surface for every change.
 - **Org-wide law lives in the flagship** ([cur8s/cur8s
   `docs/rfc/`](https://github.com/cur8s/cur8s/tree/main/docs/rfc)) —
-  link to it, never copy it. This repo keeps only its own contracts
-  in `docs/rfc/`: RFC-001 (the opinionated configuration + API
-  surface) and RFC-002 (the bootstrap contract).
+  link to it, never copy it. This repository's current component guidance
+  belongs in `docs/user-guide.md` and `docs/architecture.md`; do not create
+  local RFCs for it.
 - **Versioning** follows flagship RFC-011 (component versioning): `version.env`
   is the only authored source, carrying `FLUX_VERSION` and `CUR8S_FLUX_REVISION`; the
   version is the upstream Flux version, with a `-<n>` config revision
