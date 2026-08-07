@@ -1,9 +1,9 @@
 # Flux Package User Guide
 
 The Cur8s Flux package publishes an opinionated configuration of [Flux](https://fluxcd.io) as an
-immutable OCI artifact. It configures Flux to reconcile fully rendered, static manifests while
-deliberately excluding features that perform runtime templating or other forms of in-cluster
-interpretation.
+immutable OCI artifact. It configures Flux to reconcile static manifests through deterministic
+composition while deliberately excluding features that perform runtime templating or make decisions
+from live cluster state.
 
 ## Installed controllers
 
@@ -77,33 +77,39 @@ Source Controller.
 
 #### Static manifests only
 
-The Kustomize Controller receives **fully rendered, static manifests**. It never receives templates,
-generators, or other inputs that require interpretation during reconciliation.
+The package's operating model requires reconciliation to be deterministic from declared inputs. A
+deployment artifact may contain complete manifests or Kustomize composition whose output depends
+only on files in the artifact and explicitly declared values. It must not contain Helm charts,
+conditionals, dependency lookups, or generators that vary output according to live cluster state.
 
 How deployment artifacts are produced is intentionally outside the controller's responsibility.
 Helm, Kustomize, Jsonnet, CUE, ytt, or any other build-time tooling may be used to construct
-deployment artifacts before publication. The only requirement is that the manifests are complete,
-deterministic, and fully rendered before they reach the cluster.
+deployment artifacts before publication. Build time resolves templates, dependencies, and choices;
+at reconciliation time, Kustomize performs only deterministic structural composition and the
+explicit value substitution described below.
 
 This design deliberately separates **artifact construction** from **artifact reconciliation**.
-Deployment artifacts are assembled during the build process; the Kustomize Controller reconciles the
-published manifests.
+Deployment artifacts are assembled during the build process; the Kustomize Controller mechanically
+composes and reconciles their declared content.
 
 #### Explicit substitution is allowed
 
-The package permits Flux's `postBuild.substituteFrom` mechanism because it preserves the static
-manifest model.
+The package permits Flux's `postBuild.substituteFrom` mechanism as a narrow composition step for
+explicit environment values. Substitution occurs during reconciliation, but it does not construct
+new resources, evaluate conditions, fetch dependencies, or inspect live cluster state.
 
 Values are substituted only from explicitly declared `ConfigMap` and `Secret` resources that form
 part of the cluster's declared state. Every input to reconciliation remains explicit and
 discoverable.
 
 Unlike runtime templating, `postBuild.substituteFrom` does not change the structure of the
-manifests. The manifests have already been fully rendered before reconciliation begins; the
-controller simply substitutes declared values into that fixed structure.
+manifests. The controller substitutes declared values into a structure that was fixed before
+publication.
 
 The complete desired state remains discoverable by inspecting the GitOps repository together with
-the explicitly referenced `ConfigMap` and `Secret` resources.
+the explicitly referenced `ConfigMap` and `Secret` resources. This is the limited composition model
+defined by [Environment-Specific
+Inputs](https://github.com/cur8s/cur8s/blob/main/docs/rfc/RFC-007-environment-specific-inputs.md).
 
 ### Notification Controller
 
@@ -155,18 +161,22 @@ artifacts. Because in-cluster artifact composition falls outside the recommended
 ## Installation and operation
 
 The package is installed once and then continuously manages its own installation. Each release is
-published as two artifacts:
+published through two matching channels:
 
-1. An immutable OCI artifact (`oci://ghcr.io/cur8s/flux:<version>`), which becomes the long-term
-   source of truth for the installation.
+1. An immutable OCI artifact (`oci://ghcr.io/cur8s/flux:<version>`), which is the steady-state
+   deployment source.
 2. A bootstrap manifest (`install.yaml`), attached to the GitHub release.
 
-The bootstrap manifest exists because Kubernetes can apply YAML directly but cannot install
-resources from an OCI artifact. It is used only during the initial installation. Once the
+The bootstrap manifest exists because `kubectl` can apply YAML directly but cannot apply an
+`oci://` reference. It is used only during the initial installation. Once the
 controllers have started, the cluster continuously reconciles the OCI artifact, and the bootstrap
 manifest is no longer involved in normal operation.
 
 ### Bootstrap
+
+Flux comes up on a bare cluster with zero pre-existing secrets. Its images pull anonymously from
+`ghcr.io`, and no Flux `ServiceAccount` references an `imagePullSecret`. A missing required input
+must block reconciliation visibly rather than trigger a hidden or guessed default.
 
 Install the GitOps engine by applying the release manifest:
 
@@ -187,6 +197,10 @@ From this point onward, Flux manages its own installation.
 
 During normal operation, the cluster continuously reconciles the OCI artifact referenced by
 `OCIRepository/flux`.
+
+The external cluster definition remains the authoritative source of intent: it records which
+immutable artifact version the cluster should reconcile. The OCI artifact is the deployment
+payload, not a replacement for that declaration.
 
 Upgrading the GitOps engine consists only of changing the artifact version referenced by the cluster
 definition. The deployment artifact itself is immutable, and no controller discovers or selects
