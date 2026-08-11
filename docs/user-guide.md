@@ -107,9 +107,8 @@ manifests. The controller substitutes declared values into a structure that was 
 publication.
 
 The complete desired state remains discoverable by inspecting the GitOps repository together with
-the explicitly referenced `ConfigMap` and `Secret` resources. This is the limited composition model
-defined by [Environment-Specific
-Inputs](https://github.com/cur8s/cur8s/blob/main/docs/rfc/RFC-007-environment-specific-inputs.md).
+the explicitly referenced `ConfigMap` and `Secret` resources. This is the package's limited
+composition model for environment-specific inputs.
 
 ### Notification Controller
 
