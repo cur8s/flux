@@ -12,4 +12,5 @@ mise run artifact:build
 mise run test:e2e
 ```
 
-The rendered `oci/flux/` tree is committed deliberately: its diff is the reviewable deployment result. Run `mise run test:drift` to prove it matches a fresh render. Org-wide architecture and versioning rules remain authoritative in the [cur8s flagship RFCs](https://github.com/cur8s/cur8s/tree/main/docs/rfc).
+The rendered `oci/flux/` tree is committed deliberately: its diff is the reviewable deployment
+result. Run `mise run test:drift` to prove it matches a fresh render.
