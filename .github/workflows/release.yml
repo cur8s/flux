@@ -1,8 +1,8 @@
 # Release — a version tag publishes the dual channels from one build
 # (documented in docs/user-guide.md): the OCI artifact to ghcr.io/cur8s/flux:<version> and the
 # rendered install manifest as the GitHub release asset install.yaml.
-# Publication is gated on a green e2e for the tagged commit (flagship
-# RFC-011: no version is published without a green end-to-end run).
+# Publication is gated on a green e2e for the tagged commit, as documented
+# in docs/architecture.md.
 name: release
 
 on:

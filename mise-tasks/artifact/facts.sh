@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Component identity facts — the single authoring point for
-# self-description (flagship RFC-013). artifact:render writes these
-# facts into the cur8s.yaml release descriptor; artifact:push attaches
+# Component identity facts — the single authoring point for self-description,
+# documented in docs/architecture.md. artifact:render writes these facts into
+# the cur8s.yaml release descriptor; artifact:push attaches
 # the same facts as cur8s.io/* OCI manifest annotations. Two emitters,
 # one source: they cannot drift.
 #

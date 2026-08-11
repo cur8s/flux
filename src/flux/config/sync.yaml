@@ -11,9 +11,9 @@
 # This file ships INSIDE the artifact (oci/flux/sync.yaml) so the artifact is
 # self-describing.
 #
-# The cur8s.io/* annotations are the component's cluster-side calling card
-# (flagship RFC-013): constants only — version-bearing facts live in the
-# artifact's cur8s.yaml descriptor and its OCI manifest annotations.
+# The cur8s.io/* annotations are the component's cluster-side calling card.
+# They are constants; version-bearing facts live in the artifact's cur8s.yaml
+# descriptor and its OCI manifest annotations.
 # ─────────────────────────────────────────────────────────────────────────────
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1

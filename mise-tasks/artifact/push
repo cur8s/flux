@@ -39,7 +39,7 @@ OCI_URL="oci://${REGISTRY_URL}/flux:${TAG}"
 banner "Pushing flux artifact"
 echo "📦 $OCI_URL"
 # The same identity facts the descriptor asserts, readable from the
-# registry without pulling the artifact (flagship RFC-013). Source and
+# registry without pulling the artifact; see docs/architecture.md. Source and
 # revision ride flux push's standard OCI annotations — they are
 # push-time facts, deliberately absent from the committed descriptor.
 component_facts

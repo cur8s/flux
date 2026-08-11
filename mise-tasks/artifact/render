@@ -10,9 +10,9 @@ kustomize build --load-restrictor=LoadRestrictionsNone \
   "$REPO_ROOT/src/flux/config/overlays/deploy" > "$REPO_ROOT/oci/flux/deploy/flux.yaml"
 cp "$REPO_ROOT/src/flux/config/sync.yaml" "$REPO_ROOT/oci/flux/sync.yaml"
 
-# The release descriptor: the artifact asserting its own identity
-# (flagship RFC-013). Deliberately free of anything unknowable at
-# render time (no git revision, no timestamp) so the committed tree
+# The release descriptor: the artifact asserting its own identity, documented
+# in docs/architecture.md. Deliberately free of anything unknowable at render
+# time (no git revision, no timestamp) so the committed tree
 # regenerates byte-for-byte — source/revision are attached by
 # artifact:push as standard OCI annotations instead.
 component_facts
