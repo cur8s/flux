@@ -1,15 +1,34 @@
 # Architecture
 
+## Package boundary
+
+This repository owns one release unit: an opinionated Flux installation published as an immutable
+OCI artifact. It owns the upstream version pin, controller selection, source configuration,
+rendering, validation, bootstrap manifest, and the resource that lets Flux reconcile its own
+installation.
+
+A consuming cluster owns the `OCIRepository` because the registry endpoint, credentials, and
+artifact version are deployment-specific intent. It also owns any higher-level composition and
+integration with other cluster components. The package ships its self-management `Kustomization`
+because that resource describes how the artifact reconciles its own `deploy/` directory once a
+source has been declared.
+
 ## From upstream release to immutable intent
 
-`version.env` is the only authored version source. It records the upstream Flux version and a Cur8s configuration revision; the `mise.toml` Flux pin follows it. `artifact:fetch` runs that pinned Flux CLI with the three permitted controllers and stores both the upstream manifest and its digest in `src/flux/artifacts/`. That tree is an audit trail, not an authored install.
+`version.env` is the only authored version source. It records the upstream Flux version and a
+Cur8s configuration revision; the `mise.toml` Flux pin follows it. `artifact:fetch` runs that
+pinned Flux CLI with the three permitted controllers and stores the upstream manifest and digest
+in `src/flux/artifacts/`. That tree is an audit trail, not an authored install.
 
 The authored opinion is deliberately small:
 
 - `src/flux/config/overlays/deploy/` composes the fetched manifest with metadata-only Cur8s marks.
 - `src/flux/config/sync.yaml` defines the self-management `Kustomization`.
 
-`artifact:render` uses Kustomize to produce `oci/flux/deploy/flux.yaml`, copies `sync.yaml`, and writes the inert `cur8s.yaml` release descriptor. `artifact:validate` checks the rendered manifest with kubeconform. The complete tree under `oci/flux/` is committed intentionally: it is the review surface and the exact content later pushed as an OCI artifact.
+`artifact:render` uses Kustomize to produce `oci/flux/deploy/flux.yaml`, copies `sync.yaml`, and
+writes the inert `cur8s.yaml` release descriptor. `artifact:validate` checks the rendered manifest
+with kubeconform. The complete `oci/flux/` tree is committed intentionally: it is the review
+surface and the exact content later pushed as an OCI artifact.
 
 ```text
 version.env + pinned Flux CLI + source configuration
@@ -23,11 +42,39 @@ version.env + pinned Flux CLI + source configuration
                   (steady state)              (first touch)
 ```
 
-The pipeline resolves all choices before publication. Kustomize is used only as deterministic, build-time structural composition; it cannot vary output with cluster state. At runtime source-controller fetches the declared artifact and kustomize-controller applies its static manifests. This preserves the decision-time/runtime boundary required by the flagship's [RFC-005: Static Runtime Manifests](https://github.com/cur8s/cur8s/blob/main/docs/rfc/RFC-005-static-runtime-manifests.md): the cluster executes recorded decisions rather than making new ones.
+All choices owned by this package resolve before publication. Kustomize is used only for
+deterministic, build-time structural composition; it cannot vary output with cluster state. The
+cluster definition later supplies the environment-specific source endpoint and immutable version
+pin, but does not reinterpret or mutate the package. At runtime source-controller fetches that
+declared artifact and kustomize-controller applies its static manifests. The cluster executes
+recorded package decisions rather than making new ones.
+
+## Artifact contents and metadata
+
+The rendered artifact contains three files:
+
+```text
+oci/flux/
+├── cur8s.yaml
+├── deploy/
+│   └── flux.yaml
+└── sync.yaml
+```
+
+`deploy/flux.yaml` is the complete controller installation. `sync.yaml` is the self-management
+`Kustomization`. `cur8s.yaml` is an inert release descriptor for humans and tooling; Kubernetes
+does not apply it.
+
+The descriptor contains only facts known at render time: component identity, package version,
+upstream project, upstream version and digest, source, and documentation location. It deliberately
+omits a timestamp and Git revision so a fresh render remains byte-for-byte reproducible. The push
+task adds source revision and other registry-facing facts as OCI manifest annotations. Both forms
+of metadata obtain their shared component facts from `mise-tasks/artifact/facts.sh`.
 
 ## Task graph and verification
 
-[mise](https://mise.jdx.dev) is the task runner. Its `mise.toml` header is the authoritative command reference and defines the `<object>:<action>` grammar. The important lifecycle is:
+[mise](https://mise.jdx.dev) is the task runner. Its `mise.toml` header is the authoritative
+command reference and defines the `<object>:<action>` grammar. The important lifecycle is:
 
 ```text
 artifact:clean → artifact:fetch → artifact:render → artifact:validate
@@ -42,12 +89,27 @@ artifact:clean → artifact:fetch → artifact:render → artifact:validate
                                    test:e2e
 ```
 
-`test:drift` rebuilds and proves that the committed `oci/` tree and fetched audit trail still match the pins. `test:e2e` creates an ephemeral k3d cluster, builds and pushes a local artifact, bootstraps the controllers, hands them the self-management resources, and waits for the resulting source and Kustomization to become Ready. The end-to-end run qualifies every published version.
+`test:drift` rebuilds and proves that the committed `oci/` tree and fetched audit trail match the
+pins. `test:e2e` creates an ephemeral k3d cluster, builds and pushes a local artifact, bootstraps
+the controllers, supplies the self-management resources, and waits for the source and
+`Kustomization` to become Ready. This is the package's release gate. Deployments that combine this
+artifact with other components own their broader integration verification.
 
 ## Bootstrap, publication, and self-management
 
-The production release has two deliberately paired outputs. `release` builds and pushes `oci://ghcr.io/cur8s/flux:<version>`; the tag-triggered workflow runs the end-to-end gate and publishes the exact rendered install manifest as the GitHub release asset `install.yaml`. First touch applies that asset. Once the controllers are running, the cluster's external composition supplies the `OCIRepository` for the chosen tag and applies `sync.yaml`. Flux then fetches the artifact and reconciles its own `deploy/` directory.
+The production release has two deliberately paired outputs. `release` builds and pushes
+`oci://ghcr.io/cur8s/flux:<version>`; the tag-triggered workflow runs the end-to-end gate and
+publishes the exact rendered install manifest as the GitHub release asset `install.yaml`. First
+touch applies that asset. Once the controllers are running, the cluster definition supplies the
+`OCIRepository` for the chosen tag and applies `sync.yaml`. Flux then fetches the artifact and
+reconciles its own `deploy/` directory.
 
-The OCI source is environment-specific: development points at k3d's local registry, while production points at `ghcr.io`. That source remains outside the package because choosing an environment and artifact version is a decision-time concern. The self-management resource is inside the artifact so the artifact fully describes the relationship once a source is declared.
+The OCI source is environment-specific: development points at k3d's local registry, while
+production points at `ghcr.io`. That source remains outside the package because choosing an
+environment and artifact version is a decision-time concern. The self-management resource is
+inside the artifact so the artifact fully describes its side of the relationship once a source is
+declared.
 
-Artifacts are immutable. An upstream release changes `FLUX_VERSION`; an opinion-only change increments `CUR8S_FLUX_REVISION`. A version is never retagged, and Flux only applies the tag declared by the cluster. The version rule itself is owned by the flagship's [RFC-011: Component Versioning](https://github.com/cur8s/cur8s/blob/main/docs/rfc/RFC-011-component-versioning.md).
+Artifacts are immutable. An upstream release changes `FLUX_VERSION`; an opinion-only change
+increments `CUR8S_FLUX_REVISION`. A version is never retagged, and Flux only applies the tag
+declared by the cluster.
