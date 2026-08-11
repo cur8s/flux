@@ -62,9 +62,9 @@ tests are the pipeline itself:
   ([`work/README.md`](work/README.md) governs it).
 - Rewrite current-state documents instead of appending historical
   logs; git history is the changelog.
-- Org-wide law lives in the flagship
-  ([cur8s/cur8s `docs/rfc/`](https://github.com/cur8s/cur8s/tree/main/docs/rfc))
-  — link to it, never copy it.
+- The documents listed in `docs/README.md` are authoritative for this
+  package. Update the document that owns a subject when its behavior
+  changes; do not depend on an external RFC for the package contract.
 
 ## Verification
 

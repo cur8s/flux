@@ -9,20 +9,19 @@ immutable OCI artifact.
   and that tree is what gets pushed as the artifact. Never hand-edit
   `oci/` — change `src/` and re-render; the `oci/` diff is the review
   surface for every change.
-- **Org-wide law lives in the flagship** ([cur8s/cur8s
-  `docs/rfc/`](https://github.com/cur8s/cur8s/tree/main/docs/rfc)) —
-  link to it, never copy it. This repository's current component guidance
-  belongs in `docs/user-guide.md` and `docs/architecture.md`; do not create
-  local RFCs for it.
-- **Versioning** follows flagship RFC-011 (component versioning): `version.env`
-  is the only authored source, carrying `FLUX_VERSION` and `CUR8S_FLUX_REVISION`; the
+- **Durable project contracts live in this repository.** `docs/vision.md`
+  owns intent, `docs/user-guide.md` owns consumer-facing behavior, and
+  `docs/architecture.md` owns implementation structure. `docs/README.md`
+  governs documentation ownership; do not create a separate local RFC catalog.
+- **Versioning:** `version.env` is the only authored source, carrying
+  `FLUX_VERSION` and `CUR8S_FLUX_REVISION`; the
   version is the upstream Flux version, with a `-<n>` config revision
   when the opinion changes on the same upstream (`v2.9.0`,
   `v2.9.0-2`). Published versions are immutable. No version is
   published without a green end-to-end run.
 - **The opinion:** source, kustomize, and notification controllers
   only — helm-controller and the image-automation controllers are
-  forbidden (flagship RFC-006). Flux comes up on a bare cluster: zero
+  forbidden. Flux comes up on a bare cluster: zero
   pre-existing secrets, no `imagePullSecrets`.
 - **mise is the task runner** (`mise install`, `mise tasks`). Task
   grammar is `<object>:<action>`; the `mise.toml` header is
