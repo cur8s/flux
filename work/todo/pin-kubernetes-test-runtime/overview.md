@@ -1,22 +1,23 @@
 ---
-title: "Pin the Kubernetes runtime and validation schemas"
-summary: "Make build and end-to-end results reproducible by aligning Kubernetes versions and removing mutable schema downloads from validation."
+title: "Pin the Kubernetes test runtime"
+summary: "Test the Cur8s Kubernetes N-1 target on its latest patch, selected once for both k3s and kubectl."
 ---
 
-# Pin the Kubernetes runtime and validation schemas
+# Pin the Kubernetes test runtime
 
-The repository currently validates manifests against Kubernetes `1.33.0`, installs kubectl
-`1.36.2`, and lets k3d choose its default k3s image. With the current k3d pin, that default is
-`v1.35.5-k3s1`, so the schema target, client, and end-to-end runtime do not describe one deliberate
-compatibility target.
+`test:e2e` is now the semantic compatibility gate for the Flux CLI-generated installation: it
+applies the rendered manifest to a Kubernetes API server and proves the controllers and
+self-management resources become Ready. k3d currently chooses its own default k3s image, so the
+Kubernetes version tested can change when k3d changes without a reviewed repository change.
 
-Kubeconform also downloads schemas from a mutable remote path during validation. This makes the
-build network-dependent even though the generated Flux manifest itself is available offline, and
-`-ignore-missing-schemas` allows resources to be skipped without asserting that the skipped set is
-intentional.
+Cur8s supports and tests the current Kubernetes GA N-1 minor. With Kubernetes `1.36` current and
+Flux `v2.9.0` supporting Kubernetes `1.34` through `1.36`, the immediate target is Kubernetes
+`1.35`. Cur8s' runtime contract is the latest GA patch in that minor, rather than a fixed container
+digest. One exact `KUBERNETES_VERSION` value selects the reviewed k3s image tag and the same
+`kubectl` release; maintainers advance it when a new GA patch is published.
 
-Decide whether the package supports one Kubernetes version or a small compatibility matrix. Pin the
-k3s node image, align `KUBE_VERSION` and the kubectl version policy, and define how those pins
-advance together. Vendor the required validation schemas or reference them through an immutable
-source, then make validation fail when an unexpected schema is missing. Update CI documentation so
-its network and reproducibility claims match the resulting implementation.
+The image tag contains a k3s packaging suffix (`k3s1` today), but it does not introduce another
+Kubernetes version setting. Then pass the derived image to k3d, assert the created API server and
+client report the selected version, run Flux preflight against it, and document the target and
+advance procedure. Kubeconform and its static schema target were intentionally removed in
+`46bc99c`; this todo does not replace that validator or modify Flux-generated YAML.
