@@ -10,25 +10,27 @@ the same kubectl release. The test confirms that the client and API server it ac
 created report that value before it applies the generated Flux manifest, then runs
 Flux’s preflight and the existing controller and self-management readiness checks.
 
-The runtime version is an explicit Cur8s compatibility contract, not a changing side
-effect of the k3d release. It can advance only through a deliberate review that
-selects the then-current Kubernetes GA N-1 minor, verifies that the pinned Flux
-release supports it, selects the newest stable patch in that minor, and changes the
-single version input and documentation together. The configuration does not discover
-new patches at runtime: advancing to a newly published patch is a reviewed repository
-change.
+The runtime version is an explicit Cur8s e2e coverage target, not a changing side
+effect of the k3d release or a narrower Kubernetes compatibility contract. Flux owns
+the compatibility contract: the package is expected to work with every Kubernetes
+version supported by the pinned Flux release. The target can advance only through a
+deliberate review that selects the then-current Kubernetes GA N-1 minor, verifies the
+pinned Flux release’s supported range, selects the newest stable patch in that minor,
+and changes the single version input and documentation together. The configuration
+does not discover new patches at runtime: advancing to a newly published patch is a
+reviewed repository change.
 
-This work does not change the Flux CLI-generated `deploy/flux.yaml`, add a static
-schema validator, broaden the supported Kubernetes range, or claim that one k3s e2e
-run proves every Kubernetes distribution and patch. It defines the single runtime
-Cur8s tests and supports.
+This work does not change the Flux CLI-generated `deploy/flux.yaml` or add a static
+schema validator. It makes one runtime test target explicit; it does not claim that a
+single k3s e2e run proves every Kubernetes distribution and patch, nor does it narrow
+Flux's upstream compatibility range.
 
 ### Current facts and constraints
 
 - The current Kubernetes GA is `1.36`; Cur8s policy selects GA N-1, so the immediate
   target is Kubernetes `1.35`.
-- Flux `v2.9.0` documents support for Kubernetes `1.34`, `1.35`, and `1.36`; the
-  selected target is therefore within the pinned Flux release’s supported range.
+- Flux `v2.9.0` documents support for Kubernetes `1.34`, `1.35`, and `1.36`. Flux
+  owns this compatibility range; the selected e2e target is one version within it.
 - The repository pins k3d `5.9.0` but does not pass an image to it. Its default image
   is an implementation detail of that k3d release and may change when k3d advances.
 - The repository pins kubectl `1.36.2`; the agreed policy changes it to exactly the
@@ -40,10 +42,10 @@ Cur8s tests and supports.
 
 ### Pinning decision
 
-The repository has one Kubernetes version authority:
+The repository has one Kubernetes *test-version* authority:
 
-1. `KUBERNETES_VERSION`: the newest reviewed GA patch in the Cur8s-supported N-1
-   minor (`1.35.6` in the example below).
+1. `KUBERNETES_VERSION`: the newest reviewed GA patch in the Cur8s-tested N-1 minor
+   (`1.35.6` in the example below).
 
 The version is deliberately exact rather than `1.35`: Kubernetes tools and k3s image
 tags use patch releases, and neither project provides a maintained `v1.35` image tag
@@ -68,8 +70,8 @@ Put the one authored version input and its derived image tag in `mise.toml`’s 
 section, beside the other task inputs:
 
 ```toml
-# Cur8s supports and tests the latest GA patch of this N-1 minor. Advance this
-# value when a new GA patch is published and the Flux support check succeeds.
+# Cur8s tests the latest GA patch of this N-1 minor. Advance this value when a new
+# GA patch is published and it is within the pinned Flux release's support range.
 KUBERNETES_VERSION = "1.35.6"
 # `k3s1` is the current k3s packaging revision, not a second Kubernetes version.
 K3S_IMAGE = "rancher/k3s:v{{ env.KUBERNETES_VERSION }}-k3s1"
@@ -109,17 +111,18 @@ durable documentation.
 - [x] Approve an exact, non-digest k3s release tag derived from that value: Cur8s
   maintains the latest GA patch in the selected minor rather than content-pinning a
   patch with an image digest.
-- [ ] Confirm that the package supports one tested Kubernetes minor at a time, rather
-  than claiming a matrix from a single local e2e suite.
+- [x] Confirm that e2e covers one Kubernetes N-1 minor at a time. This is explicit
+  test coverage, not a claim that the package is incompatible with other Kubernetes
+  versions supported by the pinned Flux release.
 
 ### Phase 2: Select and wire the exact runtime
 
 Resolve the newest stable k3s patch in the approved Kubernetes minor and make the
 derived tag the only k3d image input.
 
-- [ ] Verify the selected Kubernetes minor is GA N-1 and is supported by the pinned
-  Flux release; identify the newest stable patch in that minor and confirm its k3s
-  tag exists for linux/arm64 and linux/amd64.
+- [ ] Verify the selected Kubernetes minor is GA N-1 and lies within the pinned Flux
+  release’s documented support range; identify the newest stable patch in that minor
+  and confirm its k3s tag exists for linux/arm64 and linux/amd64.
 - [ ] Add `KUBERNETES_VERSION` and the derived `K3S_IMAGE` to `mise.toml`; set
   `kubectl = "{{ env.KUBERNETES_VERSION }}"`; pass `K3S_IMAGE` explicitly to
   `k3d cluster create` without adding a competing image field to the k3d
@@ -149,10 +152,12 @@ Make a wrong, ignored, or substituted image reference fail close to cluster crea
 After the implementation decision is proven, update durable documentation to match
 the behavior rather than duplicating this temporary decision analysis.
 
-- [ ] Update the user guide with the supported/tested Kubernetes minor and link to
-  Flux’s published compatibility policy for its wider upstream range.
-- [ ] Update architecture documentation to identify the explicit k3s image pin and
-  API-server e2e validation boundary.
+- [ ] Update the user guide to distinguish the Cur8s e2e target from Flux's
+  compatibility contract: state the tested Kubernetes minor and link to, or state,
+  the Kubernetes range supported by the pinned Flux version.
+- [ ] Update architecture documentation to identify the explicit k3s image pin,
+  API-server e2e validation boundary, and Flux as the owner of the compatibility
+  range.
 - [ ] Update CONTRIBUTING with the advance procedure: select GA N-1, confirm Flux
   support, choose the newest stable k3s patch and packaging suffix, update the one
   `KUBERNETES_VERSION` input, verify its tag is multi-architecture, and run the two
