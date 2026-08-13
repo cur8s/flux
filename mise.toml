@@ -1,5 +1,5 @@
 # Pinned toolchain for the artifact pipeline: mise installs exact
-# versions so a fetch → render → validate run reproduces byte-for-byte
+# versions so a fetch → render run reproduces byte-for-byte
 # on any workstation and in CI. docker is the one deliberate outsider
 # (the daemon belongs to the host); git and openssl ride the system.
 # version.env is the release unit's single authored version source; mise loads
@@ -26,15 +26,12 @@
 [tools]
 flux2 = "{{env.FLUX_VERSION}}"
 kustomize = "5.8.1"
-kubeconform = "0.8.0"
 kubectl = "1.36.2"
 k3d = "5.9.0"
 jq = "1.8.2"
 
 [env]
 _.file = "version.env"
-# Kubernetes API version kubeconform validates the render against.
-KUBE_VERSION = "1.33.0"
 # Production registry (release publishes here; dev pushes go to the
 # k3d cluster's local registry).
 REGISTRY = "ghcr.io/cur8s"

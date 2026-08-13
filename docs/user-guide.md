@@ -35,9 +35,10 @@ artifacts, allowing them to share the same build, publish, promotion, signing, v
 replication, and access-control workflows.
 
 OCI artifacts create a clean separation between **authoring** and **distribution**. Git remains the
-place where deployment configuration is authored, reviewed, and versioned. CI renders and validates
-the final manifests, publishes them as immutable OCI artifacts, and clusters reconcile those
-artifacts directly. The cluster never reconstructs deployment artifacts from source.
+place where deployment configuration is authored, reviewed, and versioned. CI renders the final
+manifests, proves them against a Kubernetes API server during end-to-end verification, publishes
+them as immutable OCI artifacts, and clusters reconcile those artifacts directly. The cluster never
+reconstructs deployment artifacts from source.
 
 OCI artifacts are the preferred deployment unit because they:
 

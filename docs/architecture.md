@@ -4,7 +4,7 @@
 
 This repository owns one release unit: an opinionated Flux installation published as an immutable
 OCI artifact. It owns the upstream version pin, controller selection, source configuration,
-rendering, validation, bootstrap manifest, and the resource that lets Flux reconcile its own
+rendering, bootstrap manifest, and the resource that lets Flux reconcile its own
 installation.
 
 A consuming cluster owns the `OCIRepository` because the registry endpoint, credentials, and
@@ -26,15 +26,14 @@ The authored opinion is deliberately small:
 - `src/flux/config/sync.yaml` defines the self-management `Kustomization`.
 
 `artifact:render` uses Kustomize to produce `oci/flux/deploy/flux.yaml`, copies `sync.yaml`, and
-writes the inert `cur8s.yaml` release descriptor. `artifact:validate` checks the rendered manifest
-with kubeconform. The complete `oci/flux/` tree is committed intentionally: it is the review
-surface and the exact content later pushed as an OCI artifact.
+writes the inert `cur8s.yaml` release descriptor. The complete `oci/flux/` tree is committed
+intentionally: it is the review surface and the exact content later pushed as an OCI artifact.
 
 ```text
 version.env + pinned Flux CLI + source configuration
                     │
                     ▼
-      fetch → render → validate → committed oci/flux/
+             fetch → render → committed oci/flux/
                                       │
                          ┌────────────┴────────────┐
                          ▼                         ▼
@@ -77,23 +76,23 @@ of metadata obtain their shared component facts from `mise-tasks/artifact/facts.
 command reference and defines the `<object>:<action>` grammar. The important lifecycle is:
 
 ```text
-artifact:clean → artifact:fetch → artifact:render → artifact:validate
-                                      │
-                                      ▼
-                              artifact:build
-                              ├─ test:drift
-                              └─ artifact:push
-                                      │
+artifact:clean → artifact:fetch → artifact:render → artifact:build
+                                      │                 │
+                                      │                 ├─ test:drift
+                                      ▼                 └─ artifact:push
         cluster:create → cluster:init → cluster:sync → cluster:verify
                                       ▲
                                    test:e2e
 ```
 
 `test:drift` rebuilds and proves that the committed `oci/` tree and fetched audit trail match the
-pins. `test:e2e` creates an ephemeral k3d cluster, builds and pushes a local artifact, bootstraps
-the controllers, supplies the self-management resources, and waits for the source and
-`Kustomization` to become Ready. This is the package's release gate. Deployments that combine this
-artifact with other components own their broader integration verification.
+pins. `test:e2e` creates an ephemeral k3d cluster, builds and pushes a local artifact, and applies
+the generated Flux manifest to that cluster's Kubernetes API server. It then supplies the
+self-management resources and waits for the source and `Kustomization` to become Ready. This is
+both the package's release gate and its semantic compatibility check for the generated manifest:
+the repository does not hand-author the Flux controller installation and therefore cannot repair a
+static schema failure independently of changing the Flux or Kubernetes version. Deployments that
+combine this artifact with other components own their broader integration verification.
 
 ## Bootstrap, publication, and self-management
 

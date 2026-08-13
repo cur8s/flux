@@ -12,7 +12,7 @@ repository, enter its directory, and run:
 
 ```sh
 mise trust
-mise install   # pinned toolchain: flux, kustomize, kubeconform, kubectl, k3d, jq
+mise install   # pinned toolchain: flux, kustomize, kubectl, k3d, jq
 mise tasks     # list every task
 ```
 
@@ -24,7 +24,7 @@ the objects, the grammar, and the pinned toolchain.
 
 | Command | Intent |
 | --- | --- |
-| `mise run artifact:build` | Fetch upstream → render → validate the artifact tree. |
+| `mise run artifact:build` | Fetch upstream → render the artifact tree. |
 | `mise run test:drift` | Prove the committed `oci/` tree matches a fresh build. |
 | `mise run test:e2e` | Prove the full bootstrap → self-manage loop on an ephemeral k3d cluster. |
 | `mise run cluster:<action>` | Drive a persistent k3d dev cluster (see the README quickstart). |
@@ -44,9 +44,12 @@ tests are the pipeline itself:
 - `test:drift` is the review-surface gate: what is committed under
   `oci/` and `src/flux/artifacts/` must be byte-for-byte what the
   pinned pipeline produces from `src/`.
-- `test:e2e` is the product contract: build → push → bootstrap →
-  self-manage → verify on an ephemeral k3d cluster. It requires the
-  docker daemon. No version is published without a green run.
+- `test:e2e` is the product contract and Kubernetes compatibility gate:
+  build → push → bootstrap → self-manage → verify on an ephemeral k3d
+  cluster. Its API server accepts the generated Flux manifest and the
+  readiness checks prove the controllers and self-management resources
+  converge. It requires the docker daemon. No version is published without
+  a green run.
 
 ## Repository Conventions
 
