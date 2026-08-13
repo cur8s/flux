@@ -28,7 +28,6 @@ flux2 = "{{env.FLUX_VERSION}}"
 kustomize = "5.8.1"
 kubectl = "1.36.2"
 k3d = "5.9.0"
-jq = "1.8.2"
 
 [env]
 _.file = "version.env"
