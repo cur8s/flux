@@ -17,9 +17,10 @@
 # publishing the versioned artifact — takes no object segment.
 #
 # Tasks that are a few commands live below; tasks that own real logic
-# are executable file tasks under mise-tasks/ (directories namespace the
-# names: mise-tasks/artifact/fetch -> artifact:fetch). Every task runs
-# from the repo root. Arguments are declared with usage specs, so
+# are executable file tasks under .mise/tasks/ (directories namespace the
+# names: .mise/tasks/artifact/fetch -> artifact:fetch). Supporting files
+# (k3d-config.yaml, any shared scripts) live elsewhere under .mise/ so
+# they never become tasks. Every task runs from the repo root. Arguments are declared with usage specs, so
 # `mise run <task> --help` documents them.
 
 [settings]
@@ -85,7 +86,7 @@ run = [
 description = "Create a k3d cluster + its local OCI registry"
 usage = 'arg "[name]" env="CLUSTER_NAME" help="Cluster name"'
 run = '''
-k3d cluster create "$usage_name" --config mise-tasks/cluster/k3d-config.yaml \
+k3d cluster create "$usage_name" --config .mise/k3d-config.yaml \
   --registry-create "$usage_name-registry"
 port="$(docker port "$usage_name-registry" 5000 | head -1 | awk -F: '{print $NF}')"
 curl -sf --retry 30 --retry-delay 2 --retry-all-errors "http://localhost:$port/v2/" >/dev/null
