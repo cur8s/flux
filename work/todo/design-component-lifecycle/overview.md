@@ -20,8 +20,28 @@ summary: "Identify the goals and invariants of a Cur8s component's build-to-publ
 - Requirements already identified are folded into this todo rather than kept as separate todos:
   traceable fetching, a locally packaged artifact that is the one tested and published, safe
   publication, and owned images. They are preserved in [requirements](requirements.md).
-- The earlier six-phase proposal is one candidate design, preserved in
-  [candidate: six chained phases](candidate-six-phases.md).
+- The owner has since advanced the design into a [proposal](proposal.md), recorded unedited. It
+  is the current direction: architectural invariants, the namespaces `upstream`, `build`,
+  `cluster`, and `flux` with per-task contracts and status, installation stages `crds`, `deploy`,
+  and `post-install`, the intended local lifecycle, and the open decisions it says must not be
+  resolved silently. Continue from those open decisions.
+- The earlier six-phase proposal, top-level Maven-style phases rather than namespaces, is kept as
+  an alternative considered in [candidate: six chained phases](candidate-six-phases.md).
+
+**Differences to reconcile** between the proposal, the other todos, and the repository today —
+to resolve with the owner, not by assumption:
+
+- Section 9 (migration sequence and acceptance criteria) is implementation guidance; this todo is
+  document only, so it belongs with
+  [Plan the lifecycle implementation](../plan-lifecycle-implementation/overview.md).
+- The migration steps and acceptance criteria update CI workflows, but CI is parked in
+  [`finalize-ci-workflows`](../../parked/finalize-ci-workflows/overview.md) and `.github/` was
+  moved out of the repository.
+- Section 8's script style and task composition guidance (about 15 lines, compose with mise
+  dependencies) overlaps the mise conventions todo, which owns all aspects of mise and the task
+  scripts.
+- Section 8 assumes `curl` and `jq` "per documented prerequisites", but the root `README.md`
+  lists only mise and Docker; decide whether such tools are mise-managed or assumed.
 
 **Goals and invariants the owner stated while planning** — inputs to the first step, to confirm
 or revise there:

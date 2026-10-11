@@ -14,6 +14,8 @@ tasks, CI, or artifacts changes as part of this todo.
 ### Approach
 
 Interactive design with the owner, one step at a time, stopping for discussion at each step.
+Start from the owner's [proposal](proposal.md): it is the current direction, and its open
+decisions are the design work that remains.
 Record decisions, rejected alternatives, and evidence in a `working-notes.md` in this todo,
 distinguishing owner decisions from proposals and observations.
 
@@ -35,16 +37,20 @@ An agreed, written statement of what the lifecycle must achieve and what must al
 
 - [ ] Review the monorepo's lifecycle (Make targets, `scripts/`, component Makefiles) and the needs
   of a Helm-based component such as cert-manager; summarize the needs in `working-notes.md`.
-- [ ] Draft goals and invariants from the owner-stated list in the overview, the
+- [ ] Draft goals and invariants from the owner-stated list in the overview, the architectural
+  invariants in the [proposal](proposal.md), the
   [requirements](requirements.md), and the monorepo review.
 - [ ] **Stop for owner discussion**; revise until agreed.
 
-### Phase 2: Candidate designs
+### Phase 2: Complete the design
 
-Several candidate lifecycles, each assessed against the agreed goals and invariants.
+The namespaced design completed and assessed against the agreed goals and invariants, with the
+six-phase alternative compared.
 
-- [ ] Describe candidate designs, including the [six chained phases](candidate-six-phases.md) and
-  at least one structurally different alternative. Each candidate states its directory layout:
+- [ ] Continue the namespaced design from the [proposal](proposal.md): settle its open decisions
+  (`flux:reconcile` targeting, `test`, local packaging, and `publish`), and resolve the differences
+  listed in the overview. Keep the [six chained phases](candidate-six-phases.md) as the alternative
+  it is compared against. The design states its directory layout:
   which step reads and writes which directory (today `src/<component>/`, `oci/<component>/`,
   `.mise/`; candidates may add `dist/`), and what is committed versus ignored.
 - [ ] Identify which questions only an experiment can answer.
@@ -67,5 +73,6 @@ Evidence for the questions that decide between candidates.
 - [ ] Decide with the owner which durable documents describe the lifecycle and where they live;
   write each, review it with the owner, and commit it on its own.
 - [ ] Hand off to [Plan the lifecycle implementation](../plan-lifecycle-implementation/overview.md):
-  move [requirements](requirements.md), and any working notes still needed for implementation,
-  into that todo, then remove this todo.
+  move [requirements](requirements.md), the [proposal](proposal.md)'s implementation guidance
+  (section 9: migration sequence and acceptance criteria), and any working notes still needed for
+  implementation, into that todo, then remove this todo.
