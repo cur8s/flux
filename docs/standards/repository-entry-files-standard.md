@@ -54,7 +54,8 @@ development guide rather than copying its setup steps.
 **Rule:**
 
 - Write it for people.
-- Open with the repository's name as the H1, followed by a description of at most three sentences.
+- Open with the repository's name as the H1, followed by a description of at most three
+  sentences.
 - Follow with a `## Prerequisites` section containing a concepts table (ENTRY-003) and a software
   table (ENTRY-004), each labeled by its first column header rather than a subheading.
 - End with a `## Read next` numbered list linking the documents to read, in reading order, each
@@ -148,7 +149,8 @@ name the command or file instead, such as `mise tasks` or `mise.toml`.
 
 ### ENTRY-008: Keep procedures in how-to guides
 
-**Applies to:** Setup steps, verification gates, and development workflows.
+**Applies to:** Setup steps, verification gates, and development workflows, and where the
+repository documents them.
 
 **Rule:**
 
