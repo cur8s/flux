@@ -29,7 +29,8 @@ Because the rendered manifests reference the mirror, mirroring must happen befor
 phase needing ghcr write access earlier than `publish` — decide which phase owns it.
 
 Open questions: how to pin flux-mirror itself (the `flux plugin install` path is outside
-`mise.lock`; the container image or a release binary may be pinnable); the destination naming
+`mise.lock`; the container image or a release binary may be pinnable), answered by the general
+tool-pinning convention from [`standardize-mise-and-task-scripts`](../standardize-mise-and-task-scripts/overview.md); the destination naming
 scheme under `ghcr.io/cur8s`; making each new package public and having `e2e` fail on a private
 one; and whether to mirror Helm charts too (not needed for Flux). Experiment against a local k3d
 registry first; mirror to ghcr only when explicitly requested.

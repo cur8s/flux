@@ -26,13 +26,16 @@ is Flux on a cluster, `artifact:push|deploy|verify` put a built artifact on a de
 `upstream:check` reports newer upstream releases. Today's `artifact:fetch`, `artifact:render`,
 `artifact:build`, `test:drift`, `test:e2e`, and `release` map onto the phases.
 
-Chaining phases through mise `depends` makes `publish` structurally unable to skip `e2e`, so "no
+Chaining the phases makes `publish` structurally unable to skip `e2e`, so "no
 version is published without a green end-to-end run" is enforced by the task graph rather than
 by CI step order. The cost is that a phase cannot run alone; `render` always fetches first. Keep a
 supporting task for a fast re-render only if that cost proves real.
 
 Also settle the cluster-argument convention while renaming: positional name only where the
 cluster is the object (`cluster:create <name>`), `--cluster <name>` everywhere else.
+
+The mise mechanics used to express all of this follow [`standardize-mise-and-task-scripts`](../standardize-mise-and-task-scripts/overview.md),
+which comes first; this todo owns only the lifecycle and naming decisions.
 
 `package` and `publish` depend on
 [`package-oci-artifact-locally`](../package-oci-artifact-locally/overview.md); until it lands,

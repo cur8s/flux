@@ -13,9 +13,10 @@ the lifecycle as the repository's command contract, and `check` and `e2e` pass.
 ### Approach
 
 Rename in place rather than rebuild: the existing scripts already do the work of `fetch`,
-`render`, `check` (drift), `e2e`, and `publish` (release). Express ordering with each phase's
-`#MISE depends=["<previous phase>"]`; a single dependency per phase keeps mise serial, so no
-`run` lists or nested `mise run` chains are needed for the main path.
+`render`, `check` (drift), `e2e`, and `publish` (release). How phase ordering is expressed in mise
+(`depends`, `run` lists, or nested `mise run`) and how arguments are declared follow the
+conventions settled by [`standardize-mise-and-task-scripts`](../standardize-mise-and-task-scripts/overview.md); this todo
+decides the phase and task names, their order, and their namespaces, not the mise mechanics.
 
 `package` is introduced as the seam the local-packaging todo fills. Until that lands, `package`
 may do nothing beyond confirming `oci/<component>/` exists, and `publish` keeps today's push from

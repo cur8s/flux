@@ -14,4 +14,6 @@ review surface, runs policy, drift, and end-to-end checks, and opens a proposal 
 upstream release information. It must never merge, tag, or publish automatically. Determine how to
 authenticate automated proposals safely, how to handle a newer release while a proposal is already
 open, and whether upstream release notes provide enough compatibility information to summarize
-without adding another source of truth.
+without adding another source of truth. Whether Renovate can read the version pins depends on
+the templated-pin decision in
+[`standardize-mise-and-task-scripts`](../../todo/standardize-mise-and-task-scripts/overview.md).

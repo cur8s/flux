@@ -18,7 +18,8 @@ version, and digest. For Flux that is the pinned CLI version and the generated m
 Include the container images referenced by the rendered manifests, each with its upstream digest.
 This answers "what will this version run?" and is the input list for
 [`mirror-images-to-ghcr`](../mirror-images-to-ghcr/overview.md). Decide which tool resolves
-digests (for example `crane digest`) and pin it in `mise.toml` and `mise.lock`.
+digests (for example `crane digest`) and pin it following the tool-pinning convention from
+[`standardize-mise-and-task-scripts`](../standardize-mise-and-task-scripts/overview.md).
 
 `check` must fail if the committed record differs from a fresh fetch. Keep the release descriptor
 (`cur8s.yaml`) and the record from duplicating each other: the descriptor states identity, the

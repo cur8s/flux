@@ -21,5 +21,7 @@ maintainers advance it when a new GA patch is published.
 The image tag contains a k3s packaging suffix (`k3s1` today), but it does not introduce another
 Kubernetes version setting. Then pass the derived image to k3d, assert the created API server and
 client report the selected version, run Flux preflight against it, and document both the e2e target
-and Flux's supported Kubernetes range. Kubeconform and its static schema target were intentionally
+and Flux's supported Kubernetes range. How the version is authored in `mise.toml` and whether
+the `kubectl` pin may be derived from it by template follow the conventions settled by
+[`standardize-mise-and-task-scripts`](../standardize-mise-and-task-scripts/overview.md). Kubeconform and its static schema target were intentionally
 removed in `46bc99c`; this todo does not replace that validator or modify Flux-generated YAML.

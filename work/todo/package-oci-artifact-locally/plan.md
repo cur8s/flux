@@ -15,7 +15,8 @@ Prove the mechanism with an experiment before changing phases. The experiment us
 registries (the k3d dev registry); nothing goes to ghcr until publication is explicitly requested.
 
 Prefer a tool that can both build an on-disk OCI layout and copy it to a registry without
-re-encoding (`oras` first); pin whichever tool wins in `mise.toml` and refresh `mise.lock`. Match
+re-encoding (`oras` first); pin whichever tool wins following the tool-pinning convention from
+[`standardize-mise-and-task-scripts`](../standardize-mise-and-task-scripts/overview.md). Match
 the media types `flux push artifact` produces today so `OCIRepository` needs no `layerSelector`.
 If digests are not reproducible because of a timestamp or annotation, fix the input (fixed
 timestamps, sorted tar) rather than accepting a changing digest.
