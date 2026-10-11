@@ -8,13 +8,25 @@ version: 1
 
 This standard applies to the files people and coding agents read first: the root `README.md`,
 `AGENTS.md`, and README files inside directories. It is intended for experienced developers and
-coding agents who write or review those files. Write those files for experienced developers and
-current top-tier coding agents: neither needs basics explained, though developers may not yet know
-emerging tools.
+coding agents who write or review those files.
 
 ## Required Conventions
 
 Apply every applicable convention in this section.
+
+### ENTRY-009: Write for experienced readers and current agents
+
+**Applies to:** All content in the root `README.md`, `AGENTS.md`, and directory READMEs.
+
+**Rule:**
+
+- Assume readers are experienced developers and current top-tier coding agents; do not explain
+  basics of their field.
+- Prefer tables and short lists to prose so readers can scan the file to orient themselves.
+- Introduce an emerging tool readers may not know, such as mise, with a link to an authoritative
+  introduction.
+
+---
 
 ### ENTRY-001: Give each fact one home
 
