@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Delete a k3d cluster and its registry"
+#USAGE arg "[name]" env="CLUSTER_NAME" help="Cluster name"
+set -euo pipefail
+name="$usage_name"
+k3d cluster delete "$name"
+k3d registry delete "$name-registry" 2>/dev/null || true

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#MISE description="Show a k3d cluster and its registry endpoint"
+#USAGE arg "[name]" env="CLUSTER_NAME" help="Cluster name"
+set -euo pipefail
+name="$usage_name"
+k3d cluster list "$name"
+port="$(docker port "$name-registry" 5000 | head -1 | awk -F: '{print $NF}')"
+echo "registry: localhost:$port (in-cluster $name-registry:5000)"

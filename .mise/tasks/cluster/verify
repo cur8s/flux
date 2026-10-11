@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#MISE description="Wait for the controllers + self-management source and Kustomization to be Ready"
+#USAGE arg "[name]" env="CLUSTER_NAME" help="Cluster name"
+set -euo pipefail
+ctx="k3d-$usage_name"
+kubectl --context "$ctx" -n flux-system wait --for=condition=Available --timeout=3m \
+  deploy/source-controller deploy/kustomize-controller deploy/notification-controller
+kubectl --context "$ctx" -n flux-system wait --for=condition=Ready --timeout=3m \
+  ocirepository/flux kustomization/flux

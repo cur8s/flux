@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Bootstrap Flux into the cluster (server-side apply of the rendered manifest)"
+#USAGE arg "[name]" env="CLUSTER_NAME" help="Cluster name"
+set -euo pipefail
+ctx="k3d-$usage_name"
+kubectl --context "$ctx" apply --server-side -f oci/flux/deploy/flux.yaml
+kubectl --context "$ctx" -n flux-system wait deploy --all --for=condition=Available --timeout=3m

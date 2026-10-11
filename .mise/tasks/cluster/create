@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#MISE description="Create a k3d cluster + its local OCI registry"
+#USAGE arg "[name]" env="CLUSTER_NAME" help="Cluster name"
+set -euo pipefail
+# Each cluster gets its own local OCI registry (container <name>-registry,
+# reached in-cluster as <name>-registry:5000). No host ports are mapped —
+# Flux needs no ingress — so multiple clusters coexist without port conflicts.
+name="$usage_name"
+k3d cluster create "$name" --config .mise/k3d-config.yaml --registry-create "$name-registry"
+port="$(docker port "$name-registry" 5000 | head -1 | awk -F: '{print $NF}')"
+curl -sf --retry 30 --retry-delay 2 --retry-all-errors "http://localhost:$port/v2/" >/dev/null
+echo "✅ cluster $name (context k3d-$name), registry localhost:$port (in-cluster $name-registry:5000)"
