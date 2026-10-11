@@ -1,63 +1,29 @@
 #!/usr/bin/env bash
 #MISE description="Full ephemeral proof: build → cluster → push → bootstrap → self-manage → verify"
+#USAGE arg "[cluster]" default="flux-e2e" help="Ephemeral cluster name"
 set -euo pipefail
 # On success the cluster is deleted; on failure it is preserved for debugging.
-REPO_ROOT="$MISE_CONFIG_ROOT"
-source "$REPO_ROOT/scripts/lib/display.sh"
-
-CLUSTER="${1:-flux-e2e}"
-TAG="test"
-CTX="k3d-$CLUSTER"
+cluster="$usage_cluster"
+ctx="k3d-$cluster"
 
 cleanup() {
   local rc=$?
   if [ $rc -eq 0 ]; then
-    banner "✅ e2e passed — deleting cluster '$CLUSTER'"
-    mise run cluster:delete "$CLUSTER" || true
+    echo "✅ e2e passed — deleting cluster '$cluster'"
+    mise run cluster:delete "$cluster" || true
   else
-    banner "❌ e2e failed (rc=$rc) — cluster '$CLUSTER' preserved"
-    echo "  kubectl --context $CTX get all -A"
-    echo "  flux --context $CTX get all -A"
-    echo "  kubectl --context $CTX -n flux-system logs deploy/kustomize-controller"
-    echo "  mise run cluster:delete $CLUSTER   # when done"
+    echo "❌ e2e failed (rc=$rc) — cluster '$cluster' preserved"
+    flux --context "$ctx" get all -A || true
+    echo "  kubectl --context $ctx -n flux-system logs deploy/kustomize-controller"
+    echo "  mise run cluster:delete $cluster   # when done"
   fi
 }
 trap cleanup EXIT
 
-banner "E2E 1/6 — build"
 mise run artifact:build
-
-banner "E2E 2/6 — cluster"
-mise run cluster:create "$CLUSTER"
-
-banner "E2E 3/6 — push artifact"
-mise run artifact:push k3d "$CLUSTER" "$TAG"
-
-banner "E2E 4/6 — init (bootstrap Flux)"
-mise run cluster:init "$CLUSTER"
-
-banner "E2E 5/6 — sync (self-management)"
-mise run cluster:sync "$CLUSTER" "$TAG"
-
-banner "E2E — waiting for self-managed reconciliation"
-elapsed=0; timeout=180
-while [ $elapsed -lt $timeout ]; do
-  src=$(kubectl --context "$CTX" -n flux-system get ocirepository flux \
-        -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' 2>/dev/null || echo "")
-  ks=$(kubectl --context "$CTX" -n flux-system get kustomization flux \
-        -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' 2>/dev/null || echo "")
-  printf "[%3ds] OCIRepository=%s Kustomization=%s\n" "$elapsed" "${src:-?}" "${ks:-?}"
-  [ "$src" = "True" ] && [ "$ks" = "True" ] && { echo "✅ self-managed reconciliation Ready"; break; }
-  sleep 5; elapsed=$((elapsed + 5))
-done
-if [ "${src:-}" != "True" ] || [ "${ks:-}" != "True" ]; then
-  error "self-management did not become Ready in ${timeout}s"
-  flux --context "$CTX" get all -A || true
-  exit 1
-fi
-
-banner "E2E 6/6 — verify"
-mise run cluster:verify "$CLUSTER"
-
-banner "E2E — flux state"
-flux --context "$CTX" get all -A || true
+mise run cluster:create "$cluster"
+mise run artifact:push --cluster "$cluster" --tag test
+mise run cluster:init "$cluster"
+mise run cluster:sync "$cluster" test
+mise run cluster:verify "$cluster"
+flux --context "$ctx" get all -A

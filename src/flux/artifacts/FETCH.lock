@@ -1,8 +1,0 @@
-# Audit trail for fetched upstream sources. Regenerate with 'mise run artifact:fetch'.
-component: flux
-flux-version: v2.9.0
-cli-version: 2.9.0
-sources:
-  - type: flux-cli-install
-    file: manifests/flux.yaml
-    digest: sha256:69cc8ec55f6caa8723a2912b8cdcaa80eb2e32c1bf20207e240e95e46e4c308f

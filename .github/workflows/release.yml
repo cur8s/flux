@@ -22,10 +22,9 @@ jobs:
 
       - name: Tag must match package version
         run: |
-          source scripts/lib/version.sh
-          load_flux_version version.env
-          test "${GITHUB_REF_NAME}" = "${CUR8S_FLUX_VERSION}" || {
-            echo "tag ${GITHUB_REF_NAME} != package version ${CUR8S_FLUX_VERSION}" >&2
+          version="$(mise env --json | jq -r .CUR8S_FLUX_VERSION)"
+          test "${GITHUB_REF_NAME}" = "${version}" || {
+            echo "tag ${GITHUB_REF_NAME} != package version ${version}" >&2
             exit 1
           }
 

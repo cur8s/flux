@@ -15,10 +15,11 @@ source has been declared.
 
 ## From upstream release to immutable intent
 
-`version.env` is the only authored version source. It records the upstream Flux version and a
-Cur8s configuration revision; the `mise.toml` Flux pin follows it. `artifact:fetch` runs that
-pinned Flux CLI with the three permitted controllers and stores the upstream manifest and digest
-in `src/flux/artifacts/`. That tree is an audit trail, not an authored install.
+`FLUX_VERSION` and `CUR8S_FLUX_REVISION` in the `mise.toml` `[env]` section are the only authored
+version source: the upstream Flux version and a Cur8s configuration revision. The Flux tool pin
+follows `FLUX_VERSION`. `artifact:fetch` runs that pinned Flux CLI with the three permitted
+controllers and stores the upstream manifest in `src/flux/artifacts/`. That tree is generated
+upstream input, not an authored install.
 
 The authored opinion is deliberately small:
 
@@ -30,7 +31,7 @@ writes the inert `cur8s.yaml` release descriptor. The complete `oci/flux/` tree 
 intentionally: it is the review surface and the exact content later pushed as an OCI artifact.
 
 ```text
-version.env + pinned Flux CLI + source configuration
+mise.toml version + pinned Flux CLI + source configuration
                     │
                     ▼
              fetch → render → committed oci/flux/
@@ -68,7 +69,7 @@ The descriptor contains only facts known at render time: component identity, pac
 upstream project, upstream version and digest, source, and documentation location. It deliberately
 omits a timestamp and Git revision so a fresh render remains byte-for-byte reproducible. The push
 task adds source revision and other registry-facing facts as OCI manifest annotations. Both forms
-of metadata obtain their shared component facts from `mise-tasks/artifact/facts.sh`.
+of metadata obtain their shared component facts from the `[env]` section of `mise.toml`.
 
 ## Task graph and verification
 
@@ -85,8 +86,8 @@ artifact:clean → artifact:fetch → artifact:render → artifact:build
                                    test:e2e
 ```
 
-`test:drift` rebuilds and proves that the committed `oci/` tree and fetched audit trail match the
-pins. `test:e2e` creates an ephemeral k3d cluster, builds and pushes a local artifact, and applies
+`test:drift` rebuilds and proves that the committed `oci/` tree and fetched upstream manifest
+match the pins. `test:e2e` creates an ephemeral k3d cluster, builds and pushes a local artifact, and applies
 the generated Flux manifest to that cluster's Kubernetes API server. It then supplies the
 self-management resources and waits for the source and `Kustomization` to become Ready. This is
 both the package's release gate and its semantic compatibility check for the generated manifest:

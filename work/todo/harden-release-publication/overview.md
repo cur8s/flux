@@ -15,7 +15,7 @@ publication, and post-publish verification of the OCI digest, annotations, and `
 contents. Define publication order, idempotent retry behavior, and an explicit recovery procedure
 for partial success without weakening tag immutability.
 
-Run `mise run test:version` in CI and pin third-party workflow actions to immutable revisions.
+Pin third-party workflow actions to immutable revisions.
 Decide whether signing and provenance belong in the first hardened release or in separately scoped
 follow-up work. Publication must remain an explicit reviewed action and must never merge, retag, or
 advance versions automatically.

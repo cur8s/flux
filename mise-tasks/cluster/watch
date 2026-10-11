@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-#MISE description="Watch Flux reconciliation (name arg optional)"
-set -euo pipefail
-NAME="${1:-$CLUSTER_NAME}"
-exec watch flux --context "k3d-$NAME" get all -A

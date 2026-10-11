@@ -13,8 +13,8 @@ immutable OCI artifact.
   owns intent, `docs/user-guide.md` owns consumer-facing behavior, and
   `docs/architecture.md` owns implementation structure. `docs/README.md`
   governs documentation ownership; do not create a separate local RFC catalog.
-- **Versioning:** `version.env` is the only authored source, carrying
-  `FLUX_VERSION` and `CUR8S_FLUX_REVISION`; the
+- **Versioning:** `FLUX_VERSION` and `CUR8S_FLUX_REVISION` in the
+  `mise.toml` `[env]` section are the only authored source; the
   version is the upstream Flux version, with a `-<n>` config revision
   when the opinion changes on the same upstream (`v2.9.0`,
   `v2.9.0-2`). Published versions are immutable. No version is

@@ -17,8 +17,8 @@ The investigation should cover:
 - which leaf tasks can reasonably support direct execution and which orchestration tasks should
   continue invoking `mise run`;
 - how to avoid duplicated defaults or competing configuration sources; and
-- whether the sourceable [`version.env` design](../../../version.env) should
-  establish the pattern for other non-secret repository configuration.
+- whether configuration now authored in `mise.toml` `[env]`, including the package version,
+  should move back to a sourceable file.
 
 Any proposal should preserve the pinned toolchain and the documented `mise run` interface while
 making the boundary between task orchestration and ordinary runtime configuration explicit.

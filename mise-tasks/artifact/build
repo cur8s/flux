@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-#MISE description="clean → fetch → render: the full artifact build"
-set -euo pipefail
-mise run artifact:clean
-mise run artifact:fetch
-mise run artifact:render
-echo ""
-echo "✅ build complete — artifact tree in oci/flux/"

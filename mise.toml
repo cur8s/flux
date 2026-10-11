@@ -1,27 +1,35 @@
 # Pinned toolchain for the artifact pipeline: mise installs exact
 # versions so a fetch → render run reproduces byte-for-byte
 # on any workstation and in CI. docker is the one deliberate outsider
-# (the daemon belongs to the host); git and openssl ride the system.
-# version.env is the release unit's single authored version source; mise loads
-# it below and the Flux pin follows FLUX_VERSION. FETCH.lock records the CLI
-# version as proof.
+# (the daemon belongs to the host); git, openssl, curl, and jq ride the
+# system. FLUX_VERSION and CUR8S_FLUX_REVISION in [env] are the release
+# unit's single authored version source; the Flux pin follows
+# FLUX_VERSION. mise.lock pins each tool's download checksums.
 #
-# Tasks are file tasks under mise-tasks/ (directories namespace the
-# names: mise-tasks/artifact/fetch -> artifact:fetch). Grammar:
-# <object>:<action>. Objects are artifact (the OCI artifact tree:
-# src/ fetch + render -> committed oci/ -> push; artifact:push is the
-# single choke point through which every artifact leaves the repo),
-# cluster (a local k3d dev cluster and what runs on it), test (the
-# product contract: test:e2e proves the full bootstrap -> self-manage
-# loop on an ephemeral cluster, test:drift proves the committed oci/
-# tree matches a fresh build), upstream (the tracked Flux release).
-# release — the repo-level act of publishing the versioned artifact —
-# takes no object segment. A namespace must have multiple real members.
-# Task scripts must be executable or mise silently ignores them;
-# non-executable files beside them are a namespace's own support files
-# (cluster/k3d.sh lifecycle library, cluster/verify.sh check helpers,
-# cluster/k3d-config.yaml). The display vocabulary every task shares
-# is scripts/lib/display.sh.
+# Task grammar: <object>:<action>. Objects are artifact (the OCI
+# artifact tree: src/ fetch + render -> committed oci/ -> push;
+# artifact:push is the single choke point through which every artifact
+# leaves the repo), cluster (a local k3d dev cluster, its local OCI
+# registry, and what runs on it), test (the product contract: test:e2e
+# proves the full bootstrap -> self-manage loop on an ephemeral cluster,
+# test:drift proves the committed oci/ tree matches a fresh build),
+# upstream (the tracked Flux release). release — the repo-level act of
+# publishing the versioned artifact — takes no object segment.
+#
+# Tasks that are a few commands live below; tasks that own real logic
+# are executable file tasks under mise-tasks/ (directories namespace the
+# names: mise-tasks/artifact/fetch -> artifact:fetch). Every task runs
+# from the repo root. Arguments are declared with usage specs, so
+# `mise run <task> --help` documents them.
+
+[settings]
+# mise.lock records each tool's download URL and checksum per platform;
+# installs fail if a download does not match. Refresh after changing a
+# pin with: mise lock --platform linux-x64,linux-arm64,macos-x64,macos-arm64
+lockfile = true
+# A tool or platform missing from mise.lock is an install error, not a
+# silent unverified download — so a pin bumped without re-locking fails CI.
+locked = true
 
 [tools]
 flux2 = "{{env.FLUX_VERSION}}"
@@ -30,9 +38,150 @@ kubectl = "1.36.2"
 k3d = "5.9.0"
 
 [env]
-_.file = "version.env"
+# The package version: the upstream Flux version, plus a config revision
+# bumped when the opinion changes on the same upstream (reset to 1 on
+# every upstream bump). 2.9.0 + 1 -> v2.9.0; 2.9.0 + 2 -> v2.9.0-2.
+FLUX_VERSION = "2.9.0"
+CUR8S_FLUX_REVISION = "1"
+# Derived, with validation: a malformed value stops every mise command.
+FLUX_TAG = '{% if env.FLUX_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="FLUX_VERSION must be a stable SemVer (for example 2.9.0)") }}{% endif %}v{{ env.FLUX_VERSION }}'
+CUR8S_FLUX_VERSION = '{% if env.CUR8S_FLUX_REVISION is not matching(pat="^[1-9][0-9]*$") %}{{ throw(message="CUR8S_FLUX_REVISION must be a positive integer") }}{% endif %}{{ env.FLUX_TAG }}{% if env.CUR8S_FLUX_REVISION != "1" %}-{{ env.CUR8S_FLUX_REVISION }}{% endif %}'
+# Component identity facts — the single authoring point for
+# self-description (docs/architecture.md). artifact:render writes them
+# into the cur8s.yaml descriptor; artifact:push attaches them as
+# cur8s.io/* OCI annotations.
+CUR8S_COMPONENT = "flux"
+CUR8S_UPSTREAM_PROJECT = "fluxcd/flux2"
+CUR8S_SOURCE = "https://github.com/cur8s/flux"
+CUR8S_DOCS = "https://github.com/cur8s/flux"
 # Production registry (release publishes here; dev pushes go to the
 # k3d cluster's local registry).
 REGISTRY = "ghcr.io/cur8s"
 # Default dev cluster; every cluster task also accepts a name argument.
 CLUSTER_NAME = "flux-dev"
+
+# ── artifact ────────────────────────────────────────────────────────────
+
+[tasks."artifact:clean"]
+description = "Remove the generated trees (fetched upstream + rendered oci/)"
+run = "rm -rf src/flux/artifacts oci"
+
+[tasks."artifact:build"]
+description = "clean → fetch → render: the full artifact build"
+# Task references in `run` execute in order; `depends` could run them in parallel.
+run = [
+  { task = "artifact:clean" },
+  { task = "artifact:fetch" },
+  { task = "artifact:render" },
+]
+
+# ── cluster ─────────────────────────────────────────────────────────────
+# Each cluster gets its own local OCI registry (container
+# <name>-registry, reached in-cluster as <name>-registry:5000). No
+# host ports are mapped — Flux needs no ingress — so multiple clusters
+# coexist without port conflicts.
+
+[tasks."cluster:create"]
+description = "Create a k3d cluster + its local OCI registry"
+usage = 'arg "[name]" env="CLUSTER_NAME" help="Cluster name"'
+run = '''
+k3d cluster create "$usage_name" --config mise-tasks/cluster/k3d-config.yaml \
+  --registry-create "$usage_name-registry"
+port="$(docker port "$usage_name-registry" 5000 | head -1 | awk -F: '{print $NF}')"
+curl -sf --retry 30 --retry-delay 2 --retry-all-errors "http://localhost:$port/v2/" >/dev/null
+echo "✅ cluster $usage_name (context k3d-$usage_name), registry localhost:$port (in-cluster $usage_name-registry:5000)"
+'''
+
+[tasks."cluster:delete"]
+description = "Delete a k3d cluster and its registry"
+usage = 'arg "[name]" env="CLUSTER_NAME" help="Cluster name"'
+run = '''
+k3d cluster delete "$usage_name"
+k3d registry delete "$usage_name-registry" 2>/dev/null || true
+'''
+
+[tasks."cluster:status"]
+description = "Show a k3d cluster and its registry endpoint"
+usage = 'arg "[name]" env="CLUSTER_NAME" help="Cluster name"'
+run = '''
+k3d cluster list "$usage_name"
+echo "registry: localhost:$(docker port "$usage_name-registry" 5000 | head -1 | awk -F: '{print $NF}') (in-cluster $usage_name-registry:5000)"
+'''
+
+[tasks."cluster:init"]
+description = "Bootstrap Flux into the cluster (server-side apply of the rendered manifest)"
+usage = 'arg "[name]" env="CLUSTER_NAME" help="Cluster name"'
+run = '''
+kubectl --context "k3d-$usage_name" apply --server-side -f oci/flux/deploy/flux.yaml
+kubectl --context "k3d-$usage_name" -n flux-system wait deploy --all --for=condition=Available --timeout=3m
+'''
+
+[tasks."cluster:sync"]
+description = "Hand Flux its self-management config (OCIRepository + Kustomization)"
+usage = '''
+arg "[name]" env="CLUSTER_NAME" help="Cluster name"
+arg "[tag]" default="dev" help="Artifact tag to track"
+'''
+# After this, bumping the artifact tag is how Flux upgrades itself.
+run = '''
+flux --context "k3d-$usage_name" create source oci flux \
+  --url "oci://$usage_name-registry:5000/flux" --tag "$usage_tag" --insecure --interval 1m
+kubectl --context "k3d-$usage_name" apply -f oci/flux/sync.yaml
+'''
+
+[tasks."cluster:verify"]
+description = "Wait for the controllers + self-management source and Kustomization to be Ready"
+usage = 'arg "[name]" env="CLUSTER_NAME" help="Cluster name"'
+run = '''
+kubectl --context "k3d-$usage_name" -n flux-system wait --for=condition=Available --timeout=3m \
+  deploy/source-controller deploy/kustomize-controller deploy/notification-controller
+kubectl --context "k3d-$usage_name" -n flux-system wait --for=condition=Ready --timeout=3m \
+  ocirepository/flux kustomization/flux
+'''
+
+[tasks."cluster:watch"]
+description = "Watch Flux reconciliation"
+usage = 'arg "[name]" env="CLUSTER_NAME" help="Cluster name"'
+raw = true
+run = 'watch flux --context "k3d-$usage_name" get all -A'
+
+# ── test ────────────────────────────────────────────────────────────────
+
+[tasks."test:drift"]
+description = "Prove the committed oci/ tree + fetched manifest match a fresh build (the review-surface gate)"
+# The committed oci/ tree is the review surface: what is in git must be
+# exactly what the pipeline produces from src/.
+run = [
+  { task = "artifact:build" },
+  '''
+  if [ -n "$(git status --porcelain -- oci src/flux/artifacts)" ]; then
+    git status --short -- oci src/flux/artifacts
+    git --no-pager diff -- oci src/flux/artifacts | head -100
+    echo "❌ fresh build differs from the committed tree — review and commit the re-render" >&2
+    exit 1
+  fi
+  echo "✅ committed tree matches the build"
+  ''',
+]
+
+# ── upstream ────────────────────────────────────────────────────────────
+
+[tasks."upstream:check"]
+description = "Report whether a newer upstream Flux release exists than the tracked version"
+run = '''
+latest="$(curl -fsSL https://api.github.com/repos/fluxcd/flux2/releases/latest | jq -r .tag_name)"
+echo "tracked: $FLUX_TAG"
+echo "latest:  $latest"
+[ "$FLUX_TAG" = "$latest" ] && echo "✅ up to date" || echo "⚠️  update available: bump FLUX_VERSION in mise.toml, refresh mise.lock (see CONTRIBUTING.md), then 'mise run artifact:build' and 'mise run test:e2e'"
+'''
+
+# ── release ─────────────────────────────────────────────────────────────
+
+[tasks.release]
+description = "Build and publish the versioned artifact to the production registry"
+# Publication is gated on a green test:e2e for this package version
+# (docs/architecture.md) and happens only on an explicit ask (AGENTS.md).
+run = [
+  { task = "artifact:build" },
+  'mise run artifact:push --registry "$REGISTRY" --tag "${CUR8S_FLUX_VERSION}"',
+]

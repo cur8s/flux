@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-#MISE description="Remove the generated trees (fetched upstream + rendered oci/)"
-set -euo pipefail
-rm -rf "$MISE_CONFIG_ROOT/src/flux/artifacts" "$MISE_CONFIG_ROOT/oci"
-mkdir -p "$MISE_CONFIG_ROOT/src/flux/artifacts/fetched/manifests"
-echo "✅ cleaned"

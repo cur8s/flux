@@ -1,57 +1,40 @@
 #!/usr/bin/env bash
-#MISE description="Push oci/flux/ as an OCI artifact: [k3d [cluster] [tag] | oci <registry> <tag>] (default: dev cluster, tag dev)"
+#MISE description="Push oci/flux/ as an OCI artifact (default: the k3d cluster's local registry)"
+#USAGE flag "--registry <url>" help="Remote registry, e.g. ghcr.io/cur8s (default: the cluster's local registry)"
+#USAGE flag "--cluster <name>" env="CLUSTER_NAME" help="k3d cluster whose local registry receives the push"
+#USAGE flag "--tag <tag>" default="dev" help="Artifact tag"
 set -euo pipefail
 # Every artifact that leaves this repo — dev push or release — goes
 # through this task: the single insertion point for OCI metadata.
-REPO_ROOT="$MISE_CONFIG_ROOT"
-source "$REPO_ROOT/scripts/lib/display.sh"
-source "$REPO_ROOT/mise-tasks/cluster/k3d.sh"
-source "$REPO_ROOT/mise-tasks/artifact/facts.sh"
+[ -d oci/flux ] || { echo "❌ oci/flux/ not built (run 'mise run artifact:build')" >&2; exit 1; }
 
-MODE="${1:-k3d}"
-[ $# -gt 0 ] && shift
-case "$MODE" in
-  k3d)
-    NAME="${1:-$CLUSTER_NAME}"; TAG="${2:-dev}"
-    cluster_exists "$NAME" || { error "cluster '$NAME' missing (run 'mise run cluster:create')"; exit 1; }
-    REG_PORT="$(get_registry_port "${NAME}-registry")"
-    [ "$REG_PORT" != "unknown" ] || { error "registry for cluster '$NAME' not found"; exit 1; }
-    REGISTRY_URL="localhost:${REG_PORT}"
-    # The k3d-local registry is anonymous. A globally-configured docker
-    # credential helper (e.g. Docker Desktop's "desktop" credsStore) will be
-    # invoked for it anyway and can hang indefinitely on a localhost registry.
-    # Point this push at a throwaway docker config with no credsStore so the
-    # OCI client uses anonymous auth.
-    DOCKER_CONFIG="$(mktemp -d)"; export DOCKER_CONFIG
-    echo '{"auths":{}}' > "$DOCKER_CONFIG/config.json"
-    trap 'rm -rf "$DOCKER_CONFIG"' EXIT
-    ;;
-  oci)
-    REGISTRY_URL="${1:?registry required}"; TAG="${2:?tag required}"
-    ;;
-  *) error "unknown mode '$MODE' (use k3d|oci)"; exit 1 ;;
-esac
+registry="${usage_registry:-}"
+if [ -z "$registry" ]; then
+  registry="localhost:$(docker port "${usage_cluster}-registry" 5000 | head -1 | awk -F: '{print $NF}')"
+  # The k3d-local registry is anonymous. A globally-configured docker
+  # credential helper (e.g. Docker Desktop's "desktop" credsStore) will be
+  # invoked for it anyway and can hang indefinitely on a localhost registry.
+  # Point this push at a throwaway docker config with no credsStore so the
+  # OCI client uses anonymous auth.
+  DOCKER_CONFIG="$(mktemp -d)"; export DOCKER_CONFIG
+  echo '{"auths":{}}' > "$DOCKER_CONFIG/config.json"
+  trap 'rm -rf "$DOCKER_CONFIG"' EXIT
+fi
 
-ARTIFACT_PATH="$REPO_ROOT/oci/flux"
-[ -d "$ARTIFACT_PATH" ] || { error "artifact dir not found: $ARTIFACT_PATH (run 'mise run artifact:build')"; exit 1; }
-
-OCI_URL="oci://${REGISTRY_URL}/flux:${TAG}"
-banner "Pushing flux artifact"
-echo "📦 $OCI_URL"
+url="oci://${registry}/flux:${usage_tag}"
+echo "📦 $url"
 # The same identity facts the descriptor asserts, readable from the
 # registry without pulling the artifact; see docs/architecture.md. Source and
 # revision ride flux push's standard OCI annotations — they are
 # push-time facts, deliberately absent from the committed descriptor.
-component_facts
-flux push artifact "$OCI_URL" \
-  --path="$ARTIFACT_PATH" \
-  --source="$(git config --get remote.origin.url 2>/dev/null || echo 'unknown')" \
-  --revision="$(git branch --show-current 2>/dev/null || echo 'main')@sha1:$(git rev-parse HEAD 2>/dev/null || echo '0000000')" \
+flux push artifact "$url" \
+  --path=oci/flux \
+  --source="$(git config --get remote.origin.url || echo unknown)" \
+  --revision="$(git branch --show-current)@sha1:$(git rev-parse HEAD)" \
   --annotations="cur8s.io/component=${CUR8S_COMPONENT}" \
   --annotations="cur8s.io/version=${CUR8S_FLUX_VERSION}" \
   --annotations="cur8s.io/upstream=${CUR8S_UPSTREAM_PROJECT}" \
   --annotations="cur8s.io/upstream-version=${FLUX_TAG}" \
   --annotations="cur8s.io/docs=${CUR8S_DOCS}" \
   --timeout=5m
-
-success "pushed $OCI_URL"
+echo "✅ pushed $url"

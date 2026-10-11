@@ -12,7 +12,7 @@ repository, enter its directory, and run:
 
 ```sh
 mise trust
-mise install   # pinned toolchain: flux, kustomize, kubectl, k3d, jq
+mise install   # pinned toolchain: flux, kustomize, kubectl, k3d
 mise tasks     # list every task
 ```
 
@@ -29,7 +29,6 @@ the objects, the grammar, and the pinned toolchain.
 | `mise run test:e2e` | Prove the full bootstrap → self-manage loop on an ephemeral k3d cluster. |
 | `mise run cluster:<action>` | Drive a persistent k3d dev cluster (see the README quickstart). |
 | `mise run upstream:check` | Report whether upstream Flux has a newer release than the tracked version. |
-| `mise run test:version` | Validate version.env inputs and package-version construction. |
 | `mise run release` | Build and publish the versioned OCI artifact — only when explicitly asked. |
 
 The tag-triggered [release workflow](.github/workflows/release.yml) performs
@@ -79,10 +78,17 @@ git diff --check
 ```
 
 For a change that alters the rendered artifact or bootstrap behavior
-(`src/`, `version.env`, the `mise.toml` tool pins), also run:
+(`src/`, the `mise.toml` version or tool pins), also run:
 
 ```sh
 mise run test:e2e
+```
+
+A change to `FLUX_VERSION` or any tool pin must also refresh the committed
+`mise.lock`, which holds each tool's download checksums:
+
+```sh
+mise lock --platform linux-x64,linux-arm64,macos-x64,macos-arm64
 ```
 
 CI runs both gates for pull requests and pushes to `main`; a change is not

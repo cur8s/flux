@@ -9,7 +9,7 @@ summary: "Detect new Flux releases and prepare reviewable update proposals witho
 manual. A scheduled workflow could reduce maintenance effort by preparing the mechanical part of
 an update while preserving the rule that version advancement is an explicit reviewed decision.
 
-Explore a workflow that updates the future `version.env`, regenerates the fetched source and OCI
+Explore a workflow that updates `FLUX_VERSION` in `mise.toml`, regenerates the fetched source and OCI
 review surface, runs policy, drift, and end-to-end checks, and opens a proposal containing relevant
 upstream release information. It must never merge, tag, or publish automatically. Determine how to
 authenticate automated proposals safely, how to handle a newer release while a proposal is already
