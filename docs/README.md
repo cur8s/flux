@@ -10,6 +10,7 @@ authoritative source for the package's behavior, architecture, and contribution 
 | [`vision.md`](vision.md) | Why this package exists, its audience, success, and boundaries. |
 | [`user-guide.md`](user-guide.md) | Consumer-facing philosophy, supported surface, bootstrap, operation, upgrades, verification, and limits. |
 | [`architecture.md`](architecture.md) | How the source-to-artifact pipeline, decision boundary, task lifecycle, publication, and self-management work. |
+| [`standards/repository-entry-files-standard.md`](standards/repository-entry-files-standard.md) | What belongs in the root `README.md`, `AGENTS.md`, and directory READMEs. |
 
 Keep one authoritative home for each subject. The root README is only the orientation and route
 map; `mise.toml` remains the command reference. Do not create a separate RFC catalog for current

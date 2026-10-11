@@ -71,8 +71,10 @@ order, and point `AGENTS.md` at it. The removed text is in
 
 ### Phase 4: Standards
 
-`docs/standards/` records agreed technical choices with rationale. Its first content is decided
-when the phase starts.
+`docs/standards/` records agreed technical choices with rationale. Its first standard already
+exists: [repository entry files](../../../docs/standards/repository-entry-files-standard.md), written
+ahead of this phase. Further content is decided when the phase starts; consider bringing over the
+sales-agent standards authoring guide as a how-to so standards keep one format.
 
 ### Phase 5: Finish
 
