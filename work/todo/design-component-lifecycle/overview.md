@@ -1,6 +1,6 @@
 ---
 title: "Design the component lifecycle"
-summary: "Identify the goals and invariants of a Cur8s component's build-to-publish lifecycle, try candidate designs in disposable experiments, and document the chosen design for follow-up implementation."
+summary: "Identify the goals and invariants of a Cur8s component's build-to-publish lifecycle, try candidate designs in disposable experiments, and document the chosen design."
 ---
 
 # Design the component lifecycle
@@ -13,7 +13,7 @@ summary: "Identify the goals and invariants of a Cur8s component's build-to-publ
   approach is chosen.
 - The todo is **document only**. It ends with agreed goals and invariants, the chosen design with
   the alternatives considered, evidence from the experiments, and durable documentation.
-  Implementation happens in follow-up todos written from the design.
+  Implementation is planned afterwards by [Plan the lifecycle implementation](../plan-lifecycle-implementation/overview.md).
 - The monorepo at `~/dev/cur8s/monorepo-cur8s` is a reference for what the needs are — its Make
   targets and scripts show what a component build actually did. Its files are referenced, not
   copied here.

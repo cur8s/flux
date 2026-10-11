@@ -22,97 +22,71 @@ depth-first and breadth-first work.
 
 | Work area | Rationale |
 | --- | --- |
-| Build lifecycle | Every other area uses the phase names, the fetch record, or the packaged artifact, so they come first. |
-| Publication | Publishing needs the packaged artifact to exist; mirroring needs the fetch record's image list. |
-| Test fidelity | Pinning the runtime is independent but makes every later e2e result meaningful; upgrade tests need published versions to move between. |
-| Consumer contract | Others can only rely on the artifact once it is genuinely published; the bootstrap path documents what publication produces. |
-| Maintenance | Independent of the rest and small; it can be taken whenever attention allows, and is easier once the pipeline settles. |
+| Documentation structure | Every later todo ends by writing durable documentation; the categories and strategy they write into come first, starting with the product philosophy. |
+| mise and script conventions | The lifecycle is expressed in mise tasks and bash; settling those mechanics first keeps the design discussion about the problem rather than the tooling. |
+| Component lifecycle design | Decides what every component repository does and guarantees; it needs the docs structure to publish into and the mise conventions to express it. |
+| Implementation planning | Implementation can only be planned against a documented lifecycle; it gathers all remaining known work into the new sequence. |
 
-## Build lifecycle
+## Documentation structure
 
-Give every Cur8s component repository the same well-defined lifecycle, with tiny, obvious scripts
-behind it, so the same command means the same thing everywhere.
+Rebuild `docs/` as product, architecture, how-to, and standards directories, one reviewed document
+at a time, capturing the pre-rendered-manifest philosophy in the product section.
 
 **Work**
 
-- [Design the component lifecycle](../todo/design-component-lifecycle/overview.md): goals and
-  invariants, candidate designs tried in experiments, documented design. Folds in traceable
-  fetching, local packaging, safe publication, and owned images as requirements; implementation
-  todos follow from the design.
+- [Rebuild the docs as product, architecture, how-to, and standards](../todo/rebuild-docs-by-category/overview.md)
 
 **Why / what this unlocks**
 
-The phase names are the cross-repository contract the cert-manager repository and later components
-copy. Packaging once turns "no version is published without a green e2e" from a CI convention into
-a property of the bytes.
+A stable home and writing strategy for everything the following todos document, and an agreed
+statement of what the package is for and why it renders before the cluster.
 
 ---
 
-## Publication
+## mise and script conventions
 
-Ship the tested artifact safely and make every image it runs come from `ghcr.io/cur8s`.
+Review every mechanical aspect of how the repository uses mise and bash, settle and apply each
+convention interactively, and document the results.
 
 **Work**
 
-- Safe publication and owned images are requirements of
-  [Design the component lifecycle](../todo/design-component-lifecycle/requirements.md); their
-  implementation todos are written once the design is agreed.
+- [Review and standardize the mise configuration and task scripts](../todo/standardize-mise-and-task-scripts/overview.md)
 
 **Why / what this unlocks**
 
-A first real release, and a bootstrap that depends on no registry outside project control.
+Written standards and guides that the lifecycle design and every implementation todo follow, and
+that keep the per-repository copies of task scripts consistent.
 
 ---
 
-## Test fidelity
+## Component lifecycle design
 
-Make the e2e gate test a known Kubernetes runtime and, later, the transitions users actually go
-through.
+Identify the goals and invariants of a component's lifecycle, try candidate designs in disposable
+experiments, and document the chosen design. Traceable fetching, tested-equals-published
+packaging, safe publication, and owned images are folded in as requirements.
 
 **Work**
 
-- [Pin the Kubernetes test runtime](../todo/pin-kubernetes-test-runtime/overview.md): one
-  `KUBERNETES_VERSION` drives the k3s image and kubectl; decisions agreed, wiring outstanding.
-- [Test upgrades and recovery](../todo/test-upgrades-and-recovery/overview.md): reapply, revision
-  and upstream upgrades, and recovery; rollback policy undecided.
+- [Design the component lifecycle](../todo/design-component-lifecycle/overview.md)
 
 **Why / what this unlocks**
 
-A passing e2e that means the same thing on every machine and over time, and confidence that
-self-managed upgrades work rather than only fresh installs.
+The cross-repository contract that the cert-manager repository and later components follow.
 
 ---
 
-## Consumer contract
+## Implementation planning
 
-Make the published artifact something others can adopt: a clear bootstrap path, an accurate
-description of what is installed, and explicit terms of use.
-
-**Work**
-
-- [Complete the production bootstrap path](../todo/complete-production-bootstrap/overview.md):
-  copy-and-paste path from `install.yaml` to OCI-backed self-management.
-- [Clarify the Notification Receiver contract](../todo/clarify-notification-receiver-contract/overview.md):
-  reconcile the informational-only guidance with the installed `Receiver` surface.
-- [Define licensing and security policy](../todo/define-licensing-and-security-policy/overview.md):
-  license and vulnerability-reporting path; can move earlier whenever external use is imminent.
-
-**Why / what this unlocks**
-
-The repository's purpose: others can bootstrap Flux from the opinionated manifest with confidence.
-
----
-
-## Maintenance
-
-Keep the tracked upstream current.
+Turn the documented lifecycle, its requirements, and every other piece of known work into a new
+ordered sequence of implementation todos.
 
 **Work**
 
-- [Bump Flux to the latest patch](../todo/bump-flux-to-latest-patch/overview.md): v2.9.0 to the
-  newest 2.9.x.
-- Idea: [Automate upstream Flux update proposals](../ideas/automate-upstream-update-proposals/overview.md).
+- [Plan the lifecycle implementation](../todo/plan-lifecycle-implementation/overview.md): folds in
+  Kubernetes test-runtime pinning, the Flux patch bump, the production bootstrap path, the
+  Notification Receiver contract, upgrade and recovery testing, licensing and security policy, and
+  the automated upstream-update-proposals idea.
 
 **Why / what this unlocks**
 
-Security and bug fixes reach the artifact without the update itself becoming a project.
+The path to 1.0, planned from settled conventions and design rather than from older notes.

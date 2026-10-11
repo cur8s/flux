@@ -6,10 +6,10 @@
 
 The owner has agreed the lifecycle's goals and invariants and chosen a design after comparing
 candidates and trying them in disposable experiments. The design, the alternatives considered,
-and the experiment evidence are recorded, durable documentation describing the lifecycle is
-committed, and follow-up implementation todos are written from the design and
-[requirements](requirements.md). Nothing in the repository's tasks, CI, or artifacts changes as
-part of this todo.
+and the experiment evidence are recorded, and durable documentation describing the lifecycle is
+committed. The todo ends with that documentation; implementation is planned by
+[Plan the lifecycle implementation](../plan-lifecycle-implementation/overview.md), which also takes [requirements](requirements.md) as input. Nothing in the repository's
+tasks, CI, or artifacts changes as part of this todo.
 
 ### Approach
 
@@ -63,5 +63,6 @@ Evidence for the questions that decide between candidates.
 - [ ] Agree the design with the owner, recording the alternatives considered and why they lost.
 - [ ] Decide with the owner which durable documents describe the lifecycle and where they live;
   write each, review it with the owner, and commit it on its own.
-- [ ] Write the follow-up implementation todos from the design and [requirements](requirements.md),
-  then remove this todo's supporting material that now lives in documentation or those todos.
+- [ ] Hand off to [Plan the lifecycle implementation](../plan-lifecycle-implementation/overview.md):
+  move [requirements](requirements.md), and any working notes still needed for implementation,
+  into that todo, then remove this todo.
