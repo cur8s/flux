@@ -30,18 +30,15 @@ depth-first and breadth-first work.
 
 ## Build lifecycle
 
-Make every Cur8s component repository run the same fixed, chained phases — `fetch`, `render`,
-`package`, `check`, `e2e`, `publish` — with tiny, obvious scripts behind them, so the same command
-means the same thing everywhere.
+Give every Cur8s component repository the same well-defined lifecycle, with tiny, obvious scripts
+behind it, so the same command means the same thing everywhere.
 
 **Work**
 
-- [Adopt standard lifecycle phases](../todo/adopt-lifecycle-phases/overview.md): rename the tasks
-  into chained top-level phases and settle the `--cluster` convention.
-- [Record fetched sources](../todo/record-fetched-sources/overview.md): a committed provenance
-  record of every upstream input and container image, by digest.
-- [Package the OCI artifact locally](../todo/package-oci-artifact-locally/overview.md): build once
-  into `dist/` so the tested digest is the published digest; starts with a tooling experiment.
+- [Design the component lifecycle](../todo/design-component-lifecycle/overview.md): goals and
+  invariants, candidate designs tried in experiments, documented design. Folds in traceable
+  fetching, local packaging, safe publication, and owned images as requirements; implementation
+  todos follow from the design.
 
 **Why / what this unlocks**
 
@@ -57,11 +54,9 @@ Ship the tested artifact safely and make every image it runs come from `ghcr.io/
 
 **Work**
 
-- [Harden release publication](../todo/harden-release-publication/overview.md): immutability
-  preflight, partial-success recovery, digest verification, CI safety, signing decision.
-- [Mirror component images to ghcr.io/cur8s](../todo/mirror-images-to-ghcr/overview.md):
-  flux-mirror as the copier, render-time digest rewrite, public packages. Unsettled: which phase
-  owns ghcr write access, since mirroring must precede `e2e`.
+- Safe publication and owned images are requirements of
+  [Design the component lifecycle](../todo/design-component-lifecycle/requirements.md); their
+  implementation todos are written once the design is agreed.
 
 **Why / what this unlocks**
 
