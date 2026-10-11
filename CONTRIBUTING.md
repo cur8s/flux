@@ -61,9 +61,9 @@ tests are the pipeline itself:
   `.agents/skills/`, and preserve `CLAUDE.md` and `.claude/skills` as
   symlinks to them rather than maintaining copies.
 - Store durable current-state knowledge in `docs/`
-  ([`docs/README.md`](docs/README.md) governs it); store temporary
-  reasoning and intended work in a work note under `work/`
-  ([`work/README.md`](work/README.md) governs it).
+  ([`docs/README.md`](docs/README.md) governs it); keep temporary
+  reasoning and intended work under `work/`, managed with the
+  `manage-work-notes` skill. Nothing outside `work/` links into it.
 - Rewrite current-state documents instead of appending historical
   logs; git history is the changelog.
 - The documents listed in `docs/README.md` are authoritative for this

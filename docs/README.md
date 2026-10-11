@@ -2,7 +2,7 @@
 
 This directory records durable, current-state knowledge about the Flux package. Rewrite a document
 when its subject changes; Git history preserves the old state. Temporary investigation and planning
-belong in a work note under [`work/`](../work/README.md). The documents in this repository are the
+belong in the repository's work material, not here. The documents in this repository are the
 authoritative source for the package's behavior, architecture, and contribution contract.
 
 | Document | Responsibility |

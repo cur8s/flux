@@ -30,8 +30,15 @@ immutable OCI artifact.
   the committed `oci/` tree matches what the pins produce.
 - **`CONTRIBUTING.md` is the contribution contract** — setup,
   commands, verification, Conventional Commits. Durable knowledge
-  lives in `docs/` (`docs/README.md` governs it), lightweight work
-  notes in `work/` (`work/README.md` governs it); the README closest
-  to the files you change governs.
+  lives in `docs/` (`docs/README.md` governs it); intended work,
+  roadmap, and unfinished thinking live under `work/`, managed with
+  the `manage-work-notes` skill. The README closest to the files you
+  change governs.
+- **Work reference boundary:** files under `work/` may link to any
+  file in the repository; files outside `work/` must not link or
+  otherwise point to files under `work/`.
+- **Commits:** use `chore(work):` only when every changed file is
+  under `work/`; otherwise choose the type and scope for the commit's
+  main purpose.
 - **Never push commits and never publish artifacts to a remote
   registry unless explicitly asked.**
