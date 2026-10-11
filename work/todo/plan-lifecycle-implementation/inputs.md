@@ -59,6 +59,10 @@ version-specific release asset generated from authored configuration. Document p
 public and authenticated registry behavior, ordering after controller bootstrap, readiness checks,
 upgrade selection, and recovery without duplicating manifests that can drift.
 
+The owner's Flux bootstrap proposal, in the lifecycle design todo, decides that the consuming
+repository owns the `OCIRepository` and `Kustomization`, so `sync.yaml` leaves the package; what
+remains here is the copy-and-paste example for operators.
+
 ## Notification Receiver contract
 
 Formerly `clarify-notification-receiver-contract`. Resolve the mismatch between informational-only notification guidance and the installed Receiver webhook surface.
@@ -72,7 +76,9 @@ Decide whether `Receiver` should remain installed but explicitly outside the pac
 contract, or whether the receiver CRD, Service, and related controller behavior should be removed or
 disabled. Prefer a narrow documentation correction if the upstream controller surface cannot be
 safely reduced. If the rendered surface changes, update component verification to enforce the
-chosen contract.
+chosen contract. The owner's Flux bootstrap proposal treats only source-controller and
+kustomize-controller as essential and leaves notification-controller to the package definition,
+which the lifecycle design todo settles.
 
 ## Upgrade and recovery testing
 

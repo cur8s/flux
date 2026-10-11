@@ -32,10 +32,15 @@ summary: "Identify the goals and invariants of a Cur8s component's build-to-publ
   releases defined by an exact bill of materials. Versioning is part of the contract every
   component repository follows, so it is designed here; its open implementation details are open
   decisions of this todo.
+- The owner's [Flux bootstrap proposal](flux-bootstrap-proposal.md), recorded unedited, is the
+  direction for bootstrap and self-management: a static install manifest applied first, then
+  consumer-owned `OCIRepository` and `Kustomization` resources applied separately, with the same
+  generated installation bytes behind the release asset and the OCI artifact. Self-management
+  resources belong to the consuming repository, not the package; this is decided.
 - The earlier six-phase proposal, top-level Maven-style phases rather than namespaces, is kept as
   an alternative considered in [candidate: six chained phases](candidate-six-phases.md).
 
-**Differences to reconcile** between the two proposals, the other todos, and the repository
+**Differences to reconcile** between the three proposals, the other todos, and the repository
 today — to resolve with the owner, not by assumption:
 
 - Lifecycle proposal section 9 (migration sequence and acceptance criteria) is implementation guidance; this todo is
@@ -55,13 +60,22 @@ today — to resolve with the owner, not by assumption:
   changes `mise.toml`, the `cur8s.yaml` release descriptor, tags, and docs. Check whether any
   version is already published to `ghcr.io/cur8s/flux`; if so, decide how the old and new version
   lines relate.
-- Self-management: versioning proposal section 5.2 puts the self-management `OCIRepository` and
-  `Kustomization` in the consuming cluster repository, but today's artifact ships `sync.yaml` and
-  the end-to-end test proves the package takes over its own reconciliation.
+- Self-management (decided, to apply): the consuming repository owns the `OCIRepository` and
+  `Kustomization`, but today's artifact ships `sync.yaml` (`src/flux/config/sync.yaml`,
+  `oci/flux/sync.yaml`), `docs/architecture.md` argues for it, the user guide's bootstrap and
+  recovery steps apply it, and the end-to-end test deploys it. The design must say where the
+  end-to-end test's own self-management file lives, acting as the consuming repository.
+- Controllers: the Flux bootstrap proposal names only source-controller and kustomize-controller as
+  essential and leaves notification-controller to the package definition; the package installs all
+  three today.
+- End-to-end coverage: the Flux bootstrap proposal requires a fresh-cluster test through phase 1,
+  readiness, phase 2, first reconciliation, and a subsequent version update; today's test has no
+  version update.
 - Package naming: the versioning proposal names packages by capability (`cur8s-gitops`,
   `cur8s-certificates`) and does not require one package per upstream product; the direction so
   far is one repository per component, named after it (`flux`, `cert-manager`).
-- Publication runner: the versioning proposal records GitHub Actions as the publication mechanism;
+- Publication runner: the versioning and Flux bootstrap proposals both record GitHub Actions as
+  the publication mechanism (the latter marks it decided);
   the owner-stated goal below is that publishing works the same from a laptop or GitHub Actions,
   and CI is parked.
 - The platform bill of materials belongs to the future platform repository, which no todo covers

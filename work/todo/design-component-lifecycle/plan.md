@@ -14,8 +14,9 @@ tasks, CI, or artifacts changes as part of this todo.
 ### Approach
 
 Interactive design with the owner, one step at a time, stopping for discussion at each step.
-Start from the owner's [lifecycle proposal](proposal.md) and
-[versioning proposal](versioning-proposal.md): they are the current direction, and their open
+Start from the owner's [lifecycle proposal](proposal.md),
+[versioning proposal](versioning-proposal.md), and
+[Flux bootstrap proposal](flux-bootstrap-proposal.md): they are the current direction, and their open
 decisions are the design work that remains.
 Record decisions, rejected alternatives, and evidence in a `working-notes.md` in this todo,
 distinguishing owner decisions from proposals and observations.
@@ -55,7 +56,10 @@ six-phase alternative compared.
 - [ ] Settle versioning from the [versioning proposal](versioning-proposal.md): its open
   implementation details (upstream metadata schema, tag and OCI repository layout, reproducibility
   test, signing and provenance, upgrade and rollback), and how the repository's current
-  upstream-derived version moves to it. Keep the [six chained phases](candidate-six-phases.md) as the alternative
+  upstream-derived version moves to it.
+- [ ] Settle bootstrap from the [Flux bootstrap proposal](flux-bootstrap-proposal.md): which
+  controllers the package installs, how `flux:boot` and the end-to-end test supply consumer-owned
+  self-management resources, and the readiness check between the two applies. Keep the [six chained phases](candidate-six-phases.md) as the alternative
   it is compared against. The design states its directory layout:
   which step reads and writes which directory (today `src/<component>/`, `oci/<component>/`,
   `.mise/`; candidates may add `dist/`), and what is committed versus ignored.
