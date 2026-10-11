@@ -27,7 +27,9 @@ the objects, the grammar, and the pinned toolchain.
 | `mise run artifact:build` | Fetch upstream → render the artifact tree. |
 | `mise run test:drift` | Prove the committed `oci/` tree matches a fresh build. |
 | `mise run test:e2e` | Prove the full bootstrap → self-manage loop on an ephemeral k3d cluster. |
-| `mise run cluster:<action>` | Drive a persistent k3d dev cluster (see the README quickstart). |
+| `mise run cluster:<action>` | Create, inspect, or delete a k3d dev cluster and its registry. |
+| `mise run flux:<action>` | Bootstrap or inspect Flux on a dev cluster. |
+| `mise run artifact:deploy` / `artifact:verify` | Point a dev cluster's Flux at the pushed artifact, then wait for it to be Ready. |
 | `mise run upstream:check` | Report whether upstream Flux has a newer release than the tracked version. |
 | `mise run release` | Build and publish the versioned OCI artifact — only when explicitly asked. |
 

@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-#MISE description="clean → fetch → render: the full artifact build"
+#MISE description="Clean, fetch, and render: the full artifact build"
 set -euo pipefail
-# Run the stages in order; a depends list could run them in parallel.
-mise run artifact:clean
+rm -rf "src/$CUR8S_COMPONENT/artifacts" "oci/$CUR8S_COMPONENT"
 mise run artifact:fetch
 mise run artifact:render

@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
-#MISE description="Full ephemeral proof: build → cluster → push → bootstrap → self-manage → verify"
-#USAGE arg "[cluster]" default="flux-e2e" help="Ephemeral cluster name"
+#MISE description="Full ephemeral proof: build → cluster → bootstrap → push → deploy → verify"
+#USAGE arg "[cluster]" help="Ephemeral cluster name (default: <component>-e2e)"
 set -euo pipefail
 # On success the cluster is deleted; on failure it is preserved for debugging.
-cluster="$usage_cluster"
-ctx="k3d-$cluster"
+cluster="${usage_cluster:-$CUR8S_COMPONENT-e2e}"
 
 cleanup() {
   local rc=$?
@@ -13,8 +12,7 @@ cleanup() {
     mise run cluster:delete "$cluster" || true
   else
     echo "❌ e2e failed (rc=$rc) — cluster '$cluster' preserved"
-    flux --context "$ctx" get all -A || true
-    echo "  kubectl --context $ctx -n flux-system logs deploy/kustomize-controller"
+    mise run flux:status "$cluster" || true
     echo "  mise run cluster:delete $cluster   # when done"
   fi
 }
@@ -22,8 +20,8 @@ trap cleanup EXIT
 
 mise run artifact:build
 mise run cluster:create "$cluster"
-mise run artifact:push --cluster "$cluster" --tag test
-mise run cluster:init "$cluster"
-mise run cluster:sync "$cluster" test
-mise run cluster:verify "$cluster"
-flux --context "$ctx" get all -A
+mise run flux:bootstrap "$cluster"
+mise run artifact:push --cluster "$cluster" --tag e2e
+mise run artifact:deploy --cluster "$cluster" --tag e2e
+mise run artifact:verify --cluster "$cluster"
+mise run flux:status "$cluster"

@@ -5,7 +5,7 @@ set -euo pipefail
 # The committed oci/ tree is the review surface: what is in git must be
 # exactly what the pipeline produces from src/. A fresh build that leaves
 # the working tree dirty means the render and the commit have diverged.
-paths=(oci src/flux/artifacts)
+paths=("oci/$CUR8S_COMPONENT" "src/$CUR8S_COMPONENT/artifacts")
 if [ -n "$(git status --porcelain -- "${paths[@]}")" ]; then
   git status --short -- "${paths[@]}"
   git --no-pager diff -- "${paths[@]}" | head -100

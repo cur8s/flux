@@ -85,7 +85,7 @@ kubectl = "{{ env.KUBERNETES_VERSION }}"
 ```
 
 `cluster:create` should pass `--image "$K3S_IMAGE"` to k3d. Keep
-`cluster/k3d-config.yaml` for topology and k3s settings rather than placing a second
+`.mise/k3d-config.yaml` for topology and k3s settings rather than placing a second
 image value there. This gives every cluster task the same mise-provided input and
 keeps the Kubernetes target alongside the k3d and kubectl tool pins.
 

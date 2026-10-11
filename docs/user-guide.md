@@ -234,4 +234,5 @@ After recovery, verify that:
 - `OCIRepository/flux` is Ready
 - `Kustomization/flux` is Ready
 
-For local development, `mise run cluster:verify` performs these checks.
+For local development, `mise run artifact:verify` performs these checks: `Kustomization/flux` waits
+for the controller Deployments before it reports Ready.

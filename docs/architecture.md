@@ -77,19 +77,24 @@ of metadata obtain their shared component facts from the `[env]` section of `mis
 command reference and defines the `<object>:<action>` grammar. The important lifecycle is:
 
 ```text
-artifact:clean → artifact:fetch → artifact:render → artifact:build
-                                      │                 │
-                                      │                 ├─ test:drift
-                                      ▼                 └─ artifact:push
-        cluster:create → cluster:init → cluster:sync → cluster:verify
-                                      ▲
-                                   test:e2e
+artifact:build (fetch → render) ─┬─ test:drift
+                                 │
+cluster:create → flux:bootstrap → artifact:push → artifact:deploy → artifact:verify
+                                 ▲
+                              test:e2e
 ```
 
+`cluster` is pure k3d lifecycle: a cluster and its local registry with nothing installed.
+`flux:bootstrap` installs Flux from the locally rendered manifest. `artifact:deploy` supplies the
+`OCIRepository` and applies the artifact's `sync.yaml`, and `artifact:verify` waits for that
+`Kustomization` to become Ready; because `sync.yaml` sets `wait: true`, Ready means Flux has
+health-checked every resource the artifact applied. Only `flux:bootstrap`, `artifact:fetch`, and
+`artifact:render` are specific to this component, so other Cur8s component repositories can share
+the remaining tasks.
+
 `test:drift` rebuilds and proves that the committed `oci/` tree and fetched upstream manifest
-match the pins. `test:e2e` creates an ephemeral k3d cluster, builds and pushes a local artifact, and applies
-the generated Flux manifest to that cluster's Kubernetes API server. It then supplies the
-self-management resources and waits for the source and `Kustomization` to become Ready. This is
+match the pins. `test:e2e` runs that whole sequence on an ephemeral k3d cluster: Flux installs
+from this repository's render and then takes over managing itself from the pushed artifact. This is
 both the package's release gate and its semantic compatibility check for the generated manifest:
 the repository does not hand-author the Flux controller installation and therefore cannot repair a
 static schema failure independently of changing the Flux or Kubernetes version. Deployments that

@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-#MISE description="Push oci/flux/ as an OCI artifact (default: the k3d cluster's local registry)"
+#MISE description="Push oci/<component>/ as an OCI artifact (default: the k3d cluster's local registry)"
 #USAGE flag "--registry <url>" help="Remote registry, e.g. ghcr.io/cur8s (default: the cluster's local registry)"
 #USAGE flag "--cluster <name>" env="CLUSTER_NAME" help="k3d cluster whose local registry receives the push"
 #USAGE flag "--tag <tag>" default="dev" help="Artifact tag"
 set -euo pipefail
 # Every artifact that leaves this repo — dev push or release — goes
 # through this task: the single insertion point for OCI metadata.
-[ -d oci/flux ] || { echo "❌ oci/flux/ not built (run 'mise run artifact:build')" >&2; exit 1; }
+artifact="oci/$CUR8S_COMPONENT"
+[ -d "$artifact" ] || { echo "❌ $artifact/ not built (run 'mise run artifact:build')" >&2; exit 1; }
 
 registry="${usage_registry:-}"
 if [ -z "$registry" ]; then
@@ -21,14 +22,14 @@ if [ -z "$registry" ]; then
   trap 'rm -rf "$DOCKER_CONFIG"' EXIT
 fi
 
-url="oci://${registry}/flux:${usage_tag}"
+url="oci://${registry}/${CUR8S_COMPONENT}:${usage_tag}"
 echo "📦 $url"
 # The same identity facts the descriptor asserts, readable from the
 # registry without pulling the artifact; see docs/architecture.md. Source and
 # revision ride flux push's standard OCI annotations — they are
 # push-time facts, deliberately absent from the committed descriptor.
 flux push artifact "$url" \
-  --path=oci/flux \
+  --path="$artifact" \
   --source="$(git config --get remote.origin.url || echo unknown)" \
   --revision="$(git branch --show-current)@sha1:$(git rev-parse HEAD)" \
   --annotations="cur8s.io/component=${CUR8S_COMPONENT}" \
