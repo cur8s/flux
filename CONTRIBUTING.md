@@ -58,8 +58,8 @@ tests are the pipeline itself:
   `mise run artifact:build`; the `oci/` diff is the review surface
   for every change.
 - Keep agent guidance tool-neutral: edit `AGENTS.md` and
-  `.agents/skills/`, and preserve `CLAUDE.md` and `.claude/skills` as
-  symlinks to them rather than maintaining copies.
+  `.agents/skills/`, and preserve `.claude/skills` as a symlink to the
+  skills rather than maintaining copies.
 - Store durable current-state knowledge in `docs/`
   ([`docs/README.md`](docs/README.md) governs it); keep temporary
   reasoning and intended work under `work/`, managed with the
