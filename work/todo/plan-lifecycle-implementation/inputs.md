@@ -40,7 +40,9 @@ Formerly `bump-flux-to-latest-patch`. Advance the tracked upstream from v2.9.0 t
 `upstream:check` reported Flux `v2.9.6` against the tracked `v2.9.0` on 2026-10-11. Re-check the
 latest 2.9.x patch when starting, then update `FLUX_VERSION` in `mise.toml`, refresh `mise.lock`
 for all four platforms, re-render, review the `oci/` diff, and run the drift and e2e gates.
-`CUR8S_FLUX_REVISION` stays `1`. Independent of the lifecycle work.
+`CUR8S_FLUX_REVISION` stays `1`. Independent of the lifecycle work, unless the owner's
+versioning proposal (independent SemVer per package) is adopted first, in which case the bump
+also assigns a new Cur8s package version.
 
 ## Production bootstrap path
 

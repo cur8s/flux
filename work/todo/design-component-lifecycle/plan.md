@@ -14,7 +14,8 @@ tasks, CI, or artifacts changes as part of this todo.
 ### Approach
 
 Interactive design with the owner, one step at a time, stopping for discussion at each step.
-Start from the owner's [proposal](proposal.md): it is the current direction, and its open
+Start from the owner's [lifecycle proposal](proposal.md) and
+[versioning proposal](versioning-proposal.md): they are the current direction, and their open
 decisions are the design work that remains.
 Record decisions, rejected alternatives, and evidence in a `working-notes.md` in this todo,
 distinguishing owner decisions from proposals and observations.
@@ -38,7 +39,8 @@ An agreed, written statement of what the lifecycle must achieve and what must al
 - [ ] Review the monorepo's lifecycle (Make targets, `scripts/`, component Makefiles) and the needs
   of a Helm-based component such as cert-manager; summarize the needs in `working-notes.md`.
 - [ ] Draft goals and invariants from the owner-stated list in the overview, the architectural
-  invariants in the [proposal](proposal.md), the
+  invariants in the [lifecycle proposal](proposal.md), the publication invariants in the
+  [versioning proposal](versioning-proposal.md), the
   [requirements](requirements.md), and the monorepo review.
 - [ ] **Stop for owner discussion**; revise until agreed.
 
@@ -47,9 +49,13 @@ An agreed, written statement of what the lifecycle must achieve and what must al
 The namespaced design completed and assessed against the agreed goals and invariants, with the
 six-phase alternative compared.
 
-- [ ] Continue the namespaced design from the [proposal](proposal.md): settle its open decisions
-  (`flux:reconcile` targeting, `test`, local packaging, and `publish`), and resolve the differences
-  listed in the overview. Keep the [six chained phases](candidate-six-phases.md) as the alternative
+- [ ] Continue the namespaced design from the [lifecycle proposal](proposal.md): settle its open
+  decisions (`flux:reconcile` targeting, `test`, local packaging, and `publish`), and resolve the
+  differences listed in the overview.
+- [ ] Settle versioning from the [versioning proposal](versioning-proposal.md): its open
+  implementation details (upstream metadata schema, tag and OCI repository layout, reproducibility
+  test, signing and provenance, upgrade and rollback), and how the repository's current
+  upstream-derived version moves to it. Keep the [six chained phases](candidate-six-phases.md) as the alternative
   it is compared against. The design states its directory layout:
   which step reads and writes which directory (today `src/<component>/`, `oci/<component>/`,
   `.mise/`; candidates may add `dist/`), and what is committed versus ignored.
@@ -73,6 +79,6 @@ Evidence for the questions that decide between candidates.
 - [ ] Decide with the owner which durable documents describe the lifecycle and where they live;
   write each, review it with the owner, and commit it on its own.
 - [ ] Hand off to [Plan the lifecycle implementation](../plan-lifecycle-implementation/overview.md):
-  move [requirements](requirements.md), the [proposal](proposal.md)'s implementation guidance
+  move [requirements](requirements.md), the [lifecycle proposal](proposal.md)'s implementation guidance
   (section 9: migration sequence and acceptance criteria), and any working notes still needed for
   implementation, into that todo, then remove this todo.

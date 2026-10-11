@@ -20,18 +20,25 @@ summary: "Identify the goals and invariants of a Cur8s component's build-to-publ
 - Requirements already identified are folded into this todo rather than kept as separate todos:
   traceable fetching, a locally packaged artifact that is the one tested and published, safe
   publication, and owned images. They are preserved in [requirements](requirements.md).
-- The owner has since advanced the design into a [proposal](proposal.md), recorded unedited. It
+- The owner has since advanced the design into a [lifecycle proposal](proposal.md), recorded
+  unedited. It
   is the current direction: architectural invariants, the namespaces `upstream`, `build`,
   `cluster`, and `flux` with per-task contracts and status, installation stages `crds`, `deploy`,
   and `post-install`, the intended local lifecycle, and the open decisions it says must not be
   resolved silently. Continue from those open decisions.
+- The owner's [versioning proposal](versioning-proposal.md), recorded unedited, is the direction
+  for versioning: independent SemVer per Cur8s package, upstream versions kept as provenance
+  metadata, immutable byte-for-byte reproducible artifacts, and separately versioned platform
+  releases defined by an exact bill of materials. Versioning is part of the contract every
+  component repository follows, so it is designed here; its open implementation details are open
+  decisions of this todo.
 - The earlier six-phase proposal, top-level Maven-style phases rather than namespaces, is kept as
   an alternative considered in [candidate: six chained phases](candidate-six-phases.md).
 
-**Differences to reconcile** between the proposal, the other todos, and the repository today —
-to resolve with the owner, not by assumption:
+**Differences to reconcile** between the two proposals, the other todos, and the repository
+today — to resolve with the owner, not by assumption:
 
-- Section 9 (migration sequence and acceptance criteria) is implementation guidance; this todo is
+- Lifecycle proposal section 9 (migration sequence and acceptance criteria) is implementation guidance; this todo is
   document only, so it belongs with
   [Plan the lifecycle implementation](../plan-lifecycle-implementation/overview.md).
 - The migration steps and acceptance criteria update CI workflows, but CI is parked in
@@ -42,6 +49,23 @@ to resolve with the owner, not by assumption:
   scripts.
 - Section 8 assumes `curl` and `jq` "per documented prerequisites", but the root `README.md`
   lists only mise and Docker; decide whether such tools are mise-managed or assumed.
+- Version scheme: `mise.toml` derives `CUR8S_FLUX_VERSION` from the upstream version and
+  `CUR8S_FLUX_REVISION` (`v2.9.0`, then `v2.9.0-2`), essentially the upstream-derived Option D the
+  versioning proposal rejects; `v2.9.0-2` even sorts before `v2.9.0`. Adopting independent SemVer
+  changes `mise.toml`, the `cur8s.yaml` release descriptor, tags, and docs. Check whether any
+  version is already published to `ghcr.io/cur8s/flux`; if so, decide how the old and new version
+  lines relate.
+- Self-management: versioning proposal section 5.2 puts the self-management `OCIRepository` and
+  `Kustomization` in the consuming cluster repository, but today's artifact ships `sync.yaml` and
+  the end-to-end test proves the package takes over its own reconciliation.
+- Package naming: the versioning proposal names packages by capability (`cur8s-gitops`,
+  `cur8s-certificates`) and does not require one package per upstream product; the direction so
+  far is one repository per component, named after it (`flux`, `cert-manager`).
+- Publication runner: the versioning proposal records GitHub Actions as the publication mechanism;
+  the owner-stated goal below is that publishing works the same from a laptop or GitHub Actions,
+  and CI is parked.
+- The platform bill of materials belongs to the future platform repository, which no todo covers
+  yet; this todo only defines what a component publishes for it to reference.
 
 **Goals and invariants the owner stated while planning** — inputs to the first step, to confirm
 or revise there:

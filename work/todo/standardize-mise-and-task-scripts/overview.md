@@ -14,7 +14,8 @@ summary: "Systematically review every mechanical aspect of how this repository u
   defined and invoked (file versus TOML tasks, `#MISE` and `#USAGE` headers, arguments,
   `depends` versus `mise run`, supporting files under `.mise/`), and bash script conventions.
 - Out of scope: lifecycle phase names, task naming, and namespaces, which the next todo
-  defines; bumping the tracked Flux version, which is its own todo; and how CI runs mise, which
+  defines; the versioning scheme, which the lifecycle design todo settles; bumping the tracked
+  Flux version, an input to the implementation planning todo; and how CI runs mise, which
   moved to the parked [CI workflows note](../../parked/finalize-ci-workflows/overview.md). Documenting *how* a pin
   is bumped and re-locked is in scope; performing a bump is not.
 - Where the resulting documentation lands — architecture, how-to, standards, or a mix — is decided
