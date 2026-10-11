@@ -54,8 +54,6 @@ Each topic has an agreed, applied, and recorded convention.
 - [ ] Repository layout under `.mise/`: tasks, configuration, and shared scripts.
 - [ ] Bash conventions: shebang and strict mode, variable naming and quoting, output and error
   messages, comments, script size, and when logic justifies a shared helper.
-- [ ] CI usage: how GitHub Actions installs and runs mise, action pinning, caching, and locked
-  installs.
 
 ### Phase 3: Documentation
 

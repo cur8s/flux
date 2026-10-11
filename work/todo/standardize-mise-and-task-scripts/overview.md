@@ -12,10 +12,10 @@ summary: "Systematically review every mechanical aspect of how this repository u
 - Scope is every mechanical aspect of mise and the bash scripts: `mise.toml` structure (settings,
   `[tools]`, `[env]`, templates and derived values), tool pinning and `mise.lock`, how tasks are
   defined and invoked (file versus TOML tasks, `#MISE` and `#USAGE` headers, arguments,
-  `depends` versus `mise run`, supporting files under `.mise/`), bash script conventions, and how
-  CI runs mise.
+  `depends` versus `mise run`, supporting files under `.mise/`), and bash script conventions.
 - Out of scope: lifecycle phase names, task naming, and namespaces, which the next todo
-  defines; and bumping the tracked Flux version, which is its own todo. Documenting *how* a pin
+  defines; bumping the tracked Flux version, which is its own todo; and how CI runs mise, which
+  moved to the parked [CI workflows note](../../parked/finalize-ci-workflows/overview.md). Documenting *how* a pin
   is bumped and re-locked is in scope; performing a bump is not.
 - Where the resulting documentation lands — architecture, how-to, standards, or a mix — is decided
   within this todo.

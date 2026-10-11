@@ -40,7 +40,7 @@
 # pin with: mise lock --platform linux-x64,linux-arm64,macos-x64,macos-arm64
 lockfile = true
 # A tool or platform missing from mise.lock is an install error, not a
-# silent unverified download — so a pin bumped without re-locking fails CI.
+# silent unverified download — so a pin bumped without re-locking fails to install.
 locked = true
 
 [tools]

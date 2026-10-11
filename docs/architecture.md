@@ -103,8 +103,8 @@ combine this artifact with other components own their broader integration verifi
 ## Bootstrap, publication, and self-management
 
 The production release has two deliberately paired outputs. `release` builds and pushes
-`oci://ghcr.io/cur8s/flux:<version>`; the tag-triggered workflow runs the end-to-end gate and
-publishes the exact rendered install manifest as the GitHub release asset `install.yaml`. First
+`oci://ghcr.io/cur8s/flux:<version>`, after the end-to-end gate has passed, and the exact rendered
+install manifest is published as the GitHub release asset `install.yaml`. First
 touch applies that asset. Once the controllers are running, the cluster definition supplies the
 `OCIRepository` for the chosen tag and applies `sync.yaml`. Flux then fetches the artifact and
 reconciles its own `deploy/` directory.

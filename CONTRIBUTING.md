@@ -33,9 +33,10 @@ the objects, the grammar, and the pinned toolchain.
 | `mise run upstream:check` | Report whether upstream Flux has a newer release than the tracked version. |
 | `mise run release` | Build and publish the versioned OCI artifact — only when explicitly asked. |
 
-The tag-triggered [release workflow](.github/workflows/release.yml) performs
-the complete dual-channel publication: it runs the end-to-end gate, invokes
-`mise run release`, and creates the GitHub release with `install.yaml`.
+A release has two channels: the OCI artifact that `mise run release`
+publishes, and the rendered `oci/flux/deploy/flux.yaml` attached to a GitHub
+release as `install.yaml`. Run the end-to-end gate before publishing either.
+The repository has no CI workflows yet; contributors run the gates locally.
 
 ## Testing
 
@@ -93,8 +94,7 @@ A change to `FLUX_VERSION` or any tool pin must also refresh the committed
 mise lock --platform linux-x64,linux-arm64,macos-x64,macos-arm64
 ```
 
-CI runs both gates for pull requests and pushes to `main`; a change is not
-done while either is red.
+A change is not done while either gate is red.
 
 ## Commit Messages
 
