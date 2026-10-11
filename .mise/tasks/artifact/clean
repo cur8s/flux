@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+#MISE description="Remove the generated trees (fetched upstream + rendered oci/)"
+set -euo pipefail
+rm -rf src/flux/artifacts oci

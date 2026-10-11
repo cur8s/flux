@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Build and publish the versioned artifact to the production registry"
+set -euo pipefail
+# Publication is gated on a green test:e2e for this package version
+# (docs/architecture.md) and happens only on an explicit ask (AGENTS.md).
+mise run artifact:build
+mise run artifact:push --registry "$REGISTRY" --tag "$CUR8S_FLUX_VERSION"

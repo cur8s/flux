@@ -16,11 +16,11 @@
 # upstream (the tracked Flux release). release — the repo-level act of
 # publishing the versioned artifact — takes no object segment.
 #
-# Tasks that are a few commands live below; tasks that own real logic
-# are executable file tasks under .mise/tasks/ (directories namespace the
-# names: .mise/tasks/artifact/fetch -> artifact:fetch). Supporting files
-# (k3d-config.yaml, any shared scripts) live elsewhere under .mise/ so
-# they never become tasks. Every task runs from the repo root. Arguments are declared with usage specs, so
+# Every task is an executable shell script under .mise/tasks/
+# (directories namespace the names: .mise/tasks/artifact/fetch ->
+# artifact:fetch). Supporting files (k3d-config.yaml, any shared
+# scripts) live elsewhere under .mise/ so they never become tasks. Tasks
+# run from the repo root and declare arguments in #USAGE headers, so
 # `mise run <task> --help` documents them.
 
 [settings]
@@ -60,59 +60,3 @@ CUR8S_DOCS = "https://github.com/cur8s/flux"
 REGISTRY = "ghcr.io/cur8s"
 # Default dev cluster; every cluster task also accepts a name argument.
 CLUSTER_NAME = "flux-dev"
-
-# ── artifact ────────────────────────────────────────────────────────────
-
-[tasks."artifact:clean"]
-description = "Remove the generated trees (fetched upstream + rendered oci/)"
-run = "rm -rf src/flux/artifacts oci"
-
-[tasks."artifact:build"]
-description = "clean → fetch → render: the full artifact build"
-# Task references in `run` execute in order; `depends` could run them in parallel.
-run = [
-  { task = "artifact:clean" },
-  { task = "artifact:fetch" },
-  { task = "artifact:render" },
-]
-
-# ── test ────────────────────────────────────────────────────────────────
-
-[tasks."test:drift"]
-description = "Prove the committed oci/ tree + fetched manifest match a fresh build (the review-surface gate)"
-# The committed oci/ tree is the review surface: what is in git must be
-# exactly what the pipeline produces from src/.
-run = [
-  { task = "artifact:build" },
-  '''
-  if [ -n "$(git status --porcelain -- oci src/flux/artifacts)" ]; then
-    git status --short -- oci src/flux/artifacts
-    git --no-pager diff -- oci src/flux/artifacts | head -100
-    echo "❌ fresh build differs from the committed tree — review and commit the re-render" >&2
-    exit 1
-  fi
-  echo "✅ committed tree matches the build"
-  ''',
-]
-
-# ── upstream ────────────────────────────────────────────────────────────
-
-[tasks."upstream:check"]
-description = "Report whether a newer upstream Flux release exists than the tracked version"
-run = '''
-latest="$(curl -fsSL https://api.github.com/repos/fluxcd/flux2/releases/latest | jq -r .tag_name)"
-echo "tracked: $FLUX_TAG"
-echo "latest:  $latest"
-[ "$FLUX_TAG" = "$latest" ] && echo "✅ up to date" || echo "⚠️  update available: bump FLUX_VERSION in mise.toml, refresh mise.lock (see CONTRIBUTING.md), then 'mise run artifact:build' and 'mise run test:e2e'"
-'''
-
-# ── release ─────────────────────────────────────────────────────────────
-
-[tasks.release]
-description = "Build and publish the versioned artifact to the production registry"
-# Publication is gated on a green test:e2e for this package version
-# (docs/architecture.md) and happens only on an explicit ask (AGENTS.md).
-run = [
-  { task = "artifact:build" },
-  'mise run artifact:push --registry "$REGISTRY" --tag "${CUR8S_FLUX_VERSION}"',
-]

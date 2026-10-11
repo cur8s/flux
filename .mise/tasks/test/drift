@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#MISE description="Prove the committed oci/ tree + fetched manifest match a fresh build (the review-surface gate)"
+#MISE depends=["artifact:build"]
+set -euo pipefail
+# The committed oci/ tree is the review surface: what is in git must be
+# exactly what the pipeline produces from src/. A fresh build that leaves
+# the working tree dirty means the render and the commit have diverged.
+paths=(oci src/flux/artifacts)
+if [ -n "$(git status --porcelain -- "${paths[@]}")" ]; then
+  git status --short -- "${paths[@]}"
+  git --no-pager diff -- "${paths[@]}" | head -100
+  echo "❌ fresh build differs from the committed tree — review and commit the re-render" >&2
+  exit 1
+fi
+echo "✅ committed tree matches the build"

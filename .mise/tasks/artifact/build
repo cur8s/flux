@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="clean → fetch → render: the full artifact build"
+set -euo pipefail
+# Run the stages in order; a depends list could run them in parallel.
+mise run artifact:clean
+mise run artifact:fetch
+mise run artifact:render
