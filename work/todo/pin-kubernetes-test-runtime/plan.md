@@ -4,7 +4,7 @@
 
 ### Outcome
 
-`test:e2e` always creates a Kubernetes `1.35` cluster from the current GA patch in
+The e2e gate always creates a Kubernetes `1.35` cluster from the current GA patch in
 that minor. One exact `KUBERNETES_VERSION` value selects both the k3s image tag and
 the same kubectl release. The test confirms that the client and API server it actually
 created report that value before it applies the generated Flux manifest, then runs
@@ -144,7 +144,8 @@ Make a wrong, ignored, or substituted image reference fail close to cluster crea
   compatibility-range source.
 - [ ] Preserve the existing API-server apply, controller availability, artifact fetch,
   self-management readiness, failure-preservation, and successful-cleanup behavior.
-- [ ] Run `mise run artifact:build`, `mise run test:drift`, `mise run test:e2e`, and
+- [ ] Run the drift and e2e gates (`check` and `e2e` once
+  [`adopt-lifecycle-phases`](../adopt-lifecycle-phases/overview.md) lands) and
   `git diff --check` on the resulting change.
 
 ### Phase 4: Record the maintained contract

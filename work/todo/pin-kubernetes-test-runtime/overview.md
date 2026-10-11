@@ -5,7 +5,7 @@ summary: "Test the Cur8s Kubernetes N-1 target on its latest patch, selected onc
 
 # Pin the Kubernetes test runtime
 
-`test:e2e` is now the semantic compatibility gate for the Flux CLI-generated installation: it
+The e2e gate is now the semantic compatibility gate for the Flux CLI-generated installation: it
 applies the rendered manifest to a Kubernetes API server and proves the controllers and
 self-management resources become Ready. k3d currently chooses its own default k3s image, so the
 Kubernetes version tested can change when k3d changes without a reviewed repository change.
