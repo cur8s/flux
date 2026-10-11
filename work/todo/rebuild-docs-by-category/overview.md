@@ -21,6 +21,18 @@ summary: "Replace the three flat documents in docs/ with numbered product, archi
 - Sources are collected in this todo: copies of flux's current `docs/` and the monorepo's `docs/`
   only. `CONTRIBUTING.md` is separate and out of scope.
 
+**Facts to carry into the new documents.** `AGENTS.md` was reduced to agent-behavior rules, and
+these two statements existed only there; each needs a durable home in the product or
+architecture documents:
+
+- The package comes up on a bare cluster with zero pre-existing secrets and no
+  `imagePullSecrets` (the user guide states only the first half).
+- No version is published without a green end-to-end run.
+
+The rest of the removed `AGENTS.md` summary — project description, pipeline shape, document
+ownership, versioning scheme, the controller opinion, and mise usage — is already covered by the
+current docs and `mise.toml`, and is in Git history before the commit that trimmed it.
+
 **Defaults proposed, not yet objected to:**
 
 - Flux's current docs are copied, not moved. Each original is deleted in the commit whose new
