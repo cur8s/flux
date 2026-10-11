@@ -61,6 +61,14 @@ Steps are added when the phase starts.
 the operator procedures still in `docs/user-guide.md` (bootstrap, operation, upgrade, recovery),
 after which `user-guide.md` is deleted. Steps are added when the phase starts.
 
+**Known gap this phase closes:** removing `CONTRIBUTING.md` left the verification gates written
+nowhere — which gates every change runs (`test:drift`, `git diff --check`), when the end-to-end
+gate is required (changes to `src/`, the Flux version, or a tool pin), and refreshing `mise.lock`
+for version or pin changes — along with first-run setup (`mise trust`, `mise install`, a running
+Docker daemon). Write them into a local development guide, add it to the root README's reading
+order, and point `AGENTS.md` at it. The removed text is in
+[`sources/flux/CONTRIBUTING.md`](sources/flux/CONTRIBUTING.md).
+
 ### Phase 4: Standards
 
 `docs/standards/` records agreed technical choices with rationale. Its first content is decided

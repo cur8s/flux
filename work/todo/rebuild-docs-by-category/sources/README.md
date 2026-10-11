@@ -8,6 +8,7 @@ architecture is superseded by the one-component-per-repository direction.
 | --- | --- | --- |
 | [`flux/`](flux/) | `cur8s/flux` repository, `docs/` | commit `06c800d`, 2026-10-11 |
 | [`monorepo/`](monorepo/) | `~/dev/cur8s/monorepo-cur8s`, `docs/` | commit `a4eb317`, 2026-10-11 |
+| [`flux/CONTRIBUTING.md`](flux/CONTRIBUTING.md) | `cur8s/flux` repository, root `CONTRIBUTING.md`, removed in `639c197` | commit `22ba4ba`, 2026-10-11 |
 
 The `flux/` files are copies; the live originals in `docs/` remain authoritative until the step
 that replaces each one deletes it.

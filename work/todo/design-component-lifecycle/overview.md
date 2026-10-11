@@ -35,6 +35,10 @@ or revise there:
 - Publishing works the same from a laptop or GitHub Actions, because the tooling is pinned and the
   tests are self-contained.
 - Scripts stay tiny and obvious.
+- The directory layout is part of the design: each lifecycle step defines the directories it reads
+  and writes, the layout is consistent across component repositories, and each directory's purpose
+  is obvious. Each major directory explains itself in its own README rather than through a central
+  layout description.
 
 The mise mechanics any design uses follow
 [`standardize-mise-and-task-scripts`](../standardize-mise-and-task-scripts/overview.md), which

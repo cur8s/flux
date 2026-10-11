@@ -44,7 +44,9 @@ An agreed, written statement of what the lifecycle must achieve and what must al
 Several candidate lifecycles, each assessed against the agreed goals and invariants.
 
 - [ ] Describe candidate designs, including the [six chained phases](candidate-six-phases.md) and
-  at least one structurally different alternative.
+  at least one structurally different alternative. Each candidate states its directory layout:
+  which step reads and writes which directory (today `src/<component>/`, `oci/<component>/`,
+  `.mise/`; candidates may add `dist/`), and what is committed versus ignored.
 - [ ] Identify which questions only an experiment can answer.
 - [ ] **Stop for owner discussion**; agree which candidates and experiments to pursue.
 
@@ -60,7 +62,8 @@ Evidence for the questions that decide between candidates.
 
 ### Phase 4: Decide and document
 
-- [ ] Agree the design with the owner, recording the alternatives considered and why they lost.
+- [ ] Agree the design, including its directory layout, with the owner, recording the
+  alternatives considered and why they lost.
 - [ ] Decide with the owner which durable documents describe the lifecycle and where they live;
   write each, review it with the owner, and commit it on its own.
 - [ ] Hand off to [Plan the lifecycle implementation](../plan-lifecycle-implementation/overview.md):

@@ -19,4 +19,8 @@ summary: "Once the component lifecycle is documented, work out interactively how
 - The design todo's [requirements](../design-component-lifecycle/requirements.md) — traceable
   fetching, tested-equals-published packaging, safe publication, owned images — and their
   implementation detail are inputs here too.
+- Implementing the agreed directory layout includes a short README inside each major directory
+  (for example `oci/` and `src/`) explaining its purpose, since directories explain themselves
+  rather than relying on a central layout description. Any `oci/` README sits outside the
+  component's artifact directory so it is not packaged.
 - The result is a new, ordered sequence of implementation todos that replaces this note.
