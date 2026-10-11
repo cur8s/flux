@@ -21,24 +21,29 @@ Apply every applicable convention in this section.
 **Rule:**
 
 - Assume readers are experienced developers and current top-tier coding agents; do not explain
-  basics of their field.
+  the basics of their field.
 - Prefer tables and short lists to prose so readers can scan the file to orient themselves.
 - Introduce an emerging tool readers may not know, such as mise, with a link to an authoritative
   introduction.
 
+**Exception:** Use prose for a single connected explanation that a table or list would fragment,
+such as the root `README.md` description.
+
+**Example:** Explaining what a container image or a Git branch is explains the basics; explaining
+what mise does for this repository introduces an emerging tool.
+
 ---
 
-### ENTRY-001: Give each fact one home
+### ENTRY-001: Link instead of copying
 
-**Applies to:** Every statement in the root `README.md`, `AGENTS.md`, and directory READMEs.
+**Applies to:** Content added to or edited in the root `README.md`, `AGENTS.md`, and directory
+READMEs.
 
-**Rule:**
+**Rule:** Before writing an explanation, procedure, or list, check whether another file already
+covers it. If one does, link to that file rather than restating its content.
 
-- State each fact in exactly one file, the one whose audience and purpose it serves.
-- Link to that file instead of restating the fact elsewhere.
-
-**Example:** The verification gates live in a how-to guide; the root `README.md` links to the guide
-rather than repeating the commands.
+**Example:** A root `README.md` describes the repository in a few sentences, but links to the local
+development guide rather than copying its setup steps.
 
 ---
 
@@ -49,8 +54,7 @@ rather than repeating the commands.
 **Rule:**
 
 - Write it for people.
-- Open with the repository's name as the H1, followed by a description of no more than a few
-  sentences.
+- Open with the repository's name as the H1, followed by a description of at most three sentences.
 - Follow with a `## Prerequisites` section containing a concepts table (ENTRY-003) and a software
   table (ENTRY-004), each labeled by its first column header rather than a subheading.
 - End with a `## Read next` numbered list linking the documents to read, in reading order, each
@@ -85,8 +89,8 @@ OCI artifacts. It does not list pre-rendered manifests, which its product docume
 **Rule:**
 
 - Use the columns `Software` and `What it gives us`.
-- List software that developers must install themselves and may not already have, such as mise
-  and Docker.
+- List software that developers must install themselves and that a typical developer machine
+  does not include, such as mise and Docker.
 - Leave out tools that `mise.toml` manages and tools nearly every developer machine already has,
   such as Git and curl.
 - In the second column, state the outcome the choice gives the project, not why the tool is needed
@@ -109,8 +113,11 @@ k3d".
 - Phrase each rule as a direct command, preferring "do X only when Y" to "never do X".
 - Put one rule in each bullet, and group bullets under short subject headings.
 
-**Exception:** State a permission rather than a command when it marks the boundary of an adjacent
-restriction, such as which files may link into a restricted directory.
+**Exception:**
+
+- State a permission rather than a command when it marks the boundary of an adjacent restriction,
+  such as which files may link into a restricted directory.
+- Use "never do X" when X has no permitted case at all.
 
 ---
 
