@@ -8,8 +8,8 @@ version: 1
 
 This standard applies to the files people and coding agents read first: the root `README.md`,
 `AGENTS.md`, and README files inside directories. It is intended for experienced developers and
-coding agents who write or review those files. Readers are assumed to be experienced in their field
-and agents to be current top-tier models; neither needs basics explained, but people may not know
+coding agents who write or review those files. Write those files for experienced developers and
+current top-tier coding agents: neither needs basics explained, though developers may not yet know
 emerging tools.
 
 ## Required Conventions
@@ -37,12 +37,13 @@ rather than repeating the commands.
 **Rule:**
 
 - Write it for people.
-- Open with the repository's name as the H1 and a description of a few sentences.
+- Open with the repository's name as the H1, followed by a description of no more than a few
+  sentences.
 - Follow with a `## Prerequisites` section containing a concepts table (ENTRY-003) and a software
   table (ENTRY-004), each labeled by its first column header rather than a subheading.
-- End with a `## Read next` numbered list that links the documents to read, in the order to read
-  them, each with a one-line statement of what it covers.
-- Include nothing else, such as task lists, directory layouts, quick-start commands, or procedures.
+- End with a `## Read next` numbered list linking the documents to read, in reading order, each
+  with a one-line statement of what it covers.
+- Include nothing else: no task lists, directory layouts, quick-start commands, or procedures.
 
 ---
 
@@ -55,7 +56,7 @@ rather than repeating the commands.
 - Use the columns `Concept` and `Why it matters here`.
 - List the concepts a reader must bring from outside to understand the repository.
 - Leave out what the repository itself teaches, such as its own design philosophy.
-- Do not list tools separately. When a tool is essential to understanding a concept, name it in
+- Do not list tools separately; when a tool is essential to understanding a concept, name it in
   that concept's row.
 - Link each concept to an authoritative introduction.
 - In the second column, say how the concept applies to this repository, not only what it is.
@@ -72,8 +73,8 @@ OCI artifacts. It does not list pre-rendered manifests, which its product docume
 **Rule:**
 
 - Use the columns `Software` and `What it gives us`.
-- List the software a developer must install themselves and may not already have, such as mise and
-  Docker.
+- List software that developers must install themselves and may not already have, such as mise
+  and Docker.
 - Leave out tools that `mise.toml` manages and tools nearly every developer machine already has,
   such as Git and curl.
 - In the second column, state the outcome the choice gives the project, not why the tool is needed
@@ -110,8 +111,8 @@ restriction, such as which files may link into a restricted directory.
 - Explain the directory in a short `README.md` inside it: its purpose and any non-obvious rules for
   working there.
 - Do not describe directory layout centrally in the root `README.md` or `AGENTS.md`.
-- Place the README where it is not swept into generated or packaged content, such as outside a
-  directory that is published as an artifact.
+- Place the README where it is not included in generated or packaged content, such as outside a
+  directory published as an artifact.
 
 **Example:** `.agents/README.md` explains why `.claude/skills` is a symlink to `.agents/skills/`.
 
@@ -121,8 +122,8 @@ restriction, such as which files may link into a restricted directory.
 
 **Applies to:** Lists of tasks, tools, versions, or similar details in any entry file.
 
-**Rule:** Do not enumerate details that a command or configuration file already lists and that
-change over time. Name the command or file instead, such as `mise tasks` or `mise.toml`.
+**Rule:** Do not enumerate changing details that a command or configuration file already lists;
+name the command or file instead, such as `mise tasks` or `mise.toml`.
 
 ---
 
