@@ -19,7 +19,8 @@ summary: "Replace the three flat documents in docs/ with numbered product, archi
   agreed, and committed on its own. The owner builds the documentation up systematically, one file
   at a time.
 - Sources are collected in this todo: copies of flux's current `docs/` and the monorepo's `docs/`
-  only. `CONTRIBUTING.md` is separate and out of scope.
+  only. `CONTRIBUTING.md` was removed; the root `README.md` and how-to guides took over its
+  role.
 
 **Facts to carry into the new documents.** `AGENTS.md` was reduced to agent-behavior rules, and
 these two statements existed only there; each needs a durable home in the product or

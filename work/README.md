@@ -419,9 +419,9 @@ settled knowledge into self-contained docs without incoming references to work.
 Read the README, coding instructions, and relevant standards for the files being changed. Explain
 the concrete problem, resulting behavior, significant decisions, verification, and remaining
 limitations in the review handoff. Keep secrets, registry credentials, and tokens out of commits
-and notes. Follow the selected work item's verification requirements, the gates in
-[CONTRIBUTING.md](../CONTRIBUTING.md), and the completion checks below. A dispatched CI run is not
-a passing result for the revision under review.
+and notes. Follow the selected work item's verification requirements, the repository's
+verification gates, and the completion checks below. A dispatched CI run is not a passing result
+for the revision under review.
 
 ## Completion Checklist
 

@@ -8,7 +8,7 @@
 `how-to/`, and `standards/` directories, each with numbered documents that open with a purpose
 callout. The flat `vision.md`, `user-guide.md`, and `architecture.md` are gone, every subject they
 covered has exactly one new home, and nothing outside `work/` references them. Every document was
-reviewed and accepted by the owner before its commit. `CONTRIBUTING.md` is out of scope.
+reviewed and accepted by the owner before its commit.
 
 ### Approach
 
@@ -19,7 +19,7 @@ Work one document at a time. Each document step follows the same cycle:
 2. **Stop for owner review.** Revise until the owner agrees. Do not start the next document first.
 3. Commit the agreed document on its own. In the same commit, delete any original in `docs/` it
    fully replaces, remove moved sections from an original it partly replaces, and repair
-   references from `README.md`, `AGENTS.md`, `CONTRIBUTING.md`, and `docs/README.md`.
+   references from `README.md`, `AGENTS.md`, and `docs/README.md`.
 
 Check claims about current behavior against the repository while drafting. Distinguish agreed
 statements from proposals in drafts so review can focus on them.

@@ -1,16 +1,24 @@
 # flux — the Cur8s GitOps engine package
 
-This repository renders Cur8s' constrained [Flux](https://fluxcd.io) installation once and publishes it as an immutable OCI artifact. It installs only source, kustomize, and notification controllers, so a cluster reconciles explicit, static intent rather than interpreting templates or selecting versions at runtime.
+This repository renders Cur8s' constrained [Flux](https://fluxcd.io) installation once and
+publishes it as an immutable OCI artifact. The installation includes only the source, kustomize,
+and notification controllers, so clusters reconcile static manifests instead of templates resolved
+at runtime.
 
-Start with the [user guide](docs/user-guide.md) to bootstrap and operate the package, [architecture](docs/architecture.md) to understand the artifact lifecycle, and [vision](docs/vision.md) for the durable intent. Contributors should follow [CONTRIBUTING.md](CONTRIBUTING.md).
+## Prerequisites
 
-For a local build and full verification:
+| Concept | Why it matters here |
+| --- | --- |
+| [GitOps](https://opengitops.dev/) | Desired state is declared outside the cluster, versioned, and continuously reconciled into it; this package installs [Flux](https://fluxcd.io/flux/concepts/), the engine that does the reconciling. |
+| [OCI artifacts](https://oras.land/docs/concepts/artifact) | Non-image content, such as Kubernetes manifests, stored and distributed through OCI registries; this package ships as one. |
 
-```sh
-mise install
-mise run artifact:build
-mise run test:e2e
-```
+| Software | What it gives us |
+| --- | --- |
+| [mise](https://mise.jdx.dev/installing-mise.html) | The same toolchain and commands on every machine: exact, checksum-verified tool versions from [`mise.toml`](mise.toml), and every command as a task. |
+| [Docker](https://docs.docker.com/get-started/get-docker/) | The full end-to-end test on your own machine: k3d runs disposable Kubernetes clusters and registries in Docker, with no shared cluster or cloud account. |
 
-The rendered `oci/flux/` tree is committed deliberately: its diff is the reviewable deployment
-result. Run `mise run test:drift` to prove it matches a fresh render.
+## Read next
+
+1. [Vision](docs/vision.md): why the package exists and what it deliberately excludes.
+2. [User guide](docs/user-guide.md): the supported surface, bootstrap, operation, and upgrades.
+3. [Architecture](docs/architecture.md): how the source becomes the published artifact.
