@@ -37,10 +37,24 @@ summary: "Identify the goals and invariants of a Cur8s component's build-to-publ
   consumer-owned `OCIRepository` and `Kustomization` resources applied separately, with the same
   generated installation bytes behind the release asset and the OCI artifact. Self-management
   resources belong to the consuming repository, not the package; this is decided.
+- The owner's [task namespace reference](task-namespaces-proposal.md), recorded unedited,
+  consolidates the task vocabulary from the 2026-10-11 discussions: seven namespaces (`upstream`,
+  `build`, `cluster`, `flux`, `dev`, `test`, `oci`) and sixteen tasks. It adds `flux:watch`, the
+  composite `dev:create|status|delete`, `test:run` and `test:destroy`, and `oci:publish`, and says
+  which of these were reaffirmed and which were not.
+- The task namespace reference's inventory is applied to the repository, following the lifecycle
+  proposal's agreed subset (commit `a6d6186`). Owner decisions made while applying it:
+  `test:drift` folds into `test:run`; `upstream:check` stays as a task outside the inventory; and
+  tasks reach only clusters the repository created — a repo-local, git-ignored `KUBECONFIG` holds
+  their contexts and `cluster:*` refuse names not prefixed with the component. Implementation
+  choices to confirm: `flux:*` take a cluster name rather than using the current context;
+  `flux:boot` still boots the Flux repository from its local render; `build:render` does not
+  package; `dev:create` absorbs `artifact:deploy|verify`; and `oci:publish` replaces
+  `artifact:push` and `release`, publishing to a cluster's local registry with `--cluster`.
 - The earlier six-phase proposal, top-level Maven-style phases rather than namespaces, is kept as
   an alternative considered in [candidate: six chained phases](candidate-six-phases.md).
 
-**Differences to reconcile** between the three proposals, the other todos, and the repository
+**Differences to reconcile** between the four proposals, the other todos, and the repository
 today — to resolve with the owner, not by assumption:
 
 - Lifecycle proposal section 9 (migration sequence and acceptance criteria) is implementation guidance; this todo is
@@ -78,6 +92,16 @@ today — to resolve with the owner, not by assumption:
   the publication mechanism (the latter marks it decided);
   the owner-stated goal below is that publishing works the same from a laptop or GitHub Actions,
   and CI is parked.
+- Exact tested digest: the lifecycle proposal requires that the OCI digest `test:run` verified is
+  the one published; `oci:publish` pushes the rendered tree again instead of copying a tested
+  candidate, and the task namespace reference names no local packaging step.
+- Cluster selection: the task namespace reference has the `flux:` tasks act on the current kubectl
+  context; the applied tasks take a cluster name, as the lifecycle proposal requires.
+- Bootstrap source: the task namespace reference has `flux:boot` use the project's published
+  bootstrap manifest; the applied task boots the Flux repository from its local render, as the
+  lifecycle proposal requires.
+- `build:render` in the task namespace reference "generates the Flux manifests and package
+  artifacts"; the applied task renders only, and `oci:publish` packages at push time.
 - The platform bill of materials belongs to the future platform repository, which no todo covers
   yet; this todo only defines what a component publishes for it to reference.
 

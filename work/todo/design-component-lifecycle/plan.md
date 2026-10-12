@@ -15,8 +15,9 @@ tasks, CI, or artifacts changes as part of this todo.
 
 Interactive design with the owner, one step at a time, stopping for discussion at each step.
 Start from the owner's [lifecycle proposal](proposal.md),
-[versioning proposal](versioning-proposal.md), and
-[Flux bootstrap proposal](flux-bootstrap-proposal.md): they are the current direction, and their open
+[versioning proposal](versioning-proposal.md),
+[Flux bootstrap proposal](flux-bootstrap-proposal.md), and
+[task namespace reference](task-namespaces-proposal.md): they are the current direction, and their open
 decisions are the design work that remains.
 Record decisions, rejected alternatives, and evidence in a `working-notes.md` in this todo,
 distinguishing owner decisions from proposals and observations.
@@ -52,7 +53,9 @@ six-phase alternative compared.
 
 - [ ] Continue the namespaced design from the [lifecycle proposal](proposal.md): settle its open
   decisions (`flux:reconcile` targeting, `test`, local packaging, and `publish`), and resolve the
-  differences listed in the overview.
+  differences listed in the overview. Use the [task namespace reference](task-namespaces-proposal.md)
+  as the candidate vocabulary: confirm or revise `dev:`, `oci:`, `flux:watch`, `test:run`, and
+  `test:destroy`, and name the packaging and local staging tasks it leaves out.
 - [ ] Settle versioning from the [versioning proposal](versioning-proposal.md): its open
   implementation details (upstream metadata schema, tag and OCI repository layout, reproducibility
   test, signing and provenance, upgrade and rollback), and how the repository's current
