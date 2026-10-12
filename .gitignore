@@ -166,6 +166,8 @@ $RECYCLE.BIN/
 .env
 .env.local
 .env.*.local
+# Repo-local kubeconfig for this repo's k3d clusters (KUBECONFIG in mise.toml).
+/.kube/
 
 ###############################################################################
 #  Coding Agents — session/local state; shared instruction files

@@ -15,8 +15,8 @@ cp src/flux/config/sync.yaml oci/flux/sync.yaml
 # in docs/architecture.md. Deliberately free of anything unknowable at render
 # time (no git revision, no timestamp) so the committed tree
 # regenerates byte-for-byte — source/revision are attached by
-# artifact:push as standard OCI annotations instead. Identity facts come
-# from mise.toml [env], the same source artifact:push annotates from.
+# oci:publish as standard OCI annotations instead. Identity facts come
+# from mise.toml [env], the same source oci:publish annotates from.
 cat > oci/flux/cur8s.yaml <<DESCRIPTOR
 # Cur8s release descriptor — the artifact asserts its own identity.
 # Inert: read by humans and tooling, never applied to a cluster.

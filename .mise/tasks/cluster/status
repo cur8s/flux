@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-#MISE description="Show a k3d cluster and its registry endpoint"
-#USAGE arg "[name]" env="CLUSTER_NAME" help="Cluster name"
+#MISE description="Show whether a k3d cluster exists, its API is reachable, and its registry endpoint"
+#USAGE arg "[name]" env="CLUSTER_NAME" help="Cluster name (must start with <component>-)"
 set -euo pipefail
 name="$usage_name"
+[[ "$name" == "$CUR8S_COMPONENT"-* ]] || { echo "❌ cluster name must start with $CUR8S_COMPONENT-" >&2; exit 1; }
 k3d cluster list "$name"
+kubectl --context "k3d-$name" get --raw /readyz >/dev/null && echo "api: reachable"
 port="$(docker port "$name-registry" 5000 | head -1 | awk -F: '{print $NF}')"
 echo "registry: localhost:$port (in-cluster $name-registry:5000)"

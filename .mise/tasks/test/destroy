@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Delete the test cluster and its registry (e.g. one kept after a failed test:run)"
+#USAGE arg "[cluster]" env="TEST_CLUSTER_NAME" help="Ephemeral cluster name"
+set -euo pipefail
+mise run cluster:delete "$usage_cluster"

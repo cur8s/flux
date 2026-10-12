@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+#MISE description="Prove the committed tree matches a fresh fetch + render, then test it on an ephemeral cluster"
+#USAGE arg "[cluster]" env="TEST_CLUSTER_NAME" help="Ephemeral cluster name"
+set -euo pipefail
+cluster="$usage_cluster"
+paths=("oci/$CUR8S_COMPONENT" "src/$CUR8S_COMPONENT/artifacts")
+
+# Drift: the committed oci/ tree is the review surface, so a fresh fetch +
+# render must leave it (and the fetched input) unchanged. Commit a
+# re-render before running the test.
+mise run upstream:fetch
+mise run build:render
+if [ -n "$(git status --porcelain -- "${paths[@]}")" ]; then
+  git status --short -- "${paths[@]}"
+  git --no-pager diff -- "${paths[@]}" | head -100
+  echo "❌ fresh render differs from the committed tree — review and commit the re-render" >&2
+  exit 1
+fi
+echo "✅ committed tree matches the render"
+
+# Cluster test: on success the cluster is deleted; on failure it is kept.
+cleanup() {
+  local rc=$?
+  if [ $rc -eq 0 ]; then
+    echo "✅ test passed — deleting cluster '$cluster'"
+    mise run cluster:delete "$cluster" || true
+  else
+    echo "❌ test failed (rc=$rc) — cluster '$cluster' preserved"
+    mise run flux:status "$cluster" || true
+    echo "  mise run test:destroy $cluster   # when done"
+  fi
+}
+trap cleanup EXIT
+mise run dev:create "$cluster" --tag e2e
+mise run flux:status "$cluster"

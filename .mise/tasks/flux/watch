@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Watch Flux Kustomizations on a cluster until interrupted"
+#USAGE arg "[name]" env="CLUSTER_NAME" help="Cluster name"
+set -euo pipefail
+flux --context "k3d-$usage_name" get kustomizations -A --watch

@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-#MISE description="Wait for the deployed artifact's Kustomization to be Ready"
-#USAGE flag "--cluster <name>" env="CLUSTER_NAME" help="k3d cluster to check"
-set -euo pipefail
-# sync.yaml sets wait: true, so Ready means Flux health-checked every
-# resource the artifact applied — no per-workload checks needed.
-kubectl --context "k3d-$usage_cluster" -n flux-system wait --for=condition=Ready --timeout=5m \
-  "ocirepository/$CUR8S_COMPONENT" "kustomization/$CUR8S_COMPONENT"

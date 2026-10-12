@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
-#MISE description="Push oci/<component>/ as an OCI artifact (default: the k3d cluster's local registry)"
-#USAGE flag "--registry <url>" help="Remote registry, e.g. ghcr.io/cur8s (default: the cluster's local registry)"
-#USAGE flag "--cluster <name>" env="CLUSTER_NAME" help="k3d cluster whose local registry receives the push"
-#USAGE flag "--tag <tag>" default="dev" help="Artifact tag"
+#MISE description="Publish oci/<component>/ as an OCI artifact (default: REGISTRY at the package version)"
+#USAGE flag "--cluster <name>" help="Publish to this k3d cluster's local registry instead of REGISTRY"
+#USAGE flag "--tag <tag>" env="CUR8S_FLUX_VERSION" help="Artifact tag"
 set -euo pipefail
-# Every artifact that leaves this repo — dev push or release — goes
-# through this task: the single insertion point for OCI metadata.
+# Every artifact that leaves this repo — dev, test, or release — goes
+# through this task: the single insertion point for OCI metadata. It
+# publishes the committed render as-is; it never re-renders. Remote
+# publication happens only on an explicit ask (AGENTS.md).
 artifact="oci/$CUR8S_COMPONENT"
-[ -d "$artifact" ] || { echo "❌ $artifact/ not built (run 'mise run build:render')" >&2; exit 1; }
+[ -d "$artifact" ] || { echo "❌ $artifact/ not rendered (run 'mise run build:render')" >&2; exit 1; }
 
-registry="${usage_registry:-}"
-if [ -z "$registry" ]; then
+registry="$REGISTRY"
+if [ -n "${usage_cluster:-}" ]; then
   registry="localhost:$(docker port "${usage_cluster}-registry" 5000 | head -1 | awk -F: '{print $NF}')"
   # The k3d-local registry is anonymous. A globally-configured docker
   # credential helper (e.g. Docker Desktop's "desktop" credsStore) will be
@@ -38,4 +39,4 @@ flux push artifact "$url" \
   --annotations="cur8s.io/upstream-version=${FLUX_TAG}" \
   --annotations="cur8s.io/docs=${CUR8S_DOCS}" \
   --timeout=5m
-echo "✅ pushed $url"
+echo "✅ published $url"

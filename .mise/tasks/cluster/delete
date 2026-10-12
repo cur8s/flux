@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 #MISE description="Delete a k3d cluster and its registry"
-#USAGE arg "[name]" env="CLUSTER_NAME" help="Cluster name"
+#USAGE arg "[name]" env="CLUSTER_NAME" help="Cluster name (must start with <component>-)"
 set -euo pipefail
 name="$usage_name"
+[[ "$name" == "$CUR8S_COMPONENT"-* ]] || { echo "❌ cluster name must start with $CUR8S_COMPONENT-" >&2; exit 1; }
 k3d cluster delete "$name"
 k3d registry delete "$name-registry" 2>/dev/null || true

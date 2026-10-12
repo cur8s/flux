@@ -13,22 +13,28 @@
 #             output only; render cleans, then regenerates oci/<component>/
 #             from the captured inputs, never fetching.
 #   cluster   pure k3d lifecycle: a cluster and its local OCI registry,
-#             nothing installed on it.
+#             nothing installed on it. Names must start with
+#             CUR8S_COMPONENT-, and contexts live only in the repo-local
+#             KUBECONFIG, so no task reaches a cluster this repo did not
+#             create.
 #   flux      Flux on a cluster: boot installs it (here from the local
 #             render; in other component repos from the published Flux
-#             release), status shows its resources.
-#   artifact  the thing this repo ships, keyed on CUR8S_COMPONENT:
-#             push -> deploy (point Flux at it) -> verify (its
-#             Kustomization is Ready). artifact:push is the single choke
-#             point through which every artifact leaves the repo.
-#   test      the product contract: test:drift proves the committed tree
-#             matches a fresh fetch + render; test:e2e runs render ->
-#             cluster -> boot -> push -> deploy -> verify on an ephemeral
-#             cluster.
-# release — the repo-level act of publishing the versioned artifact —
-# takes no object segment. Only upstream:fetch, build:render, and
-# flux:boot are specific to this component; the rest are meant to be
-# identical across cur8s component repos.
+#             release), status and watch show it, reconcile forces this
+#             component's Kustomization.
+#   dev       the local development environment, composed from the
+#             tasks above: create runs cluster:create -> flux:boot ->
+#             oci:publish to the local registry -> hand Flux its own
+#             artifact -> wait Ready.
+#   test      the product contract: test:run proves the committed tree
+#             matches a fresh fetch + render, then runs dev:create on an
+#             ephemeral cluster, deleting it on success and keeping it on
+#             failure; test:destroy deletes a kept one.
+#   oci       oci:publish is the single choke point through which every
+#             artifact leaves the repo: REGISTRY by default, or a
+#             cluster's local registry with --cluster.
+# Only upstream:fetch, build:render, and flux:boot are specific to this
+# component; the rest are meant to be identical across cur8s component
+# repos.
 #
 # Every task is an executable shell script under .mise/tasks/
 # (directories namespace the names: .mise/tasks/upstream/fetch ->
@@ -63,14 +69,21 @@ FLUX_TAG = '{% if env.FLUX_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]
 CUR8S_FLUX_VERSION = '{% if env.CUR8S_FLUX_REVISION is not matching(pat="^[1-9][0-9]*$") %}{{ throw(message="CUR8S_FLUX_REVISION must be a positive integer") }}{% endif %}{{ env.FLUX_TAG }}{% if env.CUR8S_FLUX_REVISION != "1" %}-{{ env.CUR8S_FLUX_REVISION }}{% endif %}'
 # Component identity facts — the single authoring point for
 # self-description (docs/architecture.md). build:render writes them
-# into the cur8s.yaml descriptor; artifact:push attaches them as
+# into the cur8s.yaml descriptor; oci:publish attaches them as
 # cur8s.io/* OCI annotations.
 CUR8S_COMPONENT = "flux"
 CUR8S_UPSTREAM_PROJECT = "fluxcd/flux2"
 CUR8S_SOURCE = "https://github.com/cur8s/flux"
 CUR8S_DOCS = "https://github.com/cur8s/flux"
-# Production registry (release publishes here; dev pushes go to the
-# k3d cluster's local registry).
+# Production registry (oci:publish publishes here by default; dev and
+# test pushes go to the k3d cluster's local registry).
 REGISTRY = "ghcr.io/cur8s"
-# Default dev cluster for the cluster, flux, and artifact tasks.
+# Default dev cluster for the cluster, flux, and dev tasks. Every
+# cluster name must start with CUR8S_COMPONENT- (cluster:* refuse others).
 CLUSTER_NAME = "flux-dev"
+# Ephemeral cluster for test:run and test:destroy.
+TEST_CLUSTER_NAME = "flux-e2e"
+# Repo-local, git-ignored kubeconfig: k3d writes this repo's clusters
+# here, and kubectl and flux read only it, so no task can reach a
+# cluster this repo did not create.
+KUBECONFIG = "{{config_root}}/.kube/config"
