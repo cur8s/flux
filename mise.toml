@@ -7,29 +7,32 @@
 # FLUX_VERSION. mise.lock pins each tool's download checksums.
 #
 # Task grammar: <object>:<action>. Objects:
+#   upstream  the tracked upstream release: fetch captures it unmodified
+#             under src/<component>/artifacts/; check reports newer ones.
+#   build     the reviewable artifact tree: clean deletes generated
+#             output only; render cleans, then regenerates oci/<component>/
+#             from the captured inputs, never fetching.
 #   cluster   pure k3d lifecycle: a cluster and its local OCI registry,
 #             nothing installed on it.
-#   flux      Flux on a cluster: bootstrap installs it (here from the
-#             local render; in other component repos from the published
-#             Flux release), status shows its resources.
+#   flux      Flux on a cluster: boot installs it (here from the local
+#             render; in other component repos from the published Flux
+#             release), status shows its resources.
 #   artifact  the thing this repo ships, keyed on CUR8S_COMPONENT:
-#             fetch + render (component-specific) -> build -> push ->
-#             deploy (point Flux at it) -> verify (its Kustomization is
-#             Ready). artifact:push is the single choke point through
-#             which every artifact leaves the repo.
-#   test      the product contract: test:drift proves the committed oci/
-#             tree matches a fresh build; test:e2e runs build -> cluster
-#             -> bootstrap -> push -> deploy -> verify on an ephemeral
+#             push -> deploy (point Flux at it) -> verify (its
+#             Kustomization is Ready). artifact:push is the single choke
+#             point through which every artifact leaves the repo.
+#   test      the product contract: test:drift proves the committed tree
+#             matches a fresh fetch + render; test:e2e runs render ->
+#             cluster -> boot -> push -> deploy -> verify on an ephemeral
 #             cluster.
-#   upstream  the tracked upstream release.
 # release — the repo-level act of publishing the versioned artifact —
-# takes no object segment. Only flux:bootstrap, artifact:fetch, and
-# artifact:render are specific to this component; the rest are meant to
-# be identical across cur8s component repos.
+# takes no object segment. Only upstream:fetch, build:render, and
+# flux:boot are specific to this component; the rest are meant to be
+# identical across cur8s component repos.
 #
 # Every task is an executable shell script under .mise/tasks/
-# (directories namespace the names: .mise/tasks/artifact/fetch ->
-# artifact:fetch). Supporting files (k3d-config.yaml, any shared
+# (directories namespace the names: .mise/tasks/upstream/fetch ->
+# upstream:fetch). Supporting files (k3d-config.yaml, any shared
 # scripts) live elsewhere under .mise/ so they never become tasks. Tasks
 # run from the repo root and declare arguments in #USAGE headers, so
 # `mise run <task> --help` documents them.
@@ -59,7 +62,7 @@ CUR8S_FLUX_REVISION = "1"
 FLUX_TAG = '{% if env.FLUX_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="FLUX_VERSION must be a stable SemVer (for example 2.9.0)") }}{% endif %}v{{ env.FLUX_VERSION }}'
 CUR8S_FLUX_VERSION = '{% if env.CUR8S_FLUX_REVISION is not matching(pat="^[1-9][0-9]*$") %}{{ throw(message="CUR8S_FLUX_REVISION must be a positive integer") }}{% endif %}{{ env.FLUX_TAG }}{% if env.CUR8S_FLUX_REVISION != "1" %}-{{ env.CUR8S_FLUX_REVISION }}{% endif %}'
 # Component identity facts — the single authoring point for
-# self-description (docs/architecture.md). artifact:render writes them
+# self-description (docs/architecture.md). build:render writes them
 # into the cur8s.yaml descriptor; artifact:push attaches them as
 # cur8s.io/* OCI annotations.
 CUR8S_COMPONENT = "flux"

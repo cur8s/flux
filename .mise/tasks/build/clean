@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#MISE description="Delete the generated artifact tree (oci/<component>/); never touches fetched or authored inputs"
+set -euo pipefail
+rm -rf "oci/$CUR8S_COMPONENT"
+echo "🧹 removed oci/$CUR8S_COMPONENT/"

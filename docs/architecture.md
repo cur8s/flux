@@ -17,7 +17,7 @@ source has been declared.
 
 `FLUX_VERSION` and `CUR8S_FLUX_REVISION` in the `mise.toml` `[env]` section are the only authored
 version source: the upstream Flux version and a Cur8s configuration revision. The Flux tool pin
-follows `FLUX_VERSION`. `artifact:fetch` runs that pinned Flux CLI with the three permitted
+follows `FLUX_VERSION`. `upstream:fetch` runs that pinned Flux CLI with the three permitted
 controllers and stores the upstream manifest in `src/flux/artifacts/`. That tree is generated
 upstream input, not an authored install.
 
@@ -26,9 +26,10 @@ The authored opinion is deliberately small:
 - `src/flux/config/overlays/deploy/` composes the fetched manifest with metadata-only Cur8s marks.
 - `src/flux/config/sync.yaml` defines the self-management `Kustomization`.
 
-`artifact:render` uses Kustomize to produce `oci/flux/deploy/flux.yaml`, copies `sync.yaml`, and
-writes the inert `cur8s.yaml` release descriptor. The complete `oci/flux/` tree is committed
-intentionally: it is the review surface and the exact content later pushed as an OCI artifact.
+`build:render` clears the generated tree with `build:clean`, then uses Kustomize to produce
+`oci/flux/deploy/flux.yaml`, copies `sync.yaml`, and writes the inert `cur8s.yaml` release
+descriptor. The complete `oci/flux/` tree is committed intentionally: it is the review surface and
+the exact content later pushed as an OCI artifact.
 
 ```text
 mise.toml version + pinned Flux CLI + source configuration
@@ -77,28 +78,30 @@ of metadata obtain their shared component facts from the `[env]` section of `mis
 command reference and defines the `<object>:<action>` grammar. The important lifecycle is:
 
 ```text
-artifact:build (fetch → render) ─┬─ test:drift
-                                 │
-cluster:create → flux:bootstrap → artifact:push → artifact:deploy → artifact:verify
-                                 ▲
-                              test:e2e
+upstream:fetch → build:render ─┬─ test:drift
+                               │
+cluster:create → flux:boot → artifact:push → artifact:deploy → artifact:verify
+                               ▲
+                            test:e2e
 ```
 
-`cluster` is pure k3d lifecycle: a cluster and its local registry with nothing installed.
-`flux:bootstrap` installs Flux from the locally rendered manifest. `artifact:deploy` supplies the
-`OCIRepository` and applies the artifact's `sync.yaml`, and `artifact:verify` waits for that
-`Kustomization` to become Ready; because `sync.yaml` sets `wait: true`, Ready means Flux has
-health-checked every resource the artifact applied. Only `flux:bootstrap`, `artifact:fetch`, and
-`artifact:render` are specific to this component, so other Cur8s component repositories can share
-the remaining tasks.
+`upstream:fetch` is the only step that reaches for upstream; `build:render` works from the captured
+inputs alone, so outputs can be regenerated and diffed without re-fetching. `cluster` is pure k3d
+lifecycle: a cluster and its local registry with nothing installed. `flux:boot` installs Flux from
+the locally rendered manifest. `artifact:deploy` supplies the `OCIRepository` and applies the
+artifact's `sync.yaml`, and `artifact:verify` waits for that `Kustomization` to become Ready;
+because `sync.yaml` sets `wait: true`, Ready means Flux has health-checked every resource the
+artifact applied. Only `upstream:fetch`, `build:render`, and `flux:boot` are specific to this
+component, so other Cur8s component repositories can share the remaining tasks.
 
-`test:drift` rebuilds and proves that the committed `oci/` tree and fetched upstream manifest
-match the pins. `test:e2e` runs that whole sequence on an ephemeral k3d cluster: Flux installs
-from this repository's render and then takes over managing itself from the pushed artifact. This is
-both the package's release gate and its semantic compatibility check for the generated manifest:
-the repository does not hand-author the Flux controller installation and therefore cannot repair a
-static schema failure independently of changing the Flux or Kubernetes version. Deployments that
-combine this artifact with other components own their broader integration verification.
+`test:drift` re-fetches and re-renders, and proves that the committed `oci/` tree and fetched
+upstream manifest match the pins. `test:e2e` runs that whole sequence on an ephemeral k3d cluster:
+Flux installs from this repository's render and then takes over managing itself from the pushed
+artifact. This is both the package's release gate and its semantic compatibility check for the
+generated manifest: the repository does not hand-author the Flux controller installation and
+therefore cannot repair a static schema failure independently of changing the Flux or Kubernetes
+version. Deployments that combine this artifact with other components own their broader integration
+verification.
 
 ## Bootstrap, publication, and self-management
 

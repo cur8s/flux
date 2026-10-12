@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
-#MISE description="Generate the tracked Flux install manifest (offline, via flux CLI)"
+#MISE description="Capture the pinned upstream Flux install manifest under src/flux/artifacts/ (offline, via flux CLI)"
 set -euo pipefail
-out=src/flux/artifacts/fetched/manifests/flux.yaml
+# Replaces the previously captured release; build:render consumes it.
+dir=src/flux/artifacts/fetched
+out="$dir/manifests/flux.yaml"
 echo "🔽 Generating Flux ${FLUX_TAG} install manifest (source/kustomize/notification)..."
+rm -rf "$dir"
 mkdir -p "$(dirname "$out")"
 flux install \
   --components=source-controller,kustomize-controller,notification-controller \

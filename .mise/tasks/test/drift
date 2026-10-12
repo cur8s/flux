@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 #MISE description="Prove the committed oci/ tree + fetched manifest match a fresh build (the review-surface gate)"
-#MISE depends=["artifact:build"]
 set -euo pipefail
+# Fetch then render, in order (mise depends would run them in parallel).
+mise run upstream:fetch
+mise run build:render
 # The committed oci/ tree is the review surface: what is in git must be
 # exactly what the pipeline produces from src/. A fresh build that leaves
 # the working tree dirty means the render and the commit have diverged.

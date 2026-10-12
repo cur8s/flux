@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Full ephemeral proof: build → cluster → bootstrap → push → deploy → verify"
+#MISE description="Full ephemeral proof: render → cluster → boot → push → deploy → verify"
 #USAGE arg "[cluster]" help="Ephemeral cluster name (default: <component>-e2e)"
 set -euo pipefail
 # On success the cluster is deleted; on failure it is preserved for debugging.
@@ -18,9 +18,9 @@ cleanup() {
 }
 trap cleanup EXIT
 
-mise run artifact:build
+mise run build:render
 mise run cluster:create "$cluster"
-mise run flux:bootstrap "$cluster"
+mise run flux:boot "$cluster"
 mise run artifact:push --cluster "$cluster" --tag e2e
 mise run artifact:deploy --cluster "$cluster" --tag e2e
 mise run artifact:verify --cluster "$cluster"

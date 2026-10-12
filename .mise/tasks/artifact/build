@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-#MISE description="Clean, fetch, and render: the full artifact build"
-set -euo pipefail
-rm -rf "src/$CUR8S_COMPONENT/artifacts" "oci/$CUR8S_COMPONENT"
-mise run artifact:fetch
-mise run artifact:render

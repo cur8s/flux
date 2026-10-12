@@ -64,6 +64,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 !**/src/testFixtures/**/build/
+# The build:* mise task namespace, not build output.
+!/.mise/tasks/build/
 
 ### Maven ###
 target/

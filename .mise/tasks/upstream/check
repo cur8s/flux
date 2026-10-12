@@ -7,5 +7,5 @@ echo "latest:  $latest"
 if [ "$FLUX_TAG" = "$latest" ]; then
   echo "✅ up to date"
 else
-  echo "⚠️  update available: bump FLUX_VERSION in mise.toml, refresh mise.lock with 'mise lock --platform linux-x64,linux-arm64,macos-x64,macos-arm64', then 'mise run artifact:build' and 'mise run test:e2e'"
+  echo "⚠️  update available: bump FLUX_VERSION in mise.toml, refresh mise.lock with 'mise lock --platform linux-x64,linux-arm64,macos-x64,macos-arm64', then 'mise run upstream:fetch', 'mise run build:render', and 'mise run test:e2e'"
 fi

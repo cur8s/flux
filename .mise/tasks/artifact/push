@@ -7,7 +7,7 @@ set -euo pipefail
 # Every artifact that leaves this repo — dev push or release — goes
 # through this task: the single insertion point for OCI metadata.
 artifact="oci/$CUR8S_COMPONENT"
-[ -d "$artifact" ] || { echo "❌ $artifact/ not built (run 'mise run artifact:build')" >&2; exit 1; }
+[ -d "$artifact" ] || { echo "❌ $artifact/ not built (run 'mise run build:render')" >&2; exit 1; }
 
 registry="${usage_registry:-}"
 if [ -z "$registry" ]; then
