@@ -17,7 +17,7 @@ explaining its mechanisms; let readers consult procedures and standards as their
 | --- | --- | --- |
 | [`product/`](product/README.md) | Audience, problem, intended value, pre-rendered-manifest philosophy, and the package's supported surface and boundaries. | Explain purpose and choices, with their rationale. |
 | [`architecture/`](architecture/README.md) | Package boundary, source-to-artifact pipeline, artifact contents and metadata, publication, and self-management. | Explain responsibilities, mechanisms, and invariants. |
-| `how-to/` | Local development, bootstrap, operation, upgrades, and recovery. | Give prerequisites, actions, and observable results. |
+| [`how-to/`](how-to/00-local-development.md) | Local development, bootstrap, operation, upgrades, and recovery. | Give prerequisites, actions, and observable results. |
 | `standards/` | Agreed technical conventions and the reasons for them. | State rules, their scope, rationale, and examples. |
 
 Use two-digit filename prefixes to suggest reading order within each category, starting at `00`.
@@ -51,6 +51,7 @@ repository README and other documents.
 | [Pre-rendered manifests](product/01-pre-rendered-manifests.md) | Why artifacts are constructed before deployment, and the constraints on runtime composition and declared values. |
 | [The package's opinion](product/02-the-opinion.md) | Controller selection, source recommendations, exclusions, and the unresolved Receiver webhook contract. |
 | [User guide](user-guide.md) | Bootstrap, operation, upgrades, recovery, and their verification. |
+| [Local development](how-to/00-local-development.md) | Toolchain setup, rendering, candidate environments, committed-tree verification, and lockfile refresh. |
 | [Architecture overview](architecture/00-overview.md) | Package and consumer responsibilities, bootstrap, and the current and intended self-management boundaries. |
 | [From source to artifact](architecture/01-source-to-artifact.md) | Pinned inputs, explicit upstream capture, rendering, committed output, and verification boundaries. |
 | [Artifact contents and metadata](architecture/02-artifact-contents-and-metadata.md) | Applied content, descriptor fields, publication annotations, and file versus OCI identity. |

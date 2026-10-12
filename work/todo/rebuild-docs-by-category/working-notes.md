@@ -2,11 +2,10 @@
 
 ## Selected scope
 
-The owner requested commits for the documentation created in this session, accepting the
-[architecture reading path](../../../docs/architecture/README.md). The reviewed product and
-architecture documents now have individual commits. Commit their consolidation and reference
-repairs without including the concurrent task migration. The remaining rebuild work is how-to
-guides, standards, and final navigation and consistency checks, as recorded in the [plan](plan.md).
+The owner accepted [Local development](../../../docs/how-to/00-local-development.md) and explicitly
+requested its commit, including the README and agent navigation. The tested guide and its work
+record are committed together. Subsequent operator guides, standards, and final consistency checks
+remain in the [plan](plan.md).
 
 ## Agreed direction
 
@@ -20,8 +19,8 @@ governs the directory README. References into work material stay within work mat
 - Adapted the documentation strategy from
   `/Users/adib/dev/asaikali/sales-agent/docs/README.md`, retaining the category responsibilities,
   reading progression, writing forms, and maintenance principles relevant to this package.
-- The live reading path now uses the product vision, with the flat user guide, architecture, and
-  entry-files standard. Preserve their reading path while the collection is rebuilt.
+- The product and architecture collections are committed; the flat user guide retains operator
+  procedures. Preserve their reading path while the remaining guides are rebuilt.
 - The [source index](sources/README.md) identifies the preserved Flux and monorepo documents for
   later drafts. The monorepo layer model is superseded.
 
@@ -243,3 +242,28 @@ plan. Concurrent implementation changes and their staging are preserved; no push
 | `docs/architecture/03-publication-and-self-management.md` | `20716a9` |
 | `docs/architecture/README.md` | `de4bc79` |
 | `docs/README.md` | `d699fc4` |
+
+## Local development guide accepted for commit
+
+- Read the current scripts and architecture after layout commit `0a73317`. Use upstream/flux.yaml,
+  src/config/, and artifacts/rendered/. Whole-tree artifacts cleanup preserves captured and authored
+  inputs; local packaging remains future work.
+- Adapt setup and lock refresh from the [preserved contribution guide](sources/flux/CONTRIBUTING.md),
+  replacing its old split verification tasks with the current combined test:run workflow.
+- Distinguish uncommitted candidate testing with dev:create from the committed-tree prerequisite in
+  test:run. The latter checks staged changes as well and stops before cluster creation on drift.
+- The current tasks load the repository-local kubeconfig and target explicit named contexts. Use
+  mise exec for direct kubectl inspection; show flux-prefixed, disposable names in examples.
+- Verified available task names and the dev:create, test:run, test:destroy, and oci:publish help.
+  Verified the installed mise lock help accepts comma-separated platforms. Docker is available;
+  the initial cluster inventory contained only cur8s-dev, which this task must preserve.
+- Validated `mise run test:run flux-check`: fresh capture and render matched Git, the disposable
+  cluster booted Flux, local OCI publication succeeded, and the source and self-management
+  Kustomization reached Ready. The task exited successfully and removed its cluster and registry.
+  Verified cur8s-dev remained present and the recorded upstream/rendered trees were unchanged.
+- Guide links, local anchors, task names, shell-example syntax, reference boundary, and whitespace
+  checks passed. Setup and lock-refresh syntax was checked against the installed CLI; no tool pin
+  was changed and the lockfile was not rewritten. Candidate inspection/reconciliation examples
+  were checked against their scripts and help, rather than exercised on a second cluster.
+- The owner accepted the guide by explicitly requesting its commit. Its navigation and work record
+  are included with the guide; no push or remote publication was requested or performed.

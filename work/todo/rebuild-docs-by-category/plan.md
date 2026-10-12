@@ -33,16 +33,19 @@ phases keep their outcome until they start, so what the product phase teaches ca
 
 `docs/how-to/` holds task guides with prerequisites, actions, and observable results — at least
 the operator procedures still in `docs/user-guide.md` (bootstrap, operation, upgrade, recovery),
-after which `user-guide.md` is deleted. Steps are added when the phase starts.
+after which `user-guide.md` is deleted.
 
-**Known gap this phase closes:** removing `CONTRIBUTING.md` left setup and verification procedures
-without a home. The concurrent task migration now combines drift and cluster verification in
-`test:run`; write the current workflow from the live scripts rather than copying the old split
-gate names. Include `git diff --check`, refreshing `mise.lock` for version or pin changes, and
-first-run setup (`mise trust`, `mise install`, a running Docker daemon). Add the local development
-guide to the root README's reading order and point `AGENTS.md` at it. Earlier verification and
-setup guidance is preserved in
-[`sources/flux/CONTRIBUTING.md`](sources/flux/CONTRIBUTING.md).
+[Local development](../../../docs/how-to/00-local-development.md) now owns setup, rendering,
+candidate environments, verification, and lockfile refresh. The owner accepted it for commit after
+its combined test passed on the disposable `flux-check` cluster, which was removed with its registry.
+
+Remaining guides cover bootstrap, normal operation, upgrades, and recovery. Select their document split
+and detail each one's steps as it starts. Retire the user guide only after its procedures have
+accepted replacements, and add a how-to reading path if the collection benefits from one.
+
+The setup and verification gap left by removing `CONTRIBUTING.md` is closed by that guide and its
+README/agent navigation. Earlier guidance remains preserved in
+[`sources/flux/CONTRIBUTING.md`](sources/flux/CONTRIBUTING.md); its old task names are historical.
 
 The directory layout is now implemented and the current architecture explanations and reading
 links reflect it. The how-to phase must use `upstream/flux.yaml`, `src/config/`, and
