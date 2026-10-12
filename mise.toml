@@ -68,7 +68,8 @@ CUR8S_FLUX_REVISION = "1"
 FLUX_TAG = '{% if env.FLUX_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="FLUX_VERSION must be a stable SemVer (for example 2.9.0)") }}{% endif %}v{{ env.FLUX_VERSION }}'
 CUR8S_FLUX_VERSION = '{% if env.CUR8S_FLUX_REVISION is not matching(pat="^[1-9][0-9]*$") %}{{ throw(message="CUR8S_FLUX_REVISION must be a positive integer") }}{% endif %}{{ env.FLUX_TAG }}{% if env.CUR8S_FLUX_REVISION != "1" %}-{{ env.CUR8S_FLUX_REVISION }}{% endif %}'
 # Component identity facts — the single authoring point for
-# self-description (docs/architecture.md). build:render writes them
+# self-description (docs/architecture/02-artifact-contents-and-metadata.md).
+# build:render writes them
 # into the cur8s.yaml descriptor; oci:publish attaches them as
 # cur8s.io/* OCI annotations.
 CUR8S_COMPONENT = "flux"

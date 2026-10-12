@@ -2,7 +2,7 @@
 # (documented in docs/user-guide.md): the OCI artifact to ghcr.io/cur8s/flux:<version> and the
 # rendered install manifest as the GitHub release asset install.yaml.
 # Publication is gated on a green e2e for the tagged commit, as documented
-# in docs/architecture.md.
+# in docs/architecture/03-publication-and-self-management.md.
 name: release
 
 on:

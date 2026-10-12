@@ -10,8 +10,18 @@ architecture is superseded by the one-component-per-repository direction.
 | [`monorepo/`](monorepo/) | `~/dev/cur8s/monorepo-cur8s`, `docs/` | commit `a4eb317`, 2026-10-11 |
 | [`flux/CONTRIBUTING.md`](flux/CONTRIBUTING.md) | `cur8s/flux` repository, root `CONTRIBUTING.md`, removed in `639c197` | commit `22ba4ba`, 2026-10-11 |
 
-The `flux/` files are copies; the live originals in `docs/` remain authoritative until the step
-that replaces each one deletes it.
+The `flux/` files are preserved copies. The accepted
+[product vision](../../../../docs/product/00-vision.md) replaces the original flat vision document.
+The accepted [rendering philosophy](../../../../docs/product/01-pre-rendered-manifests.md) and
+[package opinion](../../../../docs/product/02-the-opinion.md) now own the corresponding user-guide
+subjects. The live user guide retains installation and operation. The accepted
+[architecture overview](../../../../docs/architecture/00-overview.md) owns the package boundary,
+and [From source to artifact](../../../../docs/architecture/01-source-to-artifact.md) owns capture,
+rendering, and drift verification. The accepted
+[metadata explanation](../../../../docs/architecture/02-artifact-contents-and-metadata.md) owns
+artifact content and identity. The accepted
+[publication explanation](../../../../docs/architecture/03-publication-and-self-management.md)
+owns runtime and publication details; the flat architecture has been retired.
 
 Most relevant monorepo material for the product phase:
 

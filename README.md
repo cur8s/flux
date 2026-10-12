@@ -19,6 +19,8 @@ at runtime.
 
 ## Read next
 
-1. [Vision](docs/vision.md): why the package exists and what it deliberately excludes.
-2. [User guide](docs/user-guide.md): the supported surface, bootstrap, operation, and upgrades.
-3. [Architecture](docs/architecture.md): how the source becomes the published artifact.
+1. [Vision](docs/product/00-vision.md): why the package exists and what it deliberately excludes.
+2. [Pre-rendered manifests](docs/product/01-pre-rendered-manifests.md): which decisions resolve before deployment and what reconciliation may compose.
+3. [The package's opinion](docs/product/02-the-opinion.md): installed controllers, source recommendations, and capability boundaries.
+4. [User guide](docs/user-guide.md): bootstrap, operation, upgrades, and recovery.
+5. [Architecture overview](docs/architecture/00-overview.md): package ownership, bootstrap, and self-management.

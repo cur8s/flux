@@ -159,7 +159,7 @@ The currently checked-in interface is **not** the proposed one. In particular, t
 
 Suggested migration sequence:
 
-1. Inventory existing task entry points, their callers, task arguments, documentation, tests and CI workflows. Read [`../../../mise.toml`](../../../mise.toml), [`../../../docs/architecture.md`](../../../docs/architecture.md) and [`../plan-lifecycle-implementation/overview.md`](../plan-lifecycle-implementation/overview.md).
+1. Inventory existing task entry points, their callers, task arguments, documentation, tests and CI workflows. Read [`../../../mise.toml`](../../../mise.toml), [the architecture overview](../../../docs/architecture/00-overview.md) and [`../plan-lifecycle-implementation/overview.md`](../plan-lifecycle-implementation/overview.md).
 2. Preserve the current working Flux installation and release behavior while changing names; do not combine a task-interface refactor with unnecessary controller changes.
 3. Implement `upstream:fetch` by adapting the existing fetch logic, ensuring fetched input is not deleted as a side effect of `build:render` or `build:clean`.
 4. Implement `build:clean` and `build:render`; have render clean and transform the checked-in inputs without contacting upstream. Update or adapt drift verification.

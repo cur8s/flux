@@ -26,7 +26,8 @@ fi
 url="oci://${registry}/${CUR8S_COMPONENT}:${usage_tag}"
 echo "📦 $url"
 # The same identity facts the descriptor asserts, readable from the
-# registry without pulling the artifact; see docs/architecture.md. Source and
+# registry without pulling the artifact; see
+# docs/architecture/02-artifact-contents-and-metadata.md. Source and
 # revision ride flux push's standard OCI annotations — they are
 # push-time facts, deliberately absent from the committed descriptor.
 flux push artifact "$url" \
