@@ -42,3 +42,9 @@ current docs and `mise.toml`, and is in Git history before the commit that trimm
 - The `docs/README.md` strategy document is written first, short and adapted, and refined at the
   end.
 - The `product/` file list is revisited once the vision is agreed.
+
+**Current implemented layout:** architecture and navigation now describe captured inputs under
+`upstream/`, authored configuration under `src/config/`, and disposable generated output under
+`artifacts/`, with the rendered subtree committed and future local OCI packaging ignored.
+The [layout working notes](../design-component-lifecycle/working-notes.md) preserve the selected
+scope. How-to replacement, standards, and final documentation consistency work remain open.

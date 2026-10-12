@@ -13,7 +13,7 @@ mise run oci:publish --cluster "$name" --tag "$usage_tag"
 # sources from, then sync.yaml. Bumping the tag is how the cluster upgrades.
 flux --context "k3d-$name" create source oci "$c" \
   --url "oci://$name-registry:5000/$c" --tag "$usage_tag" --insecure --interval 1m
-kubectl --context "k3d-$name" apply -f "oci/$c/sync.yaml"
+kubectl --context "k3d-$name" apply -f artifacts/rendered/sync.yaml
 # sync.yaml sets wait: true, so Ready means Flux health-checked every
 # resource the artifact applied.
 kubectl --context "k3d-$name" -n flux-system wait --for=condition=Ready --timeout=5m \

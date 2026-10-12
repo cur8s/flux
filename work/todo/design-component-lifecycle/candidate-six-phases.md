@@ -1,5 +1,9 @@
 # Candidate: six chained phases
 
+> Historical design input: local directory examples below predate the
+> [decided and implemented layout](working-notes.md). Preserve the proposal body as provenance;
+> follow the later layout decision for current paths. Broader lifecycle questions remain open.
+
 A candidate design proposed while planning, formerly the `adopt-lifecycle-phases` todo. It is one
 option to evaluate against the agreed goals and invariants, not a decision.
 

@@ -176,3 +176,6 @@ $RECYCLE.BIN/
 .claude/*
 !.claude/skills
 CLAUDE.local.md
+
+# Future locally packaged OCI output; rendered manifests remain committed.
+/artifacts/oci/

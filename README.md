@@ -24,3 +24,4 @@ at runtime.
 3. [The package's opinion](docs/product/02-the-opinion.md): installed controllers, source recommendations, and capability boundaries.
 4. [User guide](docs/user-guide.md): bootstrap, operation, upgrades, and recovery.
 5. [Architecture overview](docs/architecture/00-overview.md): package ownership, bootstrap, and self-management.
+6. [From source to artifact](docs/architecture/01-source-to-artifact.md): captured inputs, authored configuration, disposable output, and regeneration checks.

@@ -5,6 +5,13 @@ from one place without losing their content. Each section keeps the note's summa
 written; the originals are in Git history before the commit that folded them in. Links inside
 them may point at notes that no longer exist; treat them as historical.
 
+**Current path translation:** the original input bodies below are preserved as history. The
+implemented layout now captures input in `upstream/flux.yaml`, authors config in `src/config/`,
+and reviews rendered output in `artifacts/rendered/`. Old `oci/` review references mean that
+rendered tree; future local OCI packaging belongs in ignored `artifacts/oci/`. Use the current
+`test:run` for the combined drift and cluster gate. This layout change completes none of the
+remaining input requirements below.
+
 ## Kubernetes test runtime pinning
 
 Formerly `pin-kubernetes-test-runtime`. Test the Cur8s Kubernetes N-1 target on its latest patch, selected once for both k3s and kubectl.

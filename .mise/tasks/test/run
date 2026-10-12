@@ -3,9 +3,9 @@
 #USAGE arg "[cluster]" env="TEST_CLUSTER_NAME" help="Ephemeral cluster name"
 set -euo pipefail
 cluster="$usage_cluster"
-paths=("oci/$CUR8S_COMPONENT" "src/$CUR8S_COMPONENT/artifacts")
+paths=(artifacts/rendered upstream)
 
-# Drift: the committed oci/ tree is the review surface, so a fresh fetch +
+# Drift: the committed artifacts/rendered/ tree is the review surface, so a fresh fetch +
 # render must leave it (and the fetched input) unchanged. Commit a
 # re-render before running the test.
 mise run upstream:fetch

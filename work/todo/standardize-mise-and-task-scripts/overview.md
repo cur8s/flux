@@ -28,3 +28,9 @@ task scripts, so the conventions decided here are what keep those copies consist
 depend on the general rules settled here, notably how to pin a tool that is not in mise's default
 registry or ships as a Flux plugin (flux-mirror, crane, oras) and whether tool versions may be
 derived from `[env]` templates (which affects whether Renovate can read the pins).
+
+**Implemented baseline for the review:** the owner separately agreed the repository layout and
+its task path migration. Captured input is in `upstream/`, authored config in `src/config/`, and
+rendered output in `artifacts/rendered/`; `build:clean` deletes all of `artifacts/`. `.mise/README.md`
+orients task tooling. The reserved ignored `artifacts/oci/` path adds no packaging task or settled
+mise convention. Review mechanics from the current scripts; the systematic review remains open.

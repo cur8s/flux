@@ -1,5 +1,9 @@
 <!-- Provenance: the owner's lifecycle proposal, copied from ~/Downloads/cur8s-component-lifecycle-proposal.md on 2026-10-11 and recorded here unedited. Its relative links assume this location. -->
 
+> Historical design input: local directory examples below predate the
+> [decided and implemented layout](working-notes.md). Preserve the proposal body as provenance;
+> follow the later layout decision for current paths. Broader lifecycle questions remain open.
+
 # Proposal: Consistent component lifecycle across Cur8s repositories
 
 **Status:** Proposed — design direction agreed in discussion; unresolved details are explicitly identified below.  

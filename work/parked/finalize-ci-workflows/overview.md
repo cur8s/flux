@@ -18,7 +18,11 @@ Restoring them is part of this work:
 - `release.yml` runs on a `v*` tag: checks the tag matches the package version, runs e2e, logs in
   to ghcr, publishes the OCI artifact, and creates the GitHub release with `install.yaml`.
 
-Both call today's task names, which the lifecycle design and its implementation will change.
+The preserved workflow sources retain historical task and path examples. On resumption, adapt
+callers to the current task interface and implemented layout: captured `upstream/flux.yaml`,
+authored `src/config/`, and committed `artifacts/rendered/`, with ignored `artifacts/oci/` reserved
+for future packaging. `build:clean` removes the whole output tree. Local packaging and tested-digest
+promotion remain unfinished; restoring CI must not assume they are already implemented.
 
 When picking this up, also gather the CI concerns recorded elsewhere so far:
 

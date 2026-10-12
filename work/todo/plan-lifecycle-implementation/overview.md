@@ -19,8 +19,10 @@ summary: "Once the component lifecycle is documented, work out interactively how
 - The design todo's [requirements](../design-component-lifecycle/requirements.md) — traceable
   fetching, tested-equals-published packaging, safe publication, owned images — and their
   implementation detail are inputs here too.
-- Implementing the agreed directory layout includes a short README inside each major directory
-  (for example `oci/` and `src/`) explaining its purpose, since directories explain themselves
-  rather than relying on a central layout description. Any `oci/` README sits outside the
-  component's artifact directory so it is not packaged.
+- The agreed directory layout is implemented: `upstream/flux.yaml`, `src/config/`, and committed
+  `artifacts/rendered/`, with all generated output disposable under `artifacts/`. Short authored
+  READMEs orient upstream, src, and mise tooling; generated output is documented outside it.
+  [Layout working notes](../design-component-lifecycle/working-notes.md) record the decision.
+  Local OCI packaging in ignored `artifacts/oci/` remains unfinished and belongs in the future
+  implementation sequence, alongside reproducibility and tested-digest promotion.
 - The result is a new, ordered sequence of implementation todos that replaces this note.

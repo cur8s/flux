@@ -6,6 +6,11 @@ the lifecycle must satisfy. Each section keeps the requirement, its open design 
 (candidate experiments), and the implementation detail that follow-up todos will need. Their
 original notes are in Git history before the commit that folded them in.
 
+The [layout decision](working-notes.md) is implemented: captured input is outside disposable
+output, renders are committed under `artifacts/rendered/`, and `artifacts/oci/` is the reserved
+ignored destination for future local packaging. These lifecycle requirements remain unfinished;
+reserving a path does not implement packaging, provenance records, or tested-digest promotion.
+
 ## Traceable fetching
 
 **Requirement:** for any version it must be clear exactly what was downloaded from upstream.
@@ -15,7 +20,7 @@ original notes are in Git history before the commit that folded them in.
   cert-manager and later components download Helm charts and release files from remote
   registries, where a digest is the only evidence an input did not change.
 - One small, uniform record, written when fetching, listing each input's source, version, and
-  digest (name and format open; `src/<component>/artifacts/FETCH.lock` is a reasonable default).
+  digest (name and format open; `upstream/FETCH.lock` is a candidate alongside the captured inputs).
   For Flux: the pinned CLI version and the generated manifest's digest.
 - Include the container images the rendered manifests reference, each with its upstream digest.
   This answers "what will this version run?" and is the input list for owned images.
@@ -32,11 +37,11 @@ and how it is pinned.
 published. Today e2e pushes one artifact to the dev registry and release pushes a separately
 built one, so the published digest is never the tested one.
 
-- Write the artifact to a git-ignored `dist/` (an OCI image layout or equivalent) and record its
+- Write the artifact to a git-ignored `artifacts/oci/` (an OCI image layout or equivalent) and record its
   digest. E2e copies it into the throwaway cluster's registry; publishing copies the same artifact
   to `ghcr.io/cur8s/<component>:<version>`.
 - Keep OCI metadata in one place: whatever builds the artifact owns the annotations
-  `artifact:push` attaches today (`cur8s.io/*`, source, revision).
+  `oci:publish` attaches today (`cur8s.io/*`, source, revision).
 
 **Open questions / experiments** (local registries only):
 
@@ -45,7 +50,7 @@ built one, so the published digest is never the tested one.
 - Whether the artifact keeps the media types `flux push artifact` produces, so `OCIRepository`
   accepts it without a `layerSelector`. Inspect today's pushed manifest, config, and layer media
   types and annotations first.
-- Whether packaging the same `oci/` tree twice yields the same digest; fix inputs (fixed
+- Whether packaging the same `artifacts/rendered/` tree twice yields the same digest; fix inputs (fixed
   timestamps, sorted tar) rather than accept a changing digest.
 - Copy a packaged layout into a k3d registry and confirm Flux fetches it and self-management
   becomes Ready.
@@ -64,8 +69,8 @@ Implementation detail for follow-up:
   writing anything.
 - **Partial success:** publication order, idempotent retry, and an explicit recovery procedure
   when one channel succeeds and the other fails, without retagging.
-- **Post-publish verification:** the published OCI digest equals the tested `dist/` digest, the
-  annotations are present, and `install.yaml` matches `oci/flux/deploy/flux.yaml`.
+- **Post-publish verification:** the published OCI digest equals the tested local `artifacts/oci/` digest, the
+  annotations are present, and `install.yaml` matches `artifacts/rendered/deploy/flux.yaml`.
 - **CI safety:** per-version concurrency that never cancels an in-progress publication;
   third-party actions pinned to immutable revisions; the tag check in `release.yml` keeps matching
   the version mise derives.
@@ -88,7 +93,7 @@ packages are public.
 - So the work splits in three: **discover** (the image list from traceable fetching), **copy**
   (generate the flux-mirror config from that list and mirror exactly those versions), and
   **rewrite** (at render time, point each image reference at its `ghcr.io/cur8s/...@sha256:` copy,
-  for example with kustomize `images:`, keeping manifests static). The committed `oci/` diff then
+  for example with kustomize `images:`, keeping manifests static). The committed `artifacts/rendered/` diff then
   shows which images, by digest, each version runs.
 - **Lifecycle consequence:** because rendered manifests reference the mirror, mirroring must
   happen before e2e, not at publish; mirroring by digest early publishes nothing whose meaning can

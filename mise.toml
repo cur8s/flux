@@ -8,9 +8,9 @@
 #
 # Task grammar: <object>:<action>. Objects:
 #   upstream  the tracked upstream release: fetch captures it unmodified
-#             under src/<component>/artifacts/; check reports newer ones.
+#             in upstream/flux.yaml; check reports newer ones.
 #   build     the reviewable artifact tree: clean deletes generated
-#             output only; render cleans, then regenerates oci/<component>/
+#             output in artifacts/; render cleans, then regenerates artifacts/rendered/
 #             from the captured inputs, never fetching.
 #   cluster   pure k3d lifecycle: a cluster and its local OCI registry,
 #             nothing installed on it. Names must start with
@@ -32,6 +32,9 @@
 #   oci       oci:publish is the single choke point through which every
 #             artifact leaves the repo: REGISTRY by default, or a
 #             cluster's local registry with --cluster.
+# artifacts/rendered/ is committed for review. artifacts/oci/ is reserved
+# for future local OCI packaging and ignored; no packaging task exists yet.
+# Captured inputs and authored configuration live in upstream/ and src/.
 # Only upstream:fetch, build:render, and flux:boot are specific to this
 # component; the rest are meant to be identical across cur8s component
 # repos.

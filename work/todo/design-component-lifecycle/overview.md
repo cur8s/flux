@@ -11,7 +11,7 @@ summary: "Identify the goals and invariants of a Cur8s component's build-to-publ
   try them out to see how they work, then choose.
 - The first step is to identify clearly the lifecycle's goals and its invariants, before any
   approach is chosen.
-- The todo is **document only**. It ends with agreed goals and invariants, the chosen design with
+- The remaining todo is **document only**. It ends with agreed goals and invariants, the chosen design with
   the alternatives considered, evidence from the experiments, and durable documentation.
   Implementation is planned afterwards by [Plan the lifecycle implementation](../plan-lifecycle-implementation/overview.md).
 - The monorepo at `~/dev/cur8s/monorepo-cur8s` is a reference for what the needs are — its Make
@@ -54,6 +54,15 @@ summary: "Identify the goals and invariants of a Cur8s component's build-to-publ
 - The earlier six-phase proposal, top-level Maven-style phases rather than namespaces, is kept as
   an alternative considered in [candidate: six chained phases](candidate-six-phases.md).
 
+**Directory layout decided and implemented:** the owner authorized this subset independently of
+finishing the lifecycle design. Captured input is `upstream/flux.yaml`, authored configuration is
+`src/config/`, and the committed rendered payload is `artifacts/rendered/`. `build:clean` deletes
+all of `artifacts/`; ignored `artifacts/oci/` is reserved for future local packaging. The
+[layout working notes](working-notes.md) record the decision and its limits. The
+[source-to-artifact explanation](../../../docs/architecture/01-source-to-artifact.md) documents the
+implemented contract. This settles directory placement, not OCI packaging, versioning, image
+ownership, promotion, or consumer ownership of sync.
+
 **Differences to reconcile** between the four proposals, the other todos, and the repository
 today — to resolve with the owner, not by assumption:
 
@@ -75,8 +84,8 @@ today — to resolve with the owner, not by assumption:
   version is already published to `ghcr.io/cur8s/flux`; if so, decide how the old and new version
   lines relate.
 - Self-management (decided, to apply): the consuming repository owns the `OCIRepository` and
-  `Kustomization`, but today's artifact ships `sync.yaml` (`src/flux/config/sync.yaml`,
-  `oci/flux/sync.yaml`). The [architecture overview](../../../docs/architecture/00-overview.md#intended-self-management-boundary)
+  `Kustomization`, but today's artifact ships `sync.yaml` (`src/config/sync.yaml`,
+  `artifacts/rendered/sync.yaml`). The [architecture overview](../../../docs/architecture/00-overview.md#intended-self-management-boundary)
   distinguishes this current layout from the intended ownership change. The user guide's bootstrap
   and recovery steps apply it, and the end-to-end test deploys it. The design must say where the
   end-to-end test's own self-management file lives, acting as the consuming repository.
@@ -120,8 +129,8 @@ or revise there:
 - Scripts stay tiny and obvious.
 - The directory layout is part of the design: each lifecycle step defines the directories it reads
   and writes, the layout is consistent across component repositories, and each directory's purpose
-  is obvious. Each major directory explains itself in its own README rather than through a central
-  layout description.
+  is obvious. Authored major directories explain themselves in short READMEs; generated output is
+  documented outside `artifacts/` so cleaning cannot delete authored content.
 
 The mise mechanics any design uses follow
 [`standardize-mise-and-task-scripts`](../standardize-mise-and-task-scripts/overview.md), which

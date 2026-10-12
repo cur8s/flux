@@ -19,6 +19,13 @@ interactively with the owner, stopping at each step. Keep decisions in a `workin
 todo. Write each new todo following the work README's naming and template rules; do not begin
 implementation.
 
+## Current baseline
+
+The owner separately authorized and implemented the repository layout. Inventory remaining
+work from `upstream/`, `src/config/`, and `artifacts/rendered/`; do not plan the old path migration
+again. Ignored `artifacts/oci/` reserves the future packaging destination only. Include packaging,
+reproducibility, digest promotion, sync ownership, and versioning as unfinished lifecycle work.
+
 ## Phases
 
 ### Phase 1: Inventory

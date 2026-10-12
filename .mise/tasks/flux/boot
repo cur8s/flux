@@ -6,5 +6,5 @@ set -euo pipefail
 # Here Flux is the product, so it bootstraps from this repo's render.
 # Server-side apply handles the large CRDs cleanly.
 ctx="k3d-$usage_name"
-kubectl --context "$ctx" apply --server-side -f oci/flux/deploy/flux.yaml
+kubectl --context "$ctx" apply --server-side -f artifacts/rendered/deploy/flux.yaml
 kubectl --context "$ctx" -n flux-system wait deploy --all --for=condition=Available --timeout=3m

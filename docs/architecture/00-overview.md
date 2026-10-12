@@ -21,10 +21,10 @@ the broader APIs they install are defined in [the package's opinion](../product/
 | Responsibility | Current owner | Implementation |
 | --- | --- | --- |
 | Upstream and package identity | Package repository | Version and identity declarations in [`mise.toml`](../../mise.toml). |
-| Controller installation | Package repository | Captured upstream manifests composed with [`source configuration`](../../src/flux/config/overlays/deploy/kustomization.yaml). |
-| Rendered deployment payload | Package repository | The committed [`oci/flux/`](../../oci/flux/) tree. |
+| Controller installation | Package repository | Captured upstream manifests composed with [`source configuration`](../../src/config/overlays/deploy/kustomization.yaml). |
+| Rendered deployment payload | Package repository | The committed [`artifacts/rendered/`](../../artifacts/rendered/) tree. |
 | Artifact location, version selection, and credentials | Consuming cluster definition | The `OCIRepository` used by that cluster. |
-| Self-management Kustomization | Package repository, applied by the consumer | [`sync.yaml`](../../src/flux/config/sync.yaml), which references the consumer's source. |
+| Self-management Kustomization | Package repository, applied by the consumer | [`sync.yaml`](../../src/config/sync.yaml), which references the consumer's source. |
 | Integration with other components | Consuming cluster definition | Its composition, ordering, and integration verification. |
 
 Cluster-specific source selection stays outside the reusable installation. The same package can

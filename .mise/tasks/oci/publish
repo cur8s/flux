@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Publish oci/<component>/ as an OCI artifact (default: REGISTRY at the package version)"
+#MISE description="Publish artifacts/rendered/ as an OCI artifact (default: REGISTRY at the package version)"
 #USAGE flag "--cluster <name>" help="Publish to this k3d cluster's local registry instead of REGISTRY"
 #USAGE flag "--tag <tag>" env="CUR8S_FLUX_VERSION" help="Artifact tag"
 set -euo pipefail
@@ -7,7 +7,7 @@ set -euo pipefail
 # through this task: the single insertion point for OCI metadata. It
 # publishes the committed render as-is; it never re-renders. Remote
 # publication happens only on an explicit ask (AGENTS.md).
-artifact="oci/$CUR8S_COMPONENT"
+artifact=artifacts/rendered
 [ -d "$artifact" ] || { echo "❌ $artifact/ not rendered (run 'mise run build:render')" >&2; exit 1; }
 
 registry="$REGISTRY"

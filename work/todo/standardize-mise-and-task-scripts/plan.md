@@ -27,6 +27,12 @@ documentation phase publishes from. Write documentation into the structure defin
 [docs rebuild](../rebuild-docs-by-category/overview.md); if a needed category directory does not
 exist yet, create it following that todo's strategy document.
 
+## Current baseline
+
+The directory-layout migration is implemented, including task path references and `.mise/`
+orientation. Inventory current files rather than the former `src/flux/` and `oci/flux/` layout.
+The remaining rounds still settle mise and bash mechanics; this migration does not complete them.
+
 ## Phases
 
 ### Phase 1: Inventory

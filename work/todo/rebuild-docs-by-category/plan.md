@@ -44,6 +44,12 @@ guide to the root README's reading order and point `AGENTS.md` at it. Earlier ve
 setup guidance is preserved in
 [`sources/flux/CONTRIBUTING.md`](sources/flux/CONTRIBUTING.md).
 
+The directory layout is now implemented and the current architecture explanations and reading
+links reflect it. The how-to phase must use `upstream/flux.yaml`, `src/config/`, and
+`artifacts/rendered/`; explain whole-tree cleanup of `artifacts/` and the current committed-tree
+restriction in `test:run`. Local packaging under ignored `artifacts/oci/` is future work. Keep
+preserved source documents and their old path examples as provenance rather than live contracts.
+
 ### Phase 2: Standards
 
 `docs/standards/` records agreed technical choices with rationale. Its first standard already

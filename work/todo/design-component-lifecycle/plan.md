@@ -8,8 +8,11 @@ The owner has agreed the lifecycle's goals and invariants and chosen a design af
 candidates and trying them in disposable experiments. The design, the alternatives considered,
 and the experiment evidence are recorded, and durable documentation describing the lifecycle is
 committed. The todo ends with that documentation; implementation is planned by
-[Plan the lifecycle implementation](../plan-lifecycle-implementation/overview.md), which also takes [requirements](requirements.md) as input. Nothing in the repository's
-tasks, CI, or artifacts changes as part of this todo.
+[Plan the lifecycle implementation](../plan-lifecycle-implementation/overview.md), which also takes
+[requirements](requirements.md) as input. The directory-layout subset was separately authorized
+and implemented;
+[working notes](working-notes.md) record it. Remaining work here designs and documents the broader
+lifecycle without implementing it.
 
 ### Approach
 
@@ -63,9 +66,9 @@ six-phase alternative compared.
 - [ ] Settle bootstrap from the [Flux bootstrap proposal](flux-bootstrap-proposal.md): which
   controllers the package installs, how `flux:boot` and the end-to-end test supply consumer-owned
   self-management resources, and the readiness check between the two applies. Keep the [six chained phases](candidate-six-phases.md) as the alternative
-  it is compared against. The design states its directory layout:
-  which step reads and writes which directory (today `src/<component>/`, `oci/<component>/`,
-  `.mise/`; candidates may add `dist/`), and what is committed versus ignored.
+  it is compared against. Use the implemented layout documented in
+  [From source to artifact](../../../docs/architecture/01-source-to-artifact.md): `upstream/`,
+  `src/`, and disposable `artifacts/`; local OCI packaging in `artifacts/oci/` remains to design.
 - [ ] Identify which questions only an experiment can answer.
 - [ ] **Stop for owner discussion**; agree which candidates and experiments to pursue.
 
@@ -81,8 +84,8 @@ Evidence for the questions that decide between candidates.
 
 ### Phase 4: Decide and document
 
-- [ ] Agree the design, including its directory layout, with the owner, recording the
-  alternatives considered and why they lost.
+- [ ] Agree the remaining lifecycle design with the owner, using the decided directory layout and
+  recording the alternatives considered and why they lost.
 - [ ] Decide with the owner which durable documents describe the lifecycle and where they live;
   write each, review it with the owner, and commit it on its own.
 - [ ] Hand off to [Plan the lifecycle implementation](../plan-lifecycle-implementation/overview.md):

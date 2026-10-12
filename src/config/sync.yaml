@@ -8,7 +8,7 @@
 # The OCIRepository named `flux` it sources from is environment-specific (dev =
 # local k3d registry, prod = ghcr.io) and is applied alongside this file — by
 # the dev:create task in dev, by the cluster's composition in production.
-# This file ships INSIDE the artifact (oci/flux/sync.yaml) so the artifact is
+# This file ships INSIDE the artifact (artifacts/rendered/sync.yaml) so the artifact is
 # self-describing.
 #
 # The cur8s.io/* annotations are the component's cluster-side calling card.

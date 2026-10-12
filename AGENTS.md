@@ -6,10 +6,13 @@
 - Commit only when the user explicitly asks.
 - Push commits only when the user explicitly asks.
 
-## OCI artifact
+## Generated artifacts
 
-- Change `oci/` only by editing `src/` and re-rendering.
-- Commit the re-rendered `oci/` changes together with the `src/` change that produced them.
+- Change `artifacts/rendered/` only by editing captured inputs in `upstream/`, authored
+  configuration in `src/`, or render configuration, then re-rendering.
+- Commit re-rendered `artifacts/rendered/` changes together with the input or configuration
+  change that produced them.
+- Keep hand-authored files outside `artifacts/`.
 - Publish artifacts to a remote registry only when the user explicitly asks.
 
 ## Repository entry files

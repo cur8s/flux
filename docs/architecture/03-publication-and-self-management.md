@@ -16,7 +16,7 @@ A release has two matching distribution forms:
 | Form | Contract | Current repository implementation |
 | --- | --- | --- |
 | OCI artifact | The versioned payload at `oci://ghcr.io/cur8s/flux:<version>`, consumed during normal reconciliation. | The publication task pushes the existing rendered tree, defaulting to the production registry and configured package version. |
-| `install.yaml` release asset | Static controller installation for bootstrap or recovery before Flux can reconcile itself. | The rendered installation is available locally as `oci/flux/deploy/flux.yaml`; the publication task does not attach it to a GitHub release. |
+| `install.yaml` release asset | Static controller installation for bootstrap or recovery before Flux can reconcile itself. | The rendered installation is available locally as `artifacts/rendered/deploy/flux.yaml`; the publication task does not attach it to a GitHub release. |
 
 Both forms must use the same generated controller installation bytes. Publication must not render
 a separate installation for each channel. Their packaging differs, but the resources that bootstrap
@@ -47,8 +47,9 @@ identities. The current push script accepts its destination tag without enforcin
 or refusing an existing production version.
 
 The intended publication path also requires one packaged OCI artifact to be tested and promoted
-unchanged. Today test and production publication invoke the publisher separately. A green
-local test therefore establishes that its payload reconciles; it does not establish that the
+unchanged. Local OCI packaging under the reserved, ignored `artifacts/oci/` directory is still
+unfinished. Today test and production publication invoke the publisher separately, packaging only
+at push time. A green local test therefore establishes that its payload reconciles; it does not establish that the
 production OCI manifest digest is the tested digest. The
 [metadata explanation](02-artifact-contents-and-metadata.md#file-identity-and-oci-identity)
 describes why identical rendered files alone do not establish that identity.
