@@ -22,26 +22,10 @@ depth-first and breadth-first work.
 
 | Work area | Rationale |
 | --- | --- |
-| Documentation structure | Every later todo ends by writing durable documentation; the categories and strategy they write into come first, starting with the product philosophy. |
 | mise and script conventions | The lifecycle is expressed in mise tasks and bash; settling those mechanics first keeps the design discussion about the problem rather than the tooling. |
 | Component lifecycle design | Decides what every component repository does and guarantees; it needs the docs structure to publish into and the mise conventions to express it. |
 | Implementation planning | Implementation can only be planned against a documented lifecycle; it gathers all remaining known work into the new sequence. |
-
-## Documentation structure
-
-Rebuild `docs/` as product, architecture, how-to, and standards directories, one reviewed document
-at a time, capturing the pre-rendered-manifest philosophy in the product section.
-
-**Work**
-
-- [Rebuild the docs as product, architecture, how-to, and standards](../todo/rebuild-docs-by-category/overview.md)
-
-**Why / what this unlocks**
-
-A stable home and writing strategy for everything the following todos document, and an agreed
-statement of what the package is for and why it renders before the cluster.
-
----
+| Documentation structure | The category directories, strategy, product and architecture documents, and local development guide already exist for earlier work to write into. The owner chose to finish the rest last: the remaining operator how-tos and standards describe procedures that the conventions, lifecycle design, and implementation planning are likely to change. |
 
 ## mise and script conventions
 
@@ -90,3 +74,20 @@ ordered sequence of implementation todos.
 **Why / what this unlocks**
 
 The path to 1.0, planned from settled conventions and design rather than from older notes.
+
+---
+
+## Documentation structure
+
+Rebuild `docs/` as product, architecture, how-to, and standards directories, one reviewed document
+at a time, capturing the pre-rendered-manifest philosophy in the product section.
+
+**Work**
+
+- [Rebuild the docs as product, architecture, how-to, and standards](../todo/rebuild-docs-by-category/overview.md)
+
+**Why / what this unlocks**
+
+Operator guides and standards that describe the settled conventions and lifecycle rather than
+procedures about to change. The existing structure and strategy already give the earlier areas a
+home for their documentation.
