@@ -12,26 +12,29 @@
 #   build     the reviewable artifact tree: clean deletes generated
 #             output in artifacts/; render cleans, then regenerates artifacts/rendered/
 #             from the captured inputs, never fetching.
-#   cluster   pure k3d lifecycle: a cluster and its local OCI registry,
-#             nothing installed on it. Names must start with
-#             CUR8S_COMPONENT-, and contexts live only in the repo-local
-#             KUBECONFIG, so no task reaches a cluster this repo did not
-#             create.
 #   flux      Flux on a cluster: boot installs it (here from the local
 #             render; in other component repos from the published Flux
 #             release), status and watch show it, reconcile forces this
 #             component's Kustomization.
-#   dev       the local development environment, composed from the
-#             tasks above: create runs cluster:create -> flux:boot ->
+#   dev       a local environment, composed from the helper and the
+#             tasks above: create runs cluster.sh create -> flux:boot ->
 #             oci:publish to the local registry -> hand Flux its own
-#             artifact -> wait Ready.
+#             artifact -> wait Ready; status and delete inspect and
+#             remove it.
 #   test      the product contract: test:run proves the committed tree
-#             matches a fresh fetch + render, then runs dev:create on an
-#             ephemeral cluster, deleting it on success and keeping it on
+#             matches a fresh fetch + render, then runs dev:create on the
+#             test cluster, deleting it on success and keeping it on
 #             failure; test:destroy deletes a kept one.
 #   oci       oci:publish is the single choke point through which every
 #             artifact leaves the repo: REGISTRY by default, or a
-#             cluster's local registry with --cluster.
+#             cluster's local registry with --cluster dev|test.
+# Clusters: a repo has two local k3d clusters, dev and test, named
+# CUR8S_COMPONENT-dev and CUR8S_COMPONENT-test, each with its own local
+# OCI registry. .mise/cluster.sh (a helper, identical across component
+# repos, not a task) creates, deletes, and inspects them; tasks that
+# target a cluster take its role, dev (default) or test. Contexts live
+# only in the repo-local KUBECONFIG, so no task reaches a cluster this
+# repo did not create.
 # artifacts/rendered/ is committed for review. artifacts/oci/ is reserved
 # for future local OCI packaging and ignored; no packaging task exists yet.
 # Captured inputs and authored configuration live in upstream/ and src/.
@@ -42,9 +45,9 @@
 # Every task is an executable shell script under .mise/tasks/
 # (directories namespace the names: .mise/tasks/upstream/fetch ->
 # upstream:fetch). Supporting files (k3d-config.yaml, any shared
-# scripts) live elsewhere under .mise/ so they never become tasks. Tasks
-# run from the repo root and declare arguments in #USAGE headers, so
-# `mise run <task> --help` documents them.
+# scripts such as cluster.sh) live elsewhere under .mise/ so they never
+# become tasks. Tasks run from the repo root and declare arguments in
+# #USAGE headers, so `mise run <task> --help` documents them.
 
 [settings]
 # mise.lock records each tool's download URL and checksum per platform;
@@ -82,11 +85,6 @@ CUR8S_DOCS = "https://github.com/cur8s/flux"
 # Production registry (oci:publish publishes here by default; dev and
 # test pushes go to the k3d cluster's local registry).
 REGISTRY = "ghcr.io/cur8s"
-# Default dev cluster for the cluster, flux, and dev tasks. Every
-# cluster name must start with CUR8S_COMPONENT- (cluster:* refuse others).
-CLUSTER_NAME = "flux-dev"
-# Ephemeral cluster for test:run and test:destroy.
-TEST_CLUSTER_NAME = "flux-e2e"
 # Repo-local, git-ignored kubeconfig: k3d writes this repo's clusters
 # here, and kubectl and flux read only it, so no task can reach a
 # cluster this repo did not create.

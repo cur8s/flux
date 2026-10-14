@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 #MISE description="Reconcile this component's OCIRepository and Kustomization now"
-#USAGE arg "[name]" env="CLUSTER_NAME" help="Cluster name"
+#USAGE arg "[cluster]" default="dev" help="Cluster role" {
+#USAGE   choices "dev" "test"
+#USAGE }
 set -euo pipefail
 # Targets only this repo's component (the Kustomization named after it,
 # with its source), never every Kustomization on the cluster.
-flux --context "k3d-$usage_name" -n flux-system reconcile kustomization "$CUR8S_COMPONENT" --with-source
+flux --context "$(.mise/cluster.sh context "$usage_cluster")" -n flux-system \
+  reconcile kustomization "$CUR8S_COMPONENT" --with-source

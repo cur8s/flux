@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 #MISE description="Publish artifacts/rendered/ as an OCI artifact (default: REGISTRY at the package version)"
-#USAGE flag "--cluster <name>" help="Publish to this k3d cluster's local registry instead of REGISTRY"
+#USAGE flag "--cluster <cluster>" help="Publish to this cluster's local registry instead of REGISTRY" {
+#USAGE   choices "dev" "test"
+#USAGE }
 #USAGE flag "--tag <tag>" env="CUR8S_FLUX_VERSION" help="Artifact tag"
 set -euo pipefail
 # Every artifact that leaves this repo — dev, test, or release — goes
@@ -12,7 +14,7 @@ artifact=artifacts/rendered
 
 registry="$REGISTRY"
 if [ -n "${usage_cluster:-}" ]; then
-  registry="localhost:$(docker port "${usage_cluster}-registry" 5000 | head -1 | awk -F: '{print $NF}')"
+  registry="localhost:$(.mise/cluster.sh registry-port "$usage_cluster")"
   # The k3d-local registry is anonymous. A globally-configured docker
   # credential helper (e.g. Docker Desktop's "desktop" credsStore) will be
   # invoked for it anyway and can hang indefinitely on a localhost registry.

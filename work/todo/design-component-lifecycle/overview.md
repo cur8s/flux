@@ -51,6 +51,11 @@ summary: "Identify the goals and invariants of a Cur8s component's build-to-publ
   `flux:boot` still boots the Flux repository from its local render; `build:render` does not
   package; `dev:create` absorbs `artifact:deploy|verify`; and `oci:publish` replaces
   `artifact:push` and `release`, publishing to a cluster's local registry with `--cluster`.
+  Since superseded by the owner (2026-10-14, [mise conventions working notes](../standardize-mise-and-task-scripts/working-notes.md)):
+  the `cluster:*` tasks became the `.mise/cluster.sh` helper, and cluster names became the fixed
+  roles `dev` and `test` (`<component>-dev`, `<component>-test`) that the `flux:*`, `dev:*`, and
+  `oci:publish --cluster` tasks take. The [lifecycle proposal](proposal.md)'s agreed `cluster:*`
+  rows and name override need reconciling with this.
 - The earlier six-phase proposal, top-level Maven-style phases rather than namespaces, is kept as
   an alternative considered in [candidate: six chained phases](candidate-six-phases.md).
 

@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-#MISE description="Show the dev environment: cluster, API, registry, and Flux state"
-#USAGE arg "[name]" env="CLUSTER_NAME" help="Cluster name"
+#MISE description="Show a cluster's state: cluster, API, registry, and Flux"
+#USAGE arg "[cluster]" default="dev" help="Cluster role" {
+#USAGE   choices "dev" "test"
+#USAGE }
 set -euo pipefail
-mise run cluster:status "$usage_name"
-mise run flux:status "$usage_name"
+.mise/cluster.sh status "$usage_cluster"
+mise run flux:status "$usage_cluster"

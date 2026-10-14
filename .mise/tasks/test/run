@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
-#MISE description="Prove the committed tree matches a fresh fetch + render, then test it on an ephemeral cluster"
-#USAGE arg "[cluster]" env="TEST_CLUSTER_NAME" help="Ephemeral cluster name"
+#MISE description="Prove the committed tree matches a fresh fetch + render, then test it on the test cluster"
 set -euo pipefail
-cluster="$usage_cluster"
 paths=(artifacts/rendered upstream)
 
 # Drift: the committed artifacts/rendered/ tree is the review surface, so a fresh fetch +
@@ -18,18 +16,18 @@ if [ -n "$(git status --porcelain -- "${paths[@]}")" ]; then
 fi
 echo "✅ committed tree matches the render"
 
-# Cluster test: on success the cluster is deleted; on failure it is kept.
+# Cluster test on the test cluster: deleted on success, kept on failure.
 cleanup() {
   local rc=$?
   if [ $rc -eq 0 ]; then
-    echo "✅ test passed — deleting cluster '$cluster'"
-    mise run cluster:delete "$cluster" || true
+    echo "✅ test passed — deleting the test cluster"
+    .mise/cluster.sh delete test || true
   else
-    echo "❌ test failed (rc=$rc) — cluster '$cluster' preserved"
-    mise run flux:status "$cluster" || true
-    echo "  mise run test:destroy $cluster   # when done"
+    echo "❌ test failed (rc=$rc) — test cluster preserved"
+    mise run flux:status test || true
+    echo "  mise run test:destroy   # when done"
   fi
 }
 trap cleanup EXIT
-mise run dev:create "$cluster" --tag e2e
-mise run flux:status "$cluster"
+mise run dev:create test --tag e2e
+mise run flux:status test

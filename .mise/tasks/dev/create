@@ -1,21 +1,25 @@
 #!/usr/bin/env bash
 #MISE description="Create a cluster running Flux that manages itself from the rendered artifact"
-#USAGE arg "[name]" env="CLUSTER_NAME" help="Cluster name"
+#USAGE arg "[cluster]" default="dev" help="Cluster role" {
+#USAGE   choices "dev" "test"
+#USAGE }
 #USAGE flag "--tag <tag>" default="dev" help="Artifact tag to publish to the local registry and track"
 set -euo pipefail
-# Composes cluster, flux, and oci tasks from the committed render
-# (run build:render first to try uncommitted changes).
-name="$usage_name"; c="$CUR8S_COMPONENT"
-mise run cluster:create "$name"
-mise run flux:boot "$name"
-mise run oci:publish --cluster "$name" --tag "$usage_tag"
+# Composes the cluster helper with the flux and oci tasks from the committed
+# render (run build:render first to try uncommitted changes).
+cluster="$usage_cluster"; c="$CUR8S_COMPONENT"
+ctx="$(.mise/cluster.sh context "$cluster")"
+.mise/cluster.sh create "$cluster"
+mise run flux:boot "$cluster"
+mise run oci:publish --cluster "$cluster" --tag "$usage_tag"
 # Hand Flux its own artifact: the OCIRepository the artifact's sync.yaml
 # sources from, then sync.yaml. Bumping the tag is how the cluster upgrades.
-flux --context "k3d-$name" create source oci "$c" \
-  --url "oci://$name-registry:5000/$c" --tag "$usage_tag" --insecure --interval 1m
-kubectl --context "k3d-$name" apply -f artifacts/rendered/sync.yaml
+flux --context "$ctx" create source oci "$c" \
+  --url "oci://$(.mise/cluster.sh in-cluster-registry "$cluster")/$c" \
+  --tag "$usage_tag" --insecure --interval 1m
+kubectl --context "$ctx" apply -f artifacts/rendered/sync.yaml
 # sync.yaml sets wait: true, so Ready means Flux health-checked every
 # resource the artifact applied.
-kubectl --context "k3d-$name" -n flux-system wait --for=condition=Ready --timeout=5m \
+kubectl --context "$ctx" -n flux-system wait --for=condition=Ready --timeout=5m \
   "ocirepository/$c" "kustomization/$c"
-echo "✅ dev environment $name ready"
+echo "✅ $cluster environment ready ($ctx)"

@@ -22,10 +22,10 @@ tasks. [`mise.toml`](../../mise.toml) owns tool selections, environment values, 
 [`mise.lock`](../../mise.lock) records the tool downloads and checksums. Use
 `mise run <task> --help` for a task's arguments and flags.
 
-Local cluster tasks use the repository's ignored `.kube/config` and target the named k3d context.
-Use `mise run` for those tasks, or `mise exec -- kubectl ...` for direct inspection, so the
-repository's environment is loaded. Default development and test names are declared in `mise.toml`.
-Explicit cluster names must start with `flux-`; choose an unused name for each new environment.
+The repository has two local k3d clusters: `dev` (`flux-dev`) and `test` (`flux-test`). Tasks that
+target a cluster take its role, defaulting to `dev`. Their contexts live in the repository's ignored
+`.kube/config`, so use `mise run` for those tasks, or `mise exec -- kubectl ...` for direct
+inspection, so the repository's environment is loaded.
 
 ## Regenerate the deployment payload
 
@@ -54,12 +54,12 @@ identifies the generated files.
 
 ## Try an uncommitted candidate locally
 
-Render the candidate first. Then create a disposable environment from those rendered files:
+Render the candidate first. Then create the development environment from those rendered files:
 
 ```sh
-mise run dev:create flux-preview
-mise run dev:status flux-preview
-mise run flux:reconcile flux-preview
+mise run dev:create
+mise run dev:status
+mise run flux:reconcile
 ```
 
 Expected result: Flux's controllers become available, the payload is published to the new cluster's
@@ -67,17 +67,17 @@ local registry, and `OCIRepository/flux` and `Kustomization/flux` report Ready. 
 this component's Kustomization and its source. The development task does not fetch or render; it
 consumes the output already on disk, including uncommitted candidate changes.
 
-For continuous observation, run `mise run flux:watch flux-preview` and stop it with Ctrl-C. For
-direct controller inspection, use the same named context through mise:
+For continuous observation, run `mise run flux:watch` and stop it with Ctrl-C. For direct
+controller inspection, use the cluster's context through mise:
 
 ```sh
-mise exec -- kubectl --context k3d-flux-preview -n flux-system get deployments
+mise exec -- kubectl --context k3d-flux-dev -n flux-system get deployments
 ```
 
 When finished, remove the environment and its local registry:
 
 ```sh
-mise run dev:delete flux-preview
+mise run dev:delete
 ```
 
 This workflow tests a candidate before committing. The committed-tree check below establishes
@@ -94,11 +94,10 @@ git diff --cached --check
 
 Commit changed captured inputs or authored configuration together with their regenerated output
 when authorized under the [agent instructions](../../AGENTS.md). Once `upstream/` and
-`artifacts/rendered/` match the committed tree, run the combined verification task using an unused
-test name:
+`artifacts/rendered/` match the committed tree, run the combined verification task:
 
 ```sh
-mise run test:run flux-check
+mise run test:run
 ```
 
 The task captures upstream, renders, and checks those two directories for Git changes before
@@ -106,7 +105,7 @@ creating a cluster. Staged changes count too: it stops before the cluster test i
 input or rendered output is uncommitted, even when that output was regenerated correctly. Use the
 candidate workflow above while preparing that change for review.
 
-After the committed-tree check, the task creates a disposable environment, boots Flux, publishes
+After the committed-tree check, the task creates the test cluster, boots Flux, publishes
 to its local registry, and verifies self-management. Expected result: the task exits successfully
 and removes its cluster and registry. It exercises fresh installation and self-management on the
 selected runtime; the [verification scope](../architecture/03-publication-and-self-management.md#verification-scope-and-remaining-publication-work)
@@ -116,12 +115,12 @@ If the cluster stage fails, the environment is retained for inspection. Diagnose
 it explicitly:
 
 ```sh
-mise run dev:status flux-check
-mise run test:destroy flux-check
+mise run dev:status test
+mise run test:destroy
 ```
 
-A failed drift check creates no test cluster. An existing cluster with the chosen name must be
-removed or a different test name selected before retrying creation.
+A failed drift check creates no test cluster. A test cluster kept from an earlier failure must be
+removed with `test:destroy` before retrying.
 
 ## Update an upstream version or tool pin
 

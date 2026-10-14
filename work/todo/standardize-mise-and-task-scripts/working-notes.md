@@ -9,54 +9,78 @@ The owner chose to review the task namespaces one at a time, starting with `clus
 identical across component repositories. Whether this replaces the plan's topic-by-topic rounds is
 not yet decided.
 
-### `cluster`
+### Clusters (formerly the `cluster` namespace)
 
-**Owner decision (2026-10-14): task contracts.**
+**Owner decisions (2026-10-14):**
 
-- `cluster:create` fails clearly when a cluster with the name already exists.
-- `cluster:delete` succeeds when the cluster is already gone; any other failure surfaces.
-- `cluster:status` reports whether the cluster exists, whether its API is reachable, and its
-  registry endpoint. It exits non-zero only when the cluster does not exist; a stopped or
-  unhealthy cluster is reported, not failed.
+- **No `cluster:*` tasks.** Nobody runs a bare cluster operation on its own; mise tasks such as
+  `dev:create` and `test:run` remain the entry points.
+- **One helper, `.mise/cluster.sh`, run rather than sourced,** copied identically into every
+  component repository alongside `.mise/k3d-config.yaml`. It has one function per operation and
+  dispatches on its first argument: `create`, `delete`, `status`, `registry-port`, and `context`.
+- **Clusters are addressed by role, `dev` or `test`,** and the helper derives the name,
+  `<component>-dev` or `<component>-test`. Passing both a role and a name was rejected: the name is
+  fully determined by the role. This removed `CLUSTER_NAME`, `TEST_CLUSTER_NAME`, and the name-prefix
+  guard, since no caller-supplied name can reach another repository's cluster.
+- **The helper guards `CUR8S_COMPONENT` and `KUBECONFIG`** with `${VAR:?}`: unset or empty, it stops
+  before any k3d call. Unset `KUBECONFIG` would make k3d write to `~/.kube/config`.
+- **Contracts:** `create` fails clearly when the cluster exists and returns once the API server
+  accepts requests and the registry answers; the following tasks do not need the node to be Ready.
+  `delete` succeeds when the cluster is already gone and surfaces other failures. `status` reports
+  whether the cluster exists, whether its API is reachable, and its registry endpoint, exiting
+  non-zero only when the cluster does not exist.
+- **Scripts as simple as possible:** no checks k3d already performs and no `sed`/`awk` pipelines.
+- **`status` checks the API the way a user would:** `kubectl get nodes`, not the lower-level
+  `/readyz` endpoint, and with no `--request-timeout`; a hung API server is rare locally and
+  visible when it happens.
+- **`in-cluster-registry` stays,** so the registry naming and its internal port live only in the
+  helper.
 
-**Observed with k3d 5.9.0** (disposable `flux-probe` cluster):
+**Applied:**
+
+- `.mise/cluster.sh` implements the decisions; `.mise/tasks/cluster/` is removed.
+- `dev:create|status|delete` and `flux:*` take an optional `[cluster]` argument, default `dev`, and
+  `oci:publish` a `--cluster` flag, each restricted with usage `choices "dev" "test"`, so mise rejects
+  other values before the script runs. `test:run` and `test:destroy` always use `test`.
+- The test cluster is now `flux-test` (formerly `flux-e2e`); the `e2e` artifact tag is unchanged.
+- One addition beyond the agreed operations: `in-cluster-registry`, which prints
+  `<name>-registry:5000` for `dev:create`'s OCIRepository URL, so callers never spell cluster names.
+- Verified: guard and argument errors; `status` on a missing cluster exits 1; `test:destroy` on a
+  missing cluster exits 0; `test:run` passed; `dev:create`, `dev:status`, `flux:reconcile`, and
+  `dev:delete` worked on `flux-dev`; no containers left behind.
+
+**Observed with k3d 5.9.0** (disposable clusters, and the v5.9.0 source in `pkg/client/cluster.go`,
+`registry.go`, `runtimes/docker/node.go`, and `pkg/types/k3slogs.go`):
 
 - `k3d cluster create` on an existing name fails immediately with "a cluster with that name
-  already exists", so `cluster:create` needs no check of its own.
+  already exists".
 - `k3d cluster delete` exits 0 for a missing cluster and removes the registry made by
-  `--registry-create`. The former `k3d registry delete ... 2>/dev/null || true` was redundant and
-  hid real errors; it was removed.
-- `k3d cluster get` still succeeds for a stopped cluster; its API refuses connections and its
-  registry has no published port.
+  `--registry-create`.
+- `k3d cluster list <name>` exits 1 for a missing cluster; it succeeds for a stopped one, whose API
+  refuses connections and whose registry has no published port.
+- `wait: true` waits for the server log line "k3s is up and running", meaning the API server
+  serves requests. `--registry-create` creates the registry container during preparation but starts
+  it with the helper nodes after the servers, and k3d waits only for the load balancer among
+  helpers. Nothing waits for the registry, hence the `curl --retry .../v2/` check.
+- Neither Docker nor k3d reports registry readiness: `registry:2` defines no `HEALTHCHECK`, Docker
+  has no wait-until-healthy command, and k3d's registry ready log line is unused during creation.
+- k3d picks the registry's host port at creation. Three places expose it: Docker's documented
+  `inspect` field `NetworkSettings.Ports["5000/tcp"][0].HostPort` (chosen: one command, no pipes;
+  fails when the registry is stopped), the standard `local-registry-hosting` ConfigMap in
+  `kube-public` (needs parsing of embedded YAML; k3d only warns if writing it fails), and the
+  undocumented `k3s.registry.port.external` container label.
 
-**Observed in the k3d v5.9.0 source** (`pkg/client/cluster.go`, `registry.go`,
-`runtimes/docker/node.go`): `--registry-create` creates the registry container during cluster
-preparation but does not start it. The registry joins the cluster's helper nodes, which start
-after the servers, and k3d waits only for the load balancer among helpers. `wait: true` therefore
-does not cover the registry, and the `curl --retry .../v2/` readiness check in `cluster:create` is
-the only guarantee that the registry answers when the task reports success. The k3d registry docs
-say nothing about ordering or readiness.
-
-**Owner decision (2026-10-14): `cluster:create` readiness.** It returns when the API server
-accepts requests and the registry answers; the following tasks do not need the node to be Ready.
-
-**Observed:** neither Docker nor k3d reports registry readiness. `registry:2` defines no Docker
-`HEALTHCHECK`, Docker has no wait-until-healthy command, and k3d defines a registry ready log line
-but never waits for it during cluster creation. k3d's own `wait: true` covers only the server log
-line "k3s is up and running". k3d picks the registry's host port at creation and records it in the
-standard `local-registry-hosting` ConfigMap in `kube-public` (KEP-1755), which it writes last,
-only warning if that fails, and in an undocumented `k3s.registry.port.external` container label.
-
-**Applied:** `cluster:create` reads the registry host endpoint from the ConfigMap, which also proves
-the API server accepts requests, fails if it is missing, then polls `/v2/` with curl.
-`cluster:delete` and `cluster:status` were rewritten to the contracts. `test:run` passed and left
-no containers.
+**Input for the lifecycle design todo:** the [lifecycle proposal](../design-component-lifecycle/proposal.md)
+records `cluster:create|status|delete` as agreed, with a default name plus an explicit override.
+These decisions supersede that and need reconciling there.
 
 **Open for the owner:**
 
-- Duplication: the name-prefix guard (three copies), the `docker port` registry lookup still in
-  `cluster:status` and `oci:publish` (candidates for the ConfigMap read), and `k3d-<name>` context
-  derivation (six places). Proposal: keep task files self-contained.
+- Two checkouts of the same component (clones or git worktrees) compute the same cluster names,
+  and k3d names are global to the Docker host: one checkout's `delete` or `test:run` cleanup removes
+  the other's cluster. Options: a checkout-specific name suffix, or refusing to delete a cluster
+  whose context is not in this checkout's `KUBECONFIG`. Two different components coexist without
+  conflict (observed: separate containers, networks, host ports, and kubeconfigs).
 - The zot pull-through mirror at `host.k3d.internal:5051` in `.mise/k3d-config.yaml`: keep, make
   opt-in, or move to user-level configuration.
 - Flux-specific comment "this repo only tests Flux bootstrap" in the shared k3d config.

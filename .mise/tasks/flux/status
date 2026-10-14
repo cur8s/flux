@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 #MISE description="Show every Flux resource on a cluster"
-#USAGE arg "[name]" env="CLUSTER_NAME" help="Cluster name"
+#USAGE arg "[cluster]" default="dev" help="Cluster role" {
+#USAGE   choices "dev" "test"
+#USAGE }
 set -euo pipefail
-flux --context "k3d-$usage_name" get all -A
+flux --context "$(.mise/cluster.sh context "$usage_cluster")" get all -A
