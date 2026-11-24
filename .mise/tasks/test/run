@@ -2,6 +2,7 @@
 #MISE description="Prove the committed tree matches a fresh fetch + render, then test it on the test cluster"
 set -euo pipefail
 paths=(artifacts/rendered upstream)
+ctx="$(.mise/cluster.sh context test)"
 
 # Drift: the committed artifacts/rendered/ tree is the review surface, so a fresh fetch +
 # render must leave it (and the fetched input) unchanged. Commit a
@@ -23,11 +24,13 @@ cleanup() {
     echo "✅ test passed — deleting the test cluster"
     .mise/cluster.sh delete test || true
   else
-    echo "❌ test failed (rc=$rc) — test cluster preserved"
-    mise run flux:status test || true
-    echo "  mise run test:destroy   # when done"
+    echo "❌ test failed (rc=$rc) — test cluster preserved ($ctx)"
+    flux --context "$ctx" get all -A || true
+    echo "  mise exec -- flux --context $ctx get all -A"
+    echo "  mise exec -- kubectl --context $ctx -n flux-system get pods"
+    echo "  mise run test:delete   # when done"
   fi
 }
 trap cleanup EXIT
-mise run dev:create test --tag e2e
-mise run flux:status test
+.mise/env.sh create test e2e
+flux --context "$ctx" get all -A

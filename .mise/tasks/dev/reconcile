@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Reconcile this component's OCIRepository and Kustomization on the dev cluster"
+set -euo pipefail
+# Targets only this repo's component (the Kustomization named after it,
+# with its source), never every Kustomization on the cluster.
+flux --context "$(.mise/cluster.sh context dev)" -n flux-system \
+  reconcile kustomization "$CUR8S_COMPONENT" --with-source

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Render, publish to the dev cluster's local registry, and reconcile Flux"
+#MISE depends=["build:render"]
+set -euo pipefail
+mise run oci:publish --cluster dev --tag dev
+mise run dev:reconcile

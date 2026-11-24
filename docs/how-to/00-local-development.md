@@ -22,10 +22,10 @@ tasks. [`mise.toml`](../../mise.toml) owns tool selections, environment values, 
 [`mise.lock`](../../mise.lock) records the tool downloads and checksums. Use
 `mise run <task> --help` for a task's arguments and flags.
 
-The repository has two local k3d clusters: `dev` (`flux-dev`) and `test` (`flux-test`). Tasks that
-target a cluster take its role, defaulting to `dev`. Their contexts live in the repository's ignored
-`.kube/config`, so use `mise run` for those tasks, or `mise exec -- kubectl ...` for direct
-inspection, so the repository's environment is loaded.
+The repository has two local k3d clusters: `dev` (`flux-dev`) and `test` (`flux-test`). All `dev:*`
+tasks target `dev`; `test:*` tasks own `test`. Their contexts live in the repository's ignored
+`.kube/config`, so use `mise run` for tasks, or `mise exec -- kubectl ...` / `mise exec -- flux ...`
+for direct inspection, so the repository's environment is loaded.
 
 ## Regenerate the deployment payload
 
@@ -54,21 +54,29 @@ identifies the generated files.
 
 ## Try an uncommitted candidate locally
 
-Render the candidate first. Then create the development environment from those rendered files:
+Create the development environment (which runs `build:render` first, then boots Flux, publishes to
+the local registry, and wires up self-management):
 
 ```sh
 mise run dev:create
 mise run dev:status
-mise run flux:reconcile
 ```
 
-Expected result: Flux's controllers become available, the payload is published to the new cluster's
-local registry, and `OCIRepository/flux` and `Kustomization/flux` report Ready. Reconciliation targets
-this component's Kustomization and its source. The development task does not fetch or render; it
-consumes the output already on disk, including uncommitted candidate changes.
+Expected result: `artifacts/rendered/` is regenerated, Flux's controllers become available, the
+payload is published to the new cluster's local registry, and `OCIRepository/flux` and
+`Kustomization/flux` report Ready.
 
-For continuous observation, run `mise run flux:watch` and stop it with Ctrl-C. For direct
-controller inspection, use the cluster's context through mise:
+After further edits under `src/config/`, push the regenerated payload to the running `dev` cluster
+and reconcile immediately:
+
+```sh
+mise run dev:update
+```
+
+To trigger reconciliation without re-rendering or pushing, run `mise run dev:reconcile` (which
+targets only this component's Kustomization and its source). For continuous observation, run
+`mise run dev:watch` and stop it with Ctrl-C. For direct controller inspection, use the cluster's
+context through mise:
 
 ```sh
 mise exec -- kubectl --context k3d-flux-dev -n flux-system get deployments
@@ -111,16 +119,16 @@ and removes its cluster and registry. It exercises fresh installation and self-m
 selected runtime; the [verification scope](../architecture/03-publication-and-self-management.md#verification-scope-and-remaining-publication-work)
 describes its limits.
 
-If the cluster stage fails, the environment is retained for inspection. Diagnose it, then remove
-it explicitly:
+If the cluster stage fails, the environment is retained for inspection. Diagnose it with the
+test context, then remove it explicitly:
 
 ```sh
-mise run dev:status test
-mise run test:destroy
+mise exec -- flux --context k3d-flux-test get all -A
+mise run test:delete
 ```
 
 A failed drift check creates no test cluster. A test cluster kept from an earlier failure must be
-removed with `test:destroy` before retrying.
+removed with `test:delete` before retrying.
 
 ## Update an upstream version or tool pin
 

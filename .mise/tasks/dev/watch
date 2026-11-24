@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+#MISE description="Watch Flux Kustomizations on the dev cluster until interrupted"
+set -euo pipefail
+flux --context "$(.mise/cluster.sh context dev)" get kustomizations -A --watch

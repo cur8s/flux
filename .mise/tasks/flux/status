@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-#MISE description="Show every Flux resource on a cluster"
-#USAGE arg "[cluster]" default="dev" help="Cluster role" {
-#USAGE   choices "dev" "test"
-#USAGE }
-set -euo pipefail
-flux --context "$(.mise/cluster.sh context "$usage_cluster")" get all -A

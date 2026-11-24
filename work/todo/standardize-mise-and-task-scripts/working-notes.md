@@ -111,3 +111,50 @@ These decisions supersede that and need reconciling there.
 [task namespace reference](../design-component-lifecycle/task-namespaces-proposal.md), and
 [Flux bootstrap proposal](../design-component-lifecycle/flux-bootstrap-proposal.md) record
 `flux:boot` as agreed/decided. This decision supersedes that and needs reconciling there.
+
+### `dev` and `test` namespaces (`flux:` folded into `dev:`)
+
+**Owner decisions (2026-11-24):**
+
+- **Fold the remaining `flux:` tasks into `dev:` and remove the `flux:` namespace.** `flux:status`
+  folds into `dev:status`, `flux:reconcile` becomes `dev:reconcile`, and `flux:watch` becomes
+  `dev:watch`. One namespace for all local cluster work avoids remembering whether an operation is
+  under `dev:` or `flux:` and eliminates the `flux` tool/component name collision.
+- **Specialize `dev:*` to the `dev` cluster only (no `[cluster]` argument).** Passing `test` to
+  `dev:*` or `flux:*` was confusing; `dev:*` always targets `dev` (`<component>-dev`), while
+  `test:*` owns the ephemeral `test` cluster (`<component>-test`). On failure, `test:run` prints
+  Flux state and copy-pasteable `mise exec` commands for inspecting `test`.
+- **Add `dev:update` for the local iteration loop.** Renders, publishes to `dev`'s local registry
+  under `:dev`, and reconciles Flux (`build:render` → `oci:publish --cluster dev --tag dev` →
+  `dev:reconcile`). Chosen over `dev:publish` to keep `publish` reserved for formal releases and
+  over `dev:push` for lifecycle symmetry with `dev:create` / `dev:status` / `dev:delete`.
+- **Both `dev:create` and `dev:update` run `build:render` first** (`depends=["build:render"]`),
+  since rendering is offline and ~80ms, preventing stale pushes while `oci:publish` remains
+  render-free.
+- **Align cleanup verb to `delete`:** rename `test:destroy` to `test:delete` to match `dev:delete`.
+- **Share cluster setup via `.mise/env.sh`:** component-specific helper called by `dev:create` and
+  `test:run`, keeping `.mise/cluster.sh` identical across component repositories.
+
+**Applied:**
+
+- Created `.mise/env.sh` and `.mise/tasks/dev/update`.
+- Moved `flux:reconcile` and `flux:watch` into `.mise/tasks/dev/`, folded `flux:status` into
+  `.mise/tasks/dev/status`, removed `.mise/tasks/flux/`, and removed `[cluster]` arguments from all
+  `dev:*` tasks.
+- Renamed `.mise/tasks/test/destroy` to `.mise/tasks/test/delete`; updated `.mise/tasks/test/run`
+  to call `.mise/env.sh` and print `mise exec` inspection commands plus `mise run test:delete` on
+  failure.
+- Updated `mise.toml`, `.mise/README.md`, [00-local-development.md](../../../docs/how-to/00-local-development.md),
+  [01-source-to-artifact.md](../../../docs/architecture/01-source-to-artifact.md), and
+  [03-publication-and-self-management.md](../../../docs/architecture/03-publication-and-self-management.md).
+- Verified: `mise tasks` lists the 13 tasks across 5 namespaces; `mise run test:run` passed (drift
+  check, `.mise/env.sh create test e2e`, reconciliation, and `flux-test` cleanup); `mise run
+  test:delete` exited 0 on missing `flux-test`; `mise run dev:status` and `mise run dev:update`
+  (including `build:render`, local `oci:publish`, and `dev:reconcile`) passed against the existing
+  `flux-dev` cluster; `dev:create` cleanly ran `build:render` and failed on the already-existing
+  `flux-dev` cluster without disturbing it.
+
+**Input for the lifecycle design todo:** supersedes the `flux:` namespace and `test:destroy` in
+the [lifecycle proposal](../design-component-lifecycle/proposal.md) and
+[task namespace reference](../design-component-lifecycle/task-namespaces-proposal.md), and adds
+`dev:update`. Reconcile those documents during the lifecycle design todo.

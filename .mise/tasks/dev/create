@@ -1,27 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Create a cluster running Flux that manages itself from the rendered artifact"
-#USAGE arg "[cluster]" default="dev" help="Cluster role" {
-#USAGE   choices "dev" "test"
-#USAGE }
-#USAGE flag "--tag <tag>" default="dev" help="Artifact tag to publish to the local registry and track"
+#MISE description="Render and create the dev cluster running Flux managing itself from the artifact"
+#MISE depends=["build:render"]
 set -euo pipefail
-# Composes the cluster helper with the oci task from the committed render
-# (run build:render first to try uncommitted changes).
-cluster="$usage_cluster"; c="$CUR8S_COMPONENT"
-ctx="$(.mise/cluster.sh context "$cluster")"
-.mise/cluster.sh create "$cluster"
-# Bootstrap Flux from this repo's local render; server-side apply handles the large CRDs cleanly.
-kubectl --context "$ctx" apply --server-side -f artifacts/rendered/deploy/flux.yaml
-kubectl --context "$ctx" -n flux-system wait deploy --all --for=condition=Available --timeout=3m
-mise run oci:publish --cluster "$cluster" --tag "$usage_tag"
-# Hand Flux its own artifact: the OCIRepository the artifact's sync.yaml
-# sources from, then sync.yaml. Bumping the tag is how the cluster upgrades.
-flux --context "$ctx" create source oci "$c" \
-  --url "oci://$(.mise/cluster.sh in-cluster-registry "$cluster")/$c" \
-  --tag "$usage_tag" --insecure --interval 1m
-kubectl --context "$ctx" apply -f artifacts/rendered/sync.yaml
-# sync.yaml sets wait: true, so Ready means Flux health-checked every
-# resource the artifact applied.
-kubectl --context "$ctx" -n flux-system wait --for=condition=Ready --timeout=5m \
-  "ocirepository/$c" "kustomization/$c"
-echo "✅ $cluster environment ready ($ctx)"
+.mise/env.sh create dev dev

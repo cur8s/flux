@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-#MISE description="Delete a cluster and its registry"
-#USAGE arg "[cluster]" default="dev" help="Cluster role" {
-#USAGE   choices "dev" "test"
-#USAGE }
+#MISE description="Delete the dev cluster and its registry"
 set -euo pipefail
-.mise/cluster.sh delete "$usage_cluster"
+.mise/cluster.sh delete dev
