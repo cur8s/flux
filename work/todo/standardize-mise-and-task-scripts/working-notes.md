@@ -213,3 +213,6 @@ those documents during the lifecycle design todo.
   without wrapping.
 - Hardened `release:publish` (2026-11-24): removed `--tag` override (always publishes
   `CUR8S_FLUX_VERSION` to `REGISTRY`) and added a clean git working tree check before pushing.
+- Hardened `dev:update` (2026-11-24): delegated to `.mise/env.sh update dev dev` (keeping
+  `dev:update` identical across component repos), added a clear error when the dev cluster is not
+  running, and applied `artifacts/rendered/sync.yaml` before reconciling so sync edits take effect.

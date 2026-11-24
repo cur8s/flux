@@ -2,5 +2,4 @@
 #MISE description="Render, push to the dev cluster, and reconcile"
 #MISE depends=["build:render"]
 set -euo pipefail
-.mise/oci-push.sh local dev dev
-mise run dev:reconcile
+.mise/env.sh update dev dev
