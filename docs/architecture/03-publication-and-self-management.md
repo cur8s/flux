@@ -22,9 +22,9 @@ Both forms must use the same generated controller installation bytes. Publicatio
 a separate installation for each channel. Their packaging differs, but the resources that bootstrap
 installs must be the resources Flux subsequently reconciles.
 
-[`release:publish`](../../.mise/tasks/release/publish) currently publishes the existing rendered tree
-to `REGISTRY` with `CUR8S_FLUX_VERSION` as the default tag. It does not fetch or render inputs, run
-`verify:run`, enforce a clean working tree, or check whether that version already
+[`release:publish`](../../.mise/tasks/release/publish) requires a clean working tree and publishes
+the existing rendered tree to `REGISTRY` at `CUR8S_FLUX_VERSION` (with no tag override). It does
+not fetch or render inputs, run `verify:run`, or check whether that version already
 exists in either distribution channel. There is currently no live GitHub Actions workflow in the
 repository; the verification gates run locally.
 
@@ -35,16 +35,16 @@ automatic enforcement does not remove the acceptance requirement.
 ## Version identity and immutable publication
 
 The current configuration derives the package version from the selected upstream Flux release and
-a Cur8s configuration revision. The publication task defaults to that derived value as the OCI tag.
+a Cur8s configuration revision. `release:publish` uses that derived value as the OCI tag.
 
 The intended versioning contract gives the Cur8s package an independent Semantic Version that
 describes its compatibility contract, while recording upstream versions as dependency metadata.
 That versioning change has not been implemented in the current configuration.
 
 Once a production version is published, it must keep identifying the same content. Development
-tags such as `dev` and `e2e` serve local workflows; they are not immutable production release
-identities. The current push script accepts its destination tag without enforcing that distinction
-or refusing an existing production version.
+tags such as `dev` and `e2e` serve local workflows via `.mise/oci-push.sh`; `release:publish` only
+targets `REGISTRY` at `CUR8S_FLUX_VERSION`, though it does not yet refuse an existing production
+version.
 
 The intended publication path also requires one packaged OCI artifact to be tested and promoted
 unchanged. Local OCI packaging under the reserved, ignored `artifacts/oci/` directory is still

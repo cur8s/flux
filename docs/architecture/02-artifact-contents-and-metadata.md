@@ -81,12 +81,13 @@ commit through `--revision`. Flux stores them as `org.opencontainers.image.sourc
 
 These values are obtained at push time. The descriptor's `source` comes from the authored
 `CUR8S_SOURCE`, while the OCI source annotation comes from the local Git remote; they need not be
-identical. The revision records HEAD but does not attest that the working tree is clean or that
-the packaged files match that commit. The current push script does not enforce that relationship.
+identical. `.mise/oci-push.sh` records HEAD without requiring a clean working tree so local `dev`
+pushes can test uncommitted changes, whereas `release:publish` refuses to run on a dirty working
+tree so remote releases match the recorded commit.
 
-The destination tag is another separate value: it comes from the task's `--tag` argument. Local
-development and testing can use `dev` or `e2e` while the descriptor still records the configured
-package version. The publication task defaults to the configured package version as its tag.
+The destination tag is passed explicitly to `.mise/oci-push.sh`. Local `dev` and `verify` pushes
+use `dev` and `e2e` while the descriptor still records the configured package version.
+`release:publish` always tags with `CUR8S_FLUX_VERSION` and exposes no tag override.
 
 ## Cluster-side identification
 

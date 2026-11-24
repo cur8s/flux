@@ -211,3 +211,5 @@ those documents during the lifecycle design todo.
 
 - Tightened `#MISE description` across all tasks under `.mise/tasks/` so `mise tasks` scans cleanly
   without wrapping.
+- Hardened `release:publish` (2026-11-24): removed `--tag` override (always publishes
+  `CUR8S_FLUX_VERSION` to `REGISTRY`) and added a clean git working tree check before pushing.

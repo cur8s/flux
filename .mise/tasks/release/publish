@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 #MISE description="Publish artifacts/rendered/ to the remote OCI registry"
-#USAGE flag "--tag <tag>" env="CUR8S_FLUX_VERSION" help="Artifact tag"
 set -euo pipefail
-# Publishes the committed render to the remote registry as-is; never
-# re-renders. Remote publication happens only on an explicit ask (AGENTS.md).
-.mise/oci-push.sh remote "$usage_tag"
+# Publishes the committed render to REGISTRY at CUR8S_FLUX_VERSION as-is;
+# never re-renders. Remote publication happens only on an explicit ask (AGENTS.md).
+if [ -n "$(git status --porcelain)" ]; then
+  git status --short >&2
+  echo "❌ working tree is not clean — commit or stash changes before publishing" >&2
+  exit 1
+fi
+.mise/oci-push.sh remote "$CUR8S_FLUX_VERSION"
