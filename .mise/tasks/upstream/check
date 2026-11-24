@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Report whether a newer upstream release exists than the tracked version"
+#MISE description="Check for a newer upstream release"
 set -euo pipefail
 latest="$(curl -fsSL "https://api.github.com/repos/$CUR8S_UPSTREAM_PROJECT/releases/latest" | jq -r .tag_name)"
 echo "tracked: $FLUX_TAG"

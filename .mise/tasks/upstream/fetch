@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Capture the pinned upstream Flux install manifest in upstream/flux.yaml (offline, via flux CLI)"
+#MISE description="Fetch the pinned upstream manifest into upstream/"
 set -euo pipefail
 # Replaces the previously captured release; build:render consumes it.
 out=upstream/flux.yaml

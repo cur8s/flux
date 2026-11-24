@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
-#MISE description="Delete any leftover verify cluster and its registry (e.g. kept after a failed verify:run)"
+#MISE description="Delete a leftover verify cluster and its registry"
 set -euo pipefail
 .mise/cluster.sh delete verify

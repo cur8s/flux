@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Publish artifacts/rendered/ as an OCI artifact to REGISTRY at the package version"
+#MISE description="Publish artifacts/rendered/ to the remote OCI registry"
 #USAGE flag "--tag <tag>" env="CUR8S_FLUX_VERSION" help="Artifact tag"
 set -euo pipefail
 # Publishes the committed render to the remote registry as-is; never

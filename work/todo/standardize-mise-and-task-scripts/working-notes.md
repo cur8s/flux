@@ -197,3 +197,17 @@ the [lifecycle proposal](../design-component-lifecycle/proposal.md) and
 in the [lifecycle proposal](../design-component-lifecycle/proposal.md) and
 [task namespace reference](../design-component-lifecycle/task-namespaces-proposal.md). Reconcile
 those documents during the lifecycle design todo.
+
+### Task descriptions (`#MISE description`)
+
+**Owner decisions (2026-11-24):**
+
+- **Keep `#MISE description` short and scannable:** one imperative phrase, roughly ≤ 60 characters
+  (fits in an 80-column `mise tasks` table without wrapping), no parenthetical caveats or
+  semicolons, plain English instead of env var names, and consistent terminology (`push` for local
+  dev pushes, `publish` reserved for `release:publish`).
+
+**Applied:**
+
+- Tightened `#MISE description` across all tasks under `.mise/tasks/` so `mise tasks` scans cleanly
+  without wrapping.

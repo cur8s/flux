@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Delete all generated output (artifacts/); preserve captured upstream and authored inputs"
+#MISE description="Delete generated output in artifacts/"
 set -euo pipefail
 rm -rf artifacts
 echo "🧹 removed artifacts/"

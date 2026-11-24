@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Clean, then render the captured inputs and opinionated overlay into the artifact tree (artifacts/rendered/); never fetches"
+#MISE description="Clean and render artifacts/rendered/ from local inputs"
 #MISE depends=["build:clean"]
 set -euo pipefail
 in=upstream/flux.yaml

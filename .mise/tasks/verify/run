@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Prove the committed tree matches a fresh fetch + render, then verify it end-to-end on a disposable cluster"
+#MISE description="Check drift and run the end-to-end cluster verification"
 set -euo pipefail
 paths=(artifacts/rendered upstream)
 ctx="$(.mise/cluster.sh context verify)"

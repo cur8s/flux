@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Render and create the dev cluster running Flux managing itself from the artifact"
+#MISE description="Render and create the dev cluster with Flux"
 #MISE depends=["build:render"]
 set -euo pipefail
 .mise/env.sh create dev dev

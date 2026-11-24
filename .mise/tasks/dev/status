@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#MISE description="Show the dev environment's state: cluster, API, registry, and Flux"
+#MISE description="Show dev cluster, registry, and Flux status"
 set -euo pipefail
 .mise/cluster.sh status dev
 flux --context "$(.mise/cluster.sh context dev)" get all -A
