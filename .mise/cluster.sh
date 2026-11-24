@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Local k3d clusters, identical in every Cur8s component repo. Tasks run this
 # helper; it is not a task. A repo has two clusters, named from its component
-# and a role: <component>-dev and <component>-test.
+# and a role: <component>-dev and <component>-verify.
 #
-#   .mise/cluster.sh create|delete|status|registry-port|in-cluster-registry|context dev|test
+#   .mise/cluster.sh create|delete|status|registry-port|in-cluster-registry|context dev|verify
 #
 # Each cluster gets its own local OCI registry: container <name>-registry,
 # reached in-cluster as <name>-registry:5000 and from the host on a port k3d
@@ -14,11 +14,11 @@ set -euo pipefail
 : "${KUBECONFIG:?must be set (mise.toml [env]); run through mise}"
 
 usage() {
-  echo "usage: $0 create|delete|status|registry-port|in-cluster-registry|context dev|test" >&2
+  echo "usage: $0 create|delete|status|registry-port|in-cluster-registry|context dev|verify" >&2
   exit 1
 }
 [[ $# -eq 2 ]] || usage
-case "$2" in dev | test) ;; *) usage ;; esac
+case "$2" in dev | verify) ;; *) usage ;; esac
 name="$CUR8S_COMPONENT-$2"
 context="k3d-$name"
 registry="$name-registry"

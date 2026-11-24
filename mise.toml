@@ -17,22 +17,22 @@
 #             update renders, publishes to dev's local registry, and
 #             reconciles Flux; status, reconcile, watch, and delete inspect,
 #             operate, and remove it.
-#   test      the product contract (owns the test cluster): test:run proves
-#             the committed tree matches a fresh fetch + render, then runs
-#             the full cluster test via .mise/env.sh, deleting the cluster
-#             on success and keeping it on failure; test:delete removes a
-#             kept one.
-#   oci       oci:publish is the single choke point through which every
-#             artifact leaves the repo: REGISTRY by default, or a
-#             cluster's local registry with --cluster dev|test.
-# Clusters: a repo has two local k3d clusters, dev and test, named
-# CUR8S_COMPONENT-dev and CUR8S_COMPONENT-test, each with its own local
-# OCI registry. .mise/cluster.sh (a helper, identical across component
-# repos, not a task) creates, deletes, and inspects them; .mise/env.sh
-# (component-specific helper) boots Flux and wires up reconciliation on
-# either cluster. dev:* tasks always target dev; test:* tasks own test.
-# Contexts live only in the repo-local KUBECONFIG, so no task reaches a
-# cluster this repo did not create.
+#   verify    the automated release-readiness gate (owns the verify cluster):
+#             verify:run proves the committed tree matches a fresh fetch +
+#             render, then runs the end-to-end cluster check via .mise/env.sh,
+#             deleting the cluster on pass and keeping it on failure;
+#             verify:clean removes a kept one.
+#   release   explicit remote publication: release:publish pushes
+#             artifacts/rendered/ to REGISTRY via .mise/oci-push.sh.
+# Clusters: a repo has two local k3d clusters, dev and verify, named
+# CUR8S_COMPONENT-dev and CUR8S_COMPONENT-verify, each with its own local
+# OCI registry. .mise/cluster.sh (identical across component repos) creates,
+# deletes, and inspects them; .mise/oci-push.sh (identical across component
+# repos) is the single choke point for pushing OCI artifacts with cur8s.io/*
+# annotations; .mise/env.sh (component-specific) boots Flux and wires up
+# reconciliation on either cluster. dev:* tasks always target dev; verify:*
+# tasks own verify. Contexts live only in the repo-local KUBECONFIG, so no
+# task reaches a cluster this repo did not create.
 # artifacts/rendered/ is committed for review. artifacts/oci/ is reserved
 # for future local OCI packaging and ignored; no packaging task exists yet.
 # Captured inputs and authored configuration live in upstream/ and src/.
@@ -43,8 +43,8 @@
 # Every task is an executable shell script under .mise/tasks/
 # (directories namespace the names: .mise/tasks/upstream/fetch ->
 # upstream:fetch). Supporting files (k3d-config.yaml, any shared
-# scripts such as cluster.sh and env.sh) live elsewhere under .mise/ so
-# they never become tasks. Tasks run from the repo root and declare
+# scripts such as cluster.sh, env.sh, and oci-push.sh) live elsewhere under
+# .mise/ so they never become tasks. Tasks run from the repo root and declare
 # arguments in #USAGE headers, so `mise run <task> --help` documents them.
 
 [settings]
@@ -74,14 +74,14 @@ CUR8S_FLUX_VERSION = '{% if env.CUR8S_FLUX_REVISION is not matching(pat="^[1-9][
 # Component identity facts — the single authoring point for
 # self-description (docs/architecture/02-artifact-contents-and-metadata.md).
 # build:render writes them
-# into the cur8s.yaml descriptor; oci:publish attaches them as
+# into the cur8s.yaml descriptor; .mise/oci-push.sh attaches them as
 # cur8s.io/* OCI annotations.
 CUR8S_COMPONENT = "flux"
 CUR8S_UPSTREAM_PROJECT = "fluxcd/flux2"
 CUR8S_SOURCE = "https://github.com/cur8s/flux"
 CUR8S_DOCS = "https://github.com/cur8s/flux"
-# Production registry (oci:publish publishes here by default; dev and
-# test pushes go to the k3d cluster's local registry).
+# Production registry (release:publish targets this registry; dev and
+# verify pushes go to the k3d cluster's local registry via .mise/oci-push.sh).
 REGISTRY = "ghcr.io/cur8s"
 # Repo-local, git-ignored kubeconfig: k3d writes this repo's clusters
 # here, and kubectl and flux read only it, so no task can reach a

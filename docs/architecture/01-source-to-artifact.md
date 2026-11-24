@@ -103,20 +103,20 @@ the installation.
 
 ## What verification establishes
 
-[`test:run`](../../.mise/tasks/test/run) begins by explicitly capturing upstream, then rendering,
+[`verify:run`](../../.mise/tasks/verify/run) begins by explicitly capturing upstream, then rendering,
 in that order. It checks both the captured upstream area and the generated artifact tree for Git changes.
 A clean result establishes that fresh capture and rendering agree with the committed review
 surface. The current check includes staged changes, so a correct regeneration still fails while
 its updated output is uncommitted.
 
-After that check, the test creates a disposable environment through
+After that check, verification creates a disposable environment through
 [`.mise/env.sh`](../../.mise/env.sh), which boots Flux, publishes the payload to its local
 registry, and verifies self-management. Drift checking evaluates agreement with the recorded files;
-the cluster test evaluates installation and reconciliation on its selected runtime. The test task
+the cluster test evaluates installation and reconciliation on its selected runtime. The verify task
 combines both checks. [`dev:create`](../../.mise/tasks/dev/create) and
 [`dev:update`](../../.mise/tasks/dev/update) run `build:render` automatically without fetching upstream.
 
-[`oci:publish`](../../.mise/tasks/oci/publish) publishes the existing rendered payload without
+[`release:publish`](../../.mise/tasks/release/publish) publishes the existing rendered payload without
 fetching or rendering. Publication behavior and release acceptance requirements are separate from
 rendering; the [publication explanation](03-publication-and-self-management.md)
 describes that boundary.

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="Publish artifacts/rendered/ as an OCI artifact to REGISTRY at the package version"
+#USAGE flag "--tag <tag>" env="CUR8S_FLUX_VERSION" help="Artifact tag"
+set -euo pipefail
+# Publishes the committed render to the remote registry as-is; never
+# re-renders. Remote publication happens only on an explicit ask (AGENTS.md).
+.mise/oci-push.sh remote "$usage_tag"

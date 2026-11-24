@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-#MISE description="Prove the committed tree matches a fresh fetch + render, then test it on the test cluster"
+#MISE description="Prove the committed tree matches a fresh fetch + render, then verify it end-to-end on a disposable cluster"
 set -euo pipefail
 paths=(artifacts/rendered upstream)
-ctx="$(.mise/cluster.sh context test)"
+ctx="$(.mise/cluster.sh context verify)"
 
 # Drift: the committed artifacts/rendered/ tree is the review surface, so a fresh fetch +
 # render must leave it (and the fetched input) unchanged. Commit a
-# re-render before running the test.
+# re-render before running verification.
 mise run upstream:fetch
 mise run build:render
 if [ -n "$(git status --porcelain -- "${paths[@]}")" ]; then
@@ -17,20 +17,20 @@ if [ -n "$(git status --porcelain -- "${paths[@]}")" ]; then
 fi
 echo "✅ committed tree matches the render"
 
-# Cluster test on the test cluster: deleted on success, kept on failure.
+# End-to-end cluster verification: deleted on pass, kept on failure.
 cleanup() {
   local rc=$?
   if [ $rc -eq 0 ]; then
-    echo "✅ test passed — deleting the test cluster"
-    .mise/cluster.sh delete test || true
+    echo "✅ verification passed — deleting the verify cluster"
+    .mise/cluster.sh delete verify || true
   else
-    echo "❌ test failed (rc=$rc) — test cluster preserved ($ctx)"
+    echo "❌ verification failed (rc=$rc) — verify cluster preserved ($ctx)"
     flux --context "$ctx" get all -A || true
     echo "  mise exec -- flux --context $ctx get all -A"
     echo "  mise exec -- kubectl --context $ctx -n flux-system get pods"
-    echo "  mise run test:delete   # when done"
+    echo "  mise run verify:clean   # when done"
   fi
 }
 trap cleanup EXIT
-.mise/env.sh create test e2e
+.mise/env.sh create verify e2e
 flux --context "$ctx" get all -A

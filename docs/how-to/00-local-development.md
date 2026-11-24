@@ -22,10 +22,10 @@ tasks. [`mise.toml`](../../mise.toml) owns tool selections, environment values, 
 [`mise.lock`](../../mise.lock) records the tool downloads and checksums. Use
 `mise run <task> --help` for a task's arguments and flags.
 
-The repository has two local k3d clusters: `dev` (`flux-dev`) and `test` (`flux-test`). All `dev:*`
-tasks target `dev`; `test:*` tasks own `test`. Their contexts live in the repository's ignored
-`.kube/config`, so use `mise run` for tasks, or `mise exec -- kubectl ...` / `mise exec -- flux ...`
-for direct inspection, so the repository's environment is loaded.
+The repository has two local k3d clusters: `dev` (`flux-dev`) and `verify` (`flux-verify`). All
+`dev:*` tasks target `dev`; `verify:*` tasks own `verify`. Their contexts live in the repository's
+ignored `.kube/config`, so use `mise run` for tasks, or `mise exec -- kubectl ...` /
+`mise exec -- flux ...` for direct inspection, so the repository's environment is loaded.
 
 ## Regenerate the deployment payload
 
@@ -105,7 +105,7 @@ when authorized under the [agent instructions](../../AGENTS.md). Once `upstream/
 `artifacts/rendered/` match the committed tree, run the combined verification task:
 
 ```sh
-mise run test:run
+mise run verify:run
 ```
 
 The task captures upstream, renders, and checks those two directories for Git changes before
@@ -113,22 +113,22 @@ creating a cluster. Staged changes count too: it stops before the cluster test i
 input or rendered output is uncommitted, even when that output was regenerated correctly. Use the
 candidate workflow above while preparing that change for review.
 
-After the committed-tree check, the task creates the test cluster, boots Flux, publishes
+After the committed-tree check, the task creates the verify cluster, boots Flux, publishes
 to its local registry, and verifies self-management. Expected result: the task exits successfully
 and removes its cluster and registry. It exercises fresh installation and self-management on the
 selected runtime; the [verification scope](../architecture/03-publication-and-self-management.md#verification-scope-and-remaining-publication-work)
 describes its limits.
 
 If the cluster stage fails, the environment is retained for inspection. Diagnose it with the
-test context, then remove it explicitly:
+verify context, then remove it explicitly:
 
 ```sh
-mise exec -- flux --context k3d-flux-test get all -A
-mise run test:delete
+mise exec -- flux --context k3d-flux-verify get all -A
+mise run verify:clean
 ```
 
-A failed drift check creates no test cluster. A test cluster kept from an earlier failure must be
-removed with `test:delete` before retrying.
+A failed drift check creates no verify cluster. A verify cluster kept from an earlier failure must
+be removed with `verify:clean` before retrying.
 
 ## Update an upstream version or tool pin
 

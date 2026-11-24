@@ -158,3 +158,42 @@ These decisions supersede that and need reconciling there.
 the [lifecycle proposal](../design-component-lifecycle/proposal.md) and
 [task namespace reference](../design-component-lifecycle/task-namespaces-proposal.md), and adds
 `dev:update`. Reconcile those documents during the lifecycle design todo.
+
+### `verify` and `release` namespaces (replacing `test:` and `oci:`)
+
+**Owner decisions (2026-11-24):**
+
+- **Replace `test:` with `verify:` (`verify:run`, `verify:clean`).** Interactive testing already
+  happens on `dev`; Workflow 4 is the automated release-readiness gate (drift + fresh end-to-end
+  cluster verification). `verify:clean` removes any leftover verify cluster kept after a failure.
+  The second cluster role in `.mise/cluster.sh` becomes `verify` (`<component>-verify`).
+- **Replace `oci:publish` with `release:publish` and extract `.mise/oci-push.sh`.** Keeps
+  `build:` strictly offline and reserves `release:` for explicit remote publication. Moving the
+  shared `flux push artifact` + `cur8s.io/*` annotations logic into `.mise/oci-push.sh` (`local
+  dev|verify <tag>` vs. `remote <tag>`) lets `release:publish` drop the `--cluster` flag so it
+  only ever targets `REGISTRY`.
+- **Full 5-namespace cross-repo standard:** `upstream:` (`check`, `fetch`), `build:` (`clean`,
+  `render`), `dev:` (`create`, `update`, `status`, `reconcile`, `watch`, `delete`), `verify:`
+  (`run`, `clean`), and `release:` (`publish`).
+
+**Applied:**
+
+- Created `.mise/oci-push.sh` (identical across component repos) and `.mise/tasks/release/publish`;
+  removed `.mise/tasks/oci/`.
+- Created `.mise/tasks/verify/run` and `.mise/tasks/verify/clean`; removed `.mise/tasks/test/`.
+- Updated `.mise/cluster.sh`, `.mise/env.sh`, `.mise/tasks/dev/update`, `.mise/tasks/build/render`,
+  and `.mise/tasks/upstream/check` for `verify` role and `.mise/oci-push.sh`.
+- Updated `mise.toml`, `.mise/README.md`, [00-local-development.md](../../../docs/how-to/00-local-development.md),
+  [01-source-to-artifact.md](../../../docs/architecture/01-source-to-artifact.md),
+  [02-artifact-contents-and-metadata.md](../../../docs/architecture/02-artifact-contents-and-metadata.md),
+  and [03-publication-and-self-management.md](../../../docs/architecture/03-publication-and-self-management.md).
+- Verified: `mise tasks` lists the 13 tasks across `upstream`, `build`, `dev`, `verify`, and
+  `release`; `mise run verify:run` passed (drift check, `flux-verify` bootstrap, `.mise/oci-push.sh
+  local verify e2e`, reconciliation, and cleanup); `mise run verify:clean` exited 0 on missing
+  `flux-verify`; `mise run dev:update` passed against `flux-dev` (4.35s); `mise run release:publish
+  --help` shows `--tag` only (no `--cluster`).
+
+**Input for the lifecycle design todo:** supersedes `test:run`, `test:destroy`, and `oci:publish`
+in the [lifecycle proposal](../design-component-lifecycle/proposal.md) and
+[task namespace reference](../design-component-lifecycle/task-namespaces-proposal.md). Reconcile
+those documents during the lifecycle design todo.

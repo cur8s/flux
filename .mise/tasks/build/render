@@ -16,8 +16,8 @@ cp src/config/sync.yaml artifacts/rendered/sync.yaml
 # Deliberately free of anything unknowable at render
 # time (no git revision, no timestamp) so the committed tree
 # regenerates byte-for-byte — source/revision are attached by
-# oci:publish as standard OCI annotations instead. Identity facts come
-# from mise.toml [env], the same source oci:publish annotates from.
+# .mise/oci-push.sh as standard OCI annotations instead. Identity facts come
+# from mise.toml [env], the same source .mise/oci-push.sh annotates from.
 cat > artifacts/rendered/cur8s.yaml <<DESCRIPTOR
 # Cur8s release descriptor — the artifact asserts its own identity.
 # Inert: read by humans and tooling, never applied to a cluster.

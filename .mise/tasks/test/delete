@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-#MISE description="Delete the test cluster and its registry (e.g. one kept after a failed test:run)"
-set -euo pipefail
-.mise/cluster.sh delete test

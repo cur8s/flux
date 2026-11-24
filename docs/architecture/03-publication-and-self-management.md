@@ -22,9 +22,9 @@ Both forms must use the same generated controller installation bytes. Publicatio
 a separate installation for each channel. Their packaging differs, but the resources that bootstrap
 installs must be the resources Flux subsequently reconciles.
 
-[`oci:publish`](../../.mise/tasks/oci/publish) currently publishes the existing rendered tree with
-`REGISTRY` and `CUR8S_FLUX_VERSION` as defaults. It does not fetch or render inputs, run `test:run`,
-enforce a clean working tree, or check whether that version already
+[`release:publish`](../../.mise/tasks/release/publish) currently publishes the existing rendered tree
+to `REGISTRY` with `CUR8S_FLUX_VERSION` as the default tag. It does not fetch or render inputs, run
+`verify:run`, enforce a clean working tree, or check whether that version already
 exists in either distribution channel. There is currently no live GitHub Actions workflow in the
 repository; the verification gates run locally.
 
@@ -63,7 +63,7 @@ declared OCI source.
 
 | Stage | Required state | Current local operation |
 | --- | --- | --- |
-| Install controllers | The selected Flux installation resources exist in the cluster. | [`.mise/env.sh`](../../.mise/env.sh) (called by [`dev:create`](../../.mise/tasks/dev/create) and [`test:run`](../../.mise/tasks/test/run)) applies the locally rendered installation with server-side apply. |
+| Install controllers | The selected Flux installation resources exist in the cluster. | [`.mise/env.sh`](../../.mise/env.sh) (called by [`dev:create`](../../.mise/tasks/dev/create) and [`verify:run`](../../.mise/tasks/verify/run)) applies the locally rendered installation with server-side apply. |
 | Establish readiness | Required CRDs and controllers are usable before Flux custom resources are applied. | `.mise/env.sh` waits for controller Deployments to be Available; it does not issue a separate CRD Established wait. |
 | Declare self-management | A source selects the artifact and a Kustomization selects its installation content. | `.mise/env.sh` creates the local OCI source and applies the package's sync file after controller availability and local publication. |
 | Verify convergence | The declared artifact is acquired and its installation is healthy. | The development task waits for the source and Kustomization to report Ready. |
@@ -92,7 +92,7 @@ installation. The [user guide](../user-guide.md) contains the current operator p
 
 ## Verification scope and remaining publication work
 
-[`test:run`](../../.mise/tasks/test/run) captures upstream, renders, and checks agreement with the
+[`verify:run`](../../.mise/tasks/verify/run) captures upstream, renders, and checks agreement with the
 committed files before creating a disposable environment through `.mise/env.sh`. That helper creates
 the cluster and registry, boots Flux, publishes locally, declares self-management, and waits for
 Ready conditions. A successful run deletes the cluster; a failed cluster run preserves it for investigation.
