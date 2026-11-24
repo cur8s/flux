@@ -86,3 +86,28 @@ These decisions supersede that and need reconciling there.
 - Flux-specific comment "this repo only tests Flux bootstrap" in the shared k3d config.
 - `switchCurrentContext: true` is unnecessary because every task passes `--context`.
 - Kubernetes runtime pinning stays with the implementation planning todo.
+
+### Flux bootstrap (`flux:boot` removed)
+
+**Owner decisions (2026-11-24):**
+
+- **No `flux:boot` task.** With `cluster:*` removed, there is no standalone setup flow that starts
+  from a bare cluster, so `flux:boot` was a confusing leftover in `mise tasks`. Inline its two
+  `kubectl` commands (server-side apply of `artifacts/rendered/deploy/flux.yaml` and waiting for
+  controller Deployments to be `Available`) into `dev:create`, leaving the `flux:` namespace purely
+  for inspecting and reconciling a running cluster (`flux:status`, `flux:reconcile`, `flux:watch`).
+
+**Applied:**
+
+- Removed `.mise/tasks/flux/boot` and inlined the controller apply and `Available` wait into
+  `.mise/tasks/dev/create`.
+- Updated `mise.toml` header comments and
+  [Publication and self-management](../../../docs/architecture/03-publication-and-self-management.md).
+- Verified: `mise tasks` no longer lists `flux:boot`; `mise run test:run` passed (drift check,
+  inlined bootstrap in `dev:create`, local OCI publish, reconciliation to Ready, and test cluster
+  cleanup).
+
+**Input for the lifecycle design todo:** the [lifecycle proposal](../design-component-lifecycle/proposal.md),
+[task namespace reference](../design-component-lifecycle/task-namespaces-proposal.md), and
+[Flux bootstrap proposal](../design-component-lifecycle/flux-bootstrap-proposal.md) record
+`flux:boot` as agreed/decided. This decision supersedes that and needs reconciling there.

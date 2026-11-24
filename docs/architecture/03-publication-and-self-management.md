@@ -63,9 +63,9 @@ declared OCI source.
 
 | Stage | Required state | Current local operation |
 | --- | --- | --- |
-| Install controllers | The selected Flux installation resources exist in the cluster. | [`flux:boot`](../../.mise/tasks/flux/boot) applies the locally rendered installation with server-side apply. |
-| Establish readiness | Required CRDs and controllers are usable before Flux custom resources are applied. | The boot task waits for controller Deployments to be Available; it does not issue a separate CRD Established wait. |
-| Declare self-management | A source selects the artifact and a Kustomization selects its installation content. | [`dev:create`](../../.mise/tasks/dev/create) creates the local OCI source and applies the package's sync file after boot and local publication. |
+| Install controllers | The selected Flux installation resources exist in the cluster. | [`dev:create`](../../.mise/tasks/dev/create) applies the locally rendered installation with server-side apply. |
+| Establish readiness | Required CRDs and controllers are usable before Flux custom resources are applied. | `dev:create` waits for controller Deployments to be Available; it does not issue a separate CRD Established wait. |
+| Declare self-management | A source selects the artifact and a Kustomization selects its installation content. | `dev:create` creates the local OCI source and applies the package's sync file after controller availability and local publication. |
 | Verify convergence | The declared artifact is acquired and its installation is healthy. | The development task waits for the source and Kustomization to report Ready. |
 
 The local source uses the disposable cluster's registry and selected test tag. Production source

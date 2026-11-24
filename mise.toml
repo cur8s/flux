@@ -12,15 +12,13 @@
 #   build     the reviewable artifact tree: clean deletes generated
 #             output in artifacts/; render cleans, then regenerates artifacts/rendered/
 #             from the captured inputs, never fetching.
-#   flux      Flux on a cluster: boot installs it (here from the local
-#             render; in other component repos from the published Flux
-#             release), status and watch show it, reconcile forces this
-#             component's Kustomization.
+#   flux      Flux on a cluster: status and watch show it, reconcile
+#             forces this component's Kustomization.
 #   dev       a local environment, composed from the helper and the
-#             tasks above: create runs cluster.sh create -> flux:boot ->
-#             oci:publish to the local registry -> hand Flux its own
-#             artifact -> wait Ready; status and delete inspect and
-#             remove it.
+#             tasks above: create runs cluster.sh create -> bootstrap Flux
+#             from the local render -> oci:publish to the local registry ->
+#             hand Flux its own artifact -> wait Ready; status and delete
+#             inspect and remove it.
 #   test      the product contract: test:run proves the committed tree
 #             matches a fresh fetch + render, then runs dev:create on the
 #             test cluster, deleting it on success and keeping it on
@@ -38,7 +36,7 @@
 # artifacts/rendered/ is committed for review. artifacts/oci/ is reserved
 # for future local OCI packaging and ignored; no packaging task exists yet.
 # Captured inputs and authored configuration live in upstream/ and src/.
-# Only upstream:fetch, build:render, and flux:boot are specific to this
+# Only upstream:fetch, build:render, and dev:create are specific to this
 # component; the rest are meant to be identical across cur8s component
 # repos.
 #

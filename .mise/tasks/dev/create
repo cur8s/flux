@@ -5,12 +5,14 @@
 #USAGE }
 #USAGE flag "--tag <tag>" default="dev" help="Artifact tag to publish to the local registry and track"
 set -euo pipefail
-# Composes the cluster helper with the flux and oci tasks from the committed
-# render (run build:render first to try uncommitted changes).
+# Composes the cluster helper with the oci task from the committed render
+# (run build:render first to try uncommitted changes).
 cluster="$usage_cluster"; c="$CUR8S_COMPONENT"
 ctx="$(.mise/cluster.sh context "$cluster")"
 .mise/cluster.sh create "$cluster"
-mise run flux:boot "$cluster"
+# Bootstrap Flux from this repo's local render; server-side apply handles the large CRDs cleanly.
+kubectl --context "$ctx" apply --server-side -f artifacts/rendered/deploy/flux.yaml
+kubectl --context "$ctx" -n flux-system wait deploy --all --for=condition=Available --timeout=3m
 mise run oci:publish --cluster "$cluster" --tag "$usage_tag"
 # Hand Flux its own artifact: the OCIRepository the artifact's sync.yaml
 # sources from, then sync.yaml. Bumping the tag is how the cluster upgrades.

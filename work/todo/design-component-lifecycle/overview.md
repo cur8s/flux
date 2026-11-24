@@ -55,7 +55,11 @@ summary: "Identify the goals and invariants of a Cur8s component's build-to-publ
   the `cluster:*` tasks became the `.mise/cluster.sh` helper, and cluster names became the fixed
   roles `dev` and `test` (`<component>-dev`, `<component>-test`) that the `flux:*`, `dev:*`, and
   `oci:publish --cluster` tasks take. The [lifecycle proposal](proposal.md)'s agreed `cluster:*`
-  rows and name override need reconciling with this.
+  rows and name override need reconciling with this. On 2026-11-24, the owner also dropped
+  `flux:boot` and inlined it into `dev:create` ([mise conventions working notes](../standardize-mise-and-task-scripts/working-notes.md));
+  the `flux:boot` entries in the [lifecycle proposal](proposal.md),
+  [task namespace reference](task-namespaces-proposal.md), and
+  [Flux bootstrap proposal](flux-bootstrap-proposal.md) need reconciling with this too.
 - The earlier six-phase proposal, top-level Maven-style phases rather than namespaces, is kept as
   an alternative considered in [candidate: six chained phases](candidate-six-phases.md).
 
