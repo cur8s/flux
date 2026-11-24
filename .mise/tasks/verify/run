@@ -4,6 +4,12 @@ set -euo pipefail
 paths=(artifacts/rendered upstream)
 ctx="$(.mise/cluster.sh context verify)"
 
+# Refuse to start if a leftover verify cluster exists from an earlier failed run.
+if .mise/cluster.sh status verify >/dev/null 2>&1; then
+  echo "❌ verify cluster already exists ($ctx) — inspect it or run 'mise run verify:clean' first" >&2
+  exit 1
+fi
+
 # Drift: the committed artifacts/rendered/ tree is the review surface, so a fresh fetch +
 # render must leave it (and the fetched input) unchanged. Commit a
 # re-render before running verification.

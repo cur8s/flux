@@ -216,3 +216,5 @@ those documents during the lifecycle design todo.
 - Hardened `dev:update` (2026-11-24): delegated to `.mise/env.sh update dev dev` (keeping
   `dev:update` identical across component repos), added a clear error when the dev cluster is not
   running, and applied `artifacts/rendered/sync.yaml` before reconciling so sync edits take effect.
+- Hardened `verify:run` (2026-11-24): fail fast with a `verify:clean` hint before fetching or
+  rendering when a leftover `flux-verify` cluster already exists.
