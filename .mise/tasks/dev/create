@@ -2,4 +2,4 @@
 #MISE description="Render and create the dev cluster with Flux"
 #MISE depends=["build:render"]
 set -euo pipefail
-.mise/env.sh create dev dev
+.mise/env.sh dev dev

@@ -24,19 +24,15 @@ fi
 echo "✅ committed tree matches the render"
 
 # End-to-end cluster verification: deleted on pass, kept on failure.
-cleanup() {
-  local rc=$?
-  if [ $rc -eq 0 ]; then
-    echo "✅ verification passed — deleting the verify cluster"
-    .mise/cluster.sh delete verify || true
-  else
-    echo "❌ verification failed (rc=$rc) — verify cluster preserved ($ctx)"
-    flux --context "$ctx" get all -A || true
-    echo "  mise exec -- flux --context $ctx get all -A"
-    echo "  mise exec -- kubectl --context $ctx -n flux-system get pods"
-    echo "  mise run verify:clean   # when done"
-  fi
-}
-trap cleanup EXIT
-.mise/env.sh create verify e2e
-flux --context "$ctx" get all -A
+if .mise/env.sh verify e2e && flux --context "$ctx" get all -A; then
+  echo "✅ verification passed — deleting the verify cluster"
+  .mise/cluster.sh delete verify
+else
+  rc=$?
+  echo "❌ verification failed (rc=$rc) — verify cluster preserved ($ctx)"
+  flux --context "$ctx" get all -A || true
+  echo "  mise exec -- flux --context $ctx get all -A"
+  echo "  mise exec -- kubectl --context $ctx -n flux-system get pods"
+  echo "  mise run verify:clean   # when done"
+  exit "$rc"
+fi

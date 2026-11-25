@@ -36,8 +36,8 @@
 # artifacts/rendered/ is committed for review. artifacts/oci/ is reserved
 # for future local OCI packaging and ignored; no packaging task exists yet.
 # Captured inputs and authored configuration live in upstream/ and src/.
-# Only upstream:fetch, build:render, and .mise/env.sh are specific to this
-# component; the rest are meant to be identical across cur8s component
+# Only upstream:fetch, build:render, dev:update, and .mise/env.sh are specific
+# to this component; the rest are meant to be identical across cur8s component
 # repos.
 #
 # Every task is an executable shell script under .mise/tasks/

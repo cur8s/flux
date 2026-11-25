@@ -218,3 +218,19 @@ those documents during the lifecycle design todo.
   running, and applied `artifacts/rendered/sync.yaml` before reconciling so sync edits take effect.
 - Hardened `verify:run` (2026-11-24): fail fast with a `verify:clean` hint before fetching or
   rendering when a leftover `flux-verify` cluster already exists.
+
+### Bash script linearity
+
+**Owner decisions (2026-11-25):**
+
+- **Keep task scripts as simple and linear as possible:** every script under `.mise/tasks/` reads
+  top-to-bottom with no functions, `case` dispatchers, or `trap` handlers. Multi-action dispatch
+  stays only in shared `.mise/*.sh` helpers (`.mise/cluster.sh`, `.mise/oci-push.sh`).
+
+**Applied:**
+
+- Replaced `cleanup()` + `trap` in `.mise/tasks/verify/run` with a linear `if ... else ... fi`.
+- Inlined the `update` steps directly into `.mise/tasks/dev/update` and simplified `.mise/env.sh`
+  to a single linear script (`.mise/env.sh dev|verify <tag>`) with no functions or `case` dispatch.
+- Verified: `bash -n` on all scripts under `.mise/`, `mise run dev:update` (4.73s against
+  `flux-dev`), and `mise run verify:run` (passed and cleaned up `flux-verify`).

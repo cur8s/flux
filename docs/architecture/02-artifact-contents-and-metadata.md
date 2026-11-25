@@ -61,9 +61,10 @@ repository and its lockfile.
 ## Publication annotations
 
 [`.mise/oci-push.sh`](../../.mise/oci-push.sh) (used by
-[`release:publish`](../../.mise/tasks/release/publish) and [`.mise/env.sh`](../../.mise/env.sh))
-packages `artifacts/rendered/` with `flux push artifact`. It adds these custom OCI manifest
-annotations from the same configuration values used by the descriptor:
+[`release:publish`](../../.mise/tasks/release/publish), [`dev:update`](../../.mise/tasks/dev/update),
+and [`.mise/env.sh`](../../.mise/env.sh)) packages `artifacts/rendered/` with
+`flux push artifact`. It adds these custom OCI manifest annotations from the same configuration
+values used by the descriptor:
 
 | Annotation | Value source |
 | --- | --- |
