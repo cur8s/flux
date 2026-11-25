@@ -103,7 +103,9 @@ today — to resolve with the owner, not by assumption:
   `artifacts/rendered/sync.yaml`). The [architecture overview](../../../docs/architecture/00-overview.md#intended-self-management-boundary)
   distinguishes this current layout from the intended ownership change. The user guide's bootstrap
   and recovery steps apply it, and the end-to-end test deploys it. The design must say where the
-  end-to-end test's own self-management file lives, acting as the consuming repository.
+  end-to-end test's own self-management file lives, acting as the consuming repository (moving it
+  only requires updating `DEV_FLUX_MANIFESTS` in `mise.toml`, since `.mise/install.sh` and
+  `dev:update` are now data-driven).
 - Controllers: the Flux bootstrap proposal names only source-controller and kustomize-controller as
   essential and leaves notification-controller to the package definition; the package installs all
   three today.

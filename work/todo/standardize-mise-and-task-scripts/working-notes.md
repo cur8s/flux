@@ -255,3 +255,20 @@ those documents during the lifecycle design todo.
   (2026-11-25): `dev:create` and `verify:run` now explicitly call `.mise/cluster.sh create`
   followed by `.mise/install.sh`, so `cluster.sh` owns k3d lifecycle exclusively and `install.sh`
   owns installing Flux and this component into an existing cluster.
+- Adopted Pattern A — data-driven `.mise/install.sh` and `dev:update` (2026-11-25), informed by
+  reviewing `/Users/adib/dev/cur8s/monorepo-cur8s`:
+  - Added `FLUX_BOOTSTRAP_MANIFEST` and `DEV_FLUX_MANIFESTS` to `mise.toml [env]`, and updated
+    `.mise/install.sh` to wait on `ocirepository --all` and `kustomization --all` in `flux-system`.
+  - `.mise/install.sh`, `.mise/cluster.sh`, `.mise/oci-push.sh`, and every task except
+    `upstream:fetch` and `build:render` are now identical across Cur8s component repos.
+  - Other component repos express multi-stage Kustomizations (`crds`/`bootstrap`/`deploy`/`finalize`),
+    prerequisite `OCIRepository` + `Kustomization` graphs, and `postBuild` ConfigMaps declaratively
+    under `DEV_FLUX_MANIFESTS` rather than in imperative bash.
+  - Notes for future component repos and lifecycle design:
+    - Once consumer-owned `sync.yaml` moves out of the `flux` package, point `DEV_FLUX_MANIFESTS`
+      at the local test manifest directory without touching `.mise/install.sh`.
+    - Components needing functional smoke tests (e.g. `cert-manager` ClusterIssuer check, `grafana`
+      Gateway HTTP BasicAuth probe) can add an optional hook called by `verify:run` if present.
+    - Multi-stage components (2–4 Kustomizations) need `dev:reconcile` targeting settled in the
+      lifecycle design todo.
+    - Repos probing HTTP Gateways add host port mappings in `.mise/k3d-config.yaml`.
