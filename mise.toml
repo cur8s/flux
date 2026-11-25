@@ -30,7 +30,7 @@
 # .mise/oci-push.sh is the single choke point for pushing OCI artifacts with
 # cur8s.io/* annotations; .mise/install.sh installs Flux and this component
 # into an existing cluster using FLUX_BOOTSTRAP_MANIFEST and
-# DEV_FLUX_MANIFESTS from [env]. All three helpers are identical across
+# FLUX_SYNC_MANIFESTS from [env]. All three helpers are identical across
 # component repos. dev:* tasks always target dev; verify:* tasks own verify.
 # Contexts live only in the repo-local KUBECONFIG, so no task reaches a
 # cluster this repo did not create.
@@ -90,7 +90,7 @@ REGISTRY = "ghcr.io/cur8s"
 # manifests (file or directory of Kustomizations, test ConfigMaps, and any
 # pinned prerequisite OCIRepositories).
 FLUX_BOOTSTRAP_MANIFEST = "artifacts/rendered/deploy/flux.yaml"
-DEV_FLUX_MANIFESTS = "artifacts/rendered/sync.yaml"
+FLUX_SYNC_MANIFESTS = "artifacts/rendered/sync.yaml"
 # Repo-local, git-ignored kubeconfig: k3d writes this repo's clusters
 # here, and kubectl and flux read only it, so no task can reach a
 # cluster this repo did not create.

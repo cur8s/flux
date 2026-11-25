@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Install Flux and this component into an existing local cluster from artifacts/rendered/.
 # Identical across Cur8s component repos; component-specific inputs come from
-# FLUX_BOOTSTRAP_MANIFEST and DEV_FLUX_MANIFESTS in mise.toml [env].
+# FLUX_BOOTSTRAP_MANIFEST and FLUX_SYNC_MANIFESTS in mise.toml [env].
 # Run by dev:create and verify:run after .mise/cluster.sh create; not a mise task.
 #
 #   .mise/install.sh dev|verify <tag>
@@ -9,7 +9,7 @@ set -euo pipefail
 : "${CUR8S_COMPONENT:?must be set (mise.toml [env]); run through mise}"
 : "${KUBECONFIG:?must be set (mise.toml [env]); run through mise}"
 : "${FLUX_BOOTSTRAP_MANIFEST:?must be set (mise.toml [env]); run through mise}"
-: "${DEV_FLUX_MANIFESTS:?must be set (mise.toml [env]); run through mise}"
+: "${FLUX_SYNC_MANIFESTS:?must be set (mise.toml [env]); run through mise}"
 
 if [[ $# -ne 2 ]]; then
   echo "usage: $0 dev|verify <tag>" >&2
@@ -33,7 +33,7 @@ kubectl --context "$context" -n flux-system wait deploy --all --for=condition=Av
 flux --context "$context" create source oci "$component" \
   --url "oci://$(.mise/cluster.sh in-cluster-registry "$cluster")/$component" \
   --tag "$tag" --insecure --interval 1m
-kubectl --context "$context" apply -f "$DEV_FLUX_MANIFESTS"
+kubectl --context "$context" apply -f "$FLUX_SYNC_MANIFESTS"
 
 # Wait for every source and Kustomization in this disposable cluster to converge.
 kubectl --context "$context" -n flux-system wait ocirepository --all \
