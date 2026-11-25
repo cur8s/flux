@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 #MISE description="Show dev cluster, registry, and Flux status"
 set -euo pipefail
+# Reports cluster, API, registry, and Flux state; exits non-zero if the cluster does not exist.
 .mise/cluster.sh status dev
 flux --context "$(.mise/cluster.sh context dev)" get all -A

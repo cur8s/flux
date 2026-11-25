@@ -242,3 +242,10 @@ those documents during the lifecycle design todo.
     does not abort before printing the drift error message.
   - Added detached-HEAD fallback (`git describe --tags --exact-match` → `HEAD`) for `--revision`
     in `.mise/oci-push.sh`.
+- Standardized bash style and comments (2026-11-25):
+  - Always use `[[ ... ]]` (never `[ ... ]`), one statement per line (no semicolon-packed
+    assignments or inline `{ ...; exit 1; }` blocks), and full readable variable names (`input`,
+    `output`, `component`, `context`, `exit_code`, `artifact_dir`, `tracked_paths`).
+  - Helpers open with purpose, callers, and usage comments; every task script opens with a short
+    contract/precondition comment after `set -euo pipefail` (without narrating obvious commands).
+  - Wrapped multi-step guidance in `upstream:check` into a readable heredoc.

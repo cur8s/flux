@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 #MISE description="Delete a leftover verify cluster and its registry"
 set -euo pipefail
+# Succeeds even if no verify cluster exists.
 .mise/cluster.sh delete verify

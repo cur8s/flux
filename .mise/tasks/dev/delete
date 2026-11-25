@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 #MISE description="Delete the dev cluster and its registry"
 set -euo pipefail
+# Succeeds even if the dev cluster is already gone.
 .mise/cluster.sh delete dev

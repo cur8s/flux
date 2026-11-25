@@ -2,12 +2,12 @@
 #MISE description="Fetch the pinned upstream manifest into upstream/"
 set -euo pipefail
 # Replaces the previously captured release; build:render consumes it.
-out=upstream/flux.yaml
+output="upstream/flux.yaml"
 echo "🔽 Generating Flux ${UPSTREAM_TAG} install manifest (source/kustomize/notification)..."
-mkdir -p "$(dirname "$out")"
+mkdir -p "$(dirname "$output")"
 flux install \
   --components=source-controller,kustomize-controller,notification-controller \
   --namespace=flux-system \
   --version="$UPSTREAM_TAG" \
-  --export > "$out"
-echo "   ✅ $out"
+  --export > "$output"
+echo "   ✅ $output"

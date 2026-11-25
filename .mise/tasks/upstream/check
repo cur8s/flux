@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 #MISE description="Check for a newer upstream release"
 set -euo pipefail
+# Queries the GitHub Releases API to compare the latest release with UPSTREAM_TAG.
 latest="$(curl -fsSL "https://api.github.com/repos/$CUR8S_UPSTREAM_PROJECT/releases/latest" | jq -r .tag_name)"
 echo "tracked: $UPSTREAM_TAG"
 echo "latest:  $latest"
-if [ "$UPSTREAM_TAG" = "$latest" ]; then
+if [[ "$UPSTREAM_TAG" == "$latest" ]]; then
   echo "✅ up to date"
 else
-  echo "⚠️  update available: bump UPSTREAM_VERSION in mise.toml, refresh mise.lock with 'mise lock --platform linux-x64,linux-arm64,macos-x64,macos-arm64', then 'mise run upstream:fetch', 'mise run build:render', and 'mise run verify:run'"
+  cat <<'EOF'
+⚠️  update available:
+   1. Bump UPSTREAM_VERSION in mise.toml
+   2. Run: mise lock --platform linux-x64,linux-arm64,macos-x64,macos-arm64
+   3. Run: mise run upstream:fetch && mise run build:render && mise run verify:run
+EOF
 fi

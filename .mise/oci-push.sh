@@ -16,8 +16,11 @@ usage() {
   exit 1
 }
 
-artifact=artifacts/rendered
-[ -d "$artifact" ] || { echo "❌ $artifact/ not rendered (run 'mise run build:render')" >&2; exit 1; }
+artifact_dir="artifacts/rendered"
+if [[ ! -d "$artifact_dir" ]]; then
+  echo "❌ $artifact_dir/ not rendered (run 'mise run build:render')" >&2
+  exit 1
+fi
 
 case "${1:-}" in
   local)
@@ -29,7 +32,8 @@ case "${1:-}" in
     # invoked for it anyway and can hang indefinitely on a localhost registry.
     # Point this push at a throwaway docker config with no credsStore so the
     # OCI client uses anonymous auth.
-    DOCKER_CONFIG="$(mktemp -d)"; export DOCKER_CONFIG
+    DOCKER_CONFIG="$(mktemp -d)"
+    export DOCKER_CONFIG
     echo '{"auths":{}}' > "$DOCKER_CONFIG/config.json"
     trap 'rm -rf "$DOCKER_CONFIG"' EXIT
     ;;
@@ -44,10 +48,11 @@ esac
 
 url="oci://${registry}/${CUR8S_COMPONENT}:${tag}"
 ref="$(git branch --show-current)"
-if [ -z "$ref" ]; then
+if [[ -z "$ref" ]]; then
   ref="$(git describe --tags --exact-match 2>/dev/null || echo HEAD)"
 fi
 revision="${ref}@sha1:$(git rev-parse HEAD)"
+
 echo "📦 $url"
 # The same identity facts the descriptor asserts, readable from the
 # registry without pulling the artifact; see
@@ -55,7 +60,7 @@ echo "📦 $url"
 # revision ride flux push's standard OCI annotations — they are
 # push-time facts, deliberately absent from the committed descriptor.
 flux push artifact "$url" \
-  --path="$artifact" \
+  --path="$artifact_dir" \
   --source="$(git config --get remote.origin.url || echo unknown)" \
   --revision="$revision" \
   --annotations="cur8s.io/component=${CUR8S_COMPONENT}" \

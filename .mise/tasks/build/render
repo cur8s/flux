@@ -2,10 +2,15 @@
 #MISE description="Clean and render artifacts/rendered/ from local inputs"
 #MISE depends=["build:clean"]
 set -euo pipefail
-in=upstream/flux.yaml
-[ -f "$in" ] || { echo "❌ $in missing (run 'mise run upstream:fetch')" >&2; exit 1; }
+# Offline render from captured upstream/ and authored src/; never fetches upstream.
+input="upstream/flux.yaml"
+if [[ ! -f "$input" ]]; then
+  echo "❌ $input missing (run 'mise run upstream:fetch')" >&2
+  exit 1
+fi
+
 echo "🔨 Rendering opinionated config → artifacts/rendered/ ..."
-digest="sha256:$(openssl dgst -sha256 "$in" | awk '{print $NF}')"
+digest="sha256:$(openssl dgst -sha256 "$input" | awk '{print $NF}')"
 mkdir -p artifacts/rendered/deploy
 kustomize build --load-restrictor=LoadRestrictionsNone \
   src/config/overlays/deploy > artifacts/rendered/deploy/flux.yaml
@@ -13,11 +18,9 @@ cp src/config/sync.yaml artifacts/rendered/sync.yaml
 
 # The release descriptor: the artifact asserting its own identity, documented
 # in docs/architecture/02-artifact-contents-and-metadata.md.
-# Deliberately free of anything unknowable at render
-# time (no git revision, no timestamp) so the committed tree
-# regenerates byte-for-byte — source/revision are attached by
-# .mise/oci-push.sh as standard OCI annotations instead. Identity facts come
-# from mise.toml [env], the same source .mise/oci-push.sh annotates from.
+# Deliberately free of anything unknowable at render time (no git revision,
+# no timestamp) so the committed tree regenerates byte-for-byte — source and
+# revision are attached by .mise/oci-push.sh as OCI annotations instead.
 cat > artifacts/rendered/cur8s.yaml <<DESCRIPTOR
 # Cur8s release descriptor — the artifact asserts its own identity.
 # Inert: read by humans and tooling, never applied to a cluster.
