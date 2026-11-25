@@ -59,8 +59,8 @@ summary: "Identify the goals and invariants of a Cur8s component's build-to-publ
   folded the remaining `flux:*` tasks into `dev:` (`dev:status`, `dev:reconcile`, `dev:watch`),
   specialized `dev:*` to the `dev` cluster only, added `dev:update` (with both `dev:create` and
   `dev:update` depending on `build:render`), extracted component installation into
-  `.mise/install.sh` (called after `.mise/cluster.sh create`) and
-  OCI pushing to `.mise/oci-push.sh`, replaced `test:run`/`test:destroy` with `verify:run`/
+  `.mise/install-component.sh` (called after `.mise/cluster.sh create`) and
+  OCI pushing to `.mise/push-artifact.sh`, replaced `test:run`/`test:destroy` with `verify:run`/
   `verify:clean` (cluster role `verify`), and replaced `oci:publish` with `release:publish`
   ([mise conventions working notes](../standardize-mise-and-task-scripts/working-notes.md));
   the `flux:*`, `test:*`, and `oci:publish` entries in the [lifecycle proposal](proposal.md),
@@ -104,7 +104,7 @@ today — to resolve with the owner, not by assumption:
   distinguishes this current layout from the intended ownership change. The user guide's bootstrap
   and recovery steps apply it, and the end-to-end test deploys it. The design must say where the
   end-to-end test's own self-management file lives, acting as the consuming repository (moving it
-  only requires updating `FLUX_SYNC_MANIFESTS` in `mise.toml`, since `.mise/install.sh` and
+  only requires updating `FLUX_SYNC_MANIFESTS` in `mise.toml`, since `.mise/install-component.sh` and
   `dev:update` are now data-driven).
 - Controllers: the Flux bootstrap proposal names only source-controller and kustomize-controller as
   essential and leaves notification-controller to the package definition; the package installs all

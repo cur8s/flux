@@ -4,4 +4,4 @@
 set -euo pipefail
 # Fails if the dev cluster already exists; use dev:update to iterate on a running one.
 .mise/cluster.sh create dev
-.mise/install.sh dev dev
+.mise/install-component.sh dev dev

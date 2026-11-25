@@ -42,7 +42,7 @@ describes its compatibility contract, while recording upstream versions as depen
 That versioning change has not been implemented in the current configuration.
 
 Once a production version is published, it must keep identifying the same content. Development
-tags such as `dev` and `e2e` serve local workflows via `.mise/oci-push.sh`; `release:publish` only
+tags such as `dev` and `e2e` serve local workflows via `.mise/push-artifact.sh`; `release:publish` only
 targets `REGISTRY` at `CUR8S_VERSION`, though it does not yet refuse an existing production
 version.
 
@@ -63,9 +63,9 @@ declared OCI source.
 
 | Stage | Required state | Current local operation |
 | --- | --- | --- |
-| Install controllers | The selected Flux installation resources exist in the cluster. | [`.mise/install.sh`](../../.mise/install.sh) (called by [`dev:create`](../../.mise/tasks/dev/create) and [`verify:run`](../../.mise/tasks/verify/run) after `.mise/cluster.sh create`) applies the locally rendered installation with server-side apply. |
-| Establish readiness | Required CRDs and controllers are usable before Flux custom resources are applied. | `.mise/install.sh` waits for controller Deployments to be Available; it does not issue a separate CRD Established wait. |
-| Declare self-management | A source selects the artifact and a Kustomization selects its installation content. | `.mise/install.sh` creates the local OCI source and applies the package's sync file after controller availability and local publication. |
+| Install controllers | The selected Flux installation resources exist in the cluster. | [`.mise/install-component.sh`](../../.mise/install-component.sh) (called by [`dev:create`](../../.mise/tasks/dev/create) and [`verify:run`](../../.mise/tasks/verify/run) after `.mise/cluster.sh create`) applies the locally rendered installation with server-side apply. |
+| Establish readiness | Required CRDs and controllers are usable before Flux custom resources are applied. | `.mise/install-component.sh` waits for controller Deployments to be Available; it does not issue a separate CRD Established wait. |
+| Declare self-management | A source selects the artifact and a Kustomization selects its installation content. | `.mise/install-component.sh` creates the local OCI source and applies the package's sync file after controller availability and local publication. |
 | Verify convergence | The declared artifact is acquired and its installation is healthy. | The development task waits for the source and Kustomization to report Ready. |
 
 The local source uses the disposable cluster's registry and selected test tag. Production source
@@ -94,7 +94,7 @@ installation. The [user guide](../user-guide.md) contains the current operator p
 
 [`verify:run`](../../.mise/tasks/verify/run) captures upstream, renders, and checks agreement with the
 committed files before creating a disposable cluster with `.mise/cluster.sh` and installing into it
-with `.mise/install.sh`. That flow creates
+with `.mise/install-component.sh`. That flow creates
 the cluster and registry, boots Flux, publishes locally, declares self-management, and waits for
 Ready conditions. A successful run deletes the cluster; a failed cluster run preserves it for investigation.
 The test establishes fresh installation and self-management on its selected Kubernetes runtime.

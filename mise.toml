@@ -4,7 +4,7 @@
 #
 # Tasks live as executable scripts under .mise/tasks/<namespace>/<action>
 # (run `mise tasks` to list them). Supporting helpers (.mise/cluster.sh,
-# .mise/install.sh, .mise/oci-push.sh, .mise/k3d-config.yaml) live directly
+# .mise/install-component.sh, .mise/push-artifact.sh, .mise/k3d-config.yaml) live directly
 # under .mise/ so they are never discovered as tasks; see .mise/README.md.
 # Only upstream:fetch and build:render are component-specific; the rest are
 # meant to be identical across Cur8s component repos.
@@ -36,16 +36,16 @@ CUR8S_VERSION = '{% if env.CUR8S_REVISION is not matching(pat="^[1-9][0-9]*$") %
 # Component identity facts — the single authoring point for
 # self-description (docs/architecture/02-artifact-contents-and-metadata.md).
 # build:render writes them
-# into the cur8s.yaml descriptor; .mise/oci-push.sh attaches them as
+# into the cur8s.yaml descriptor; .mise/push-artifact.sh attaches them as
 # cur8s.io/* OCI annotations.
 CUR8S_COMPONENT = "flux"
 CUR8S_UPSTREAM_PROJECT = "fluxcd/flux2"
 CUR8S_SOURCE = "https://github.com/cur8s/flux"
 CUR8S_DOCS = "https://github.com/cur8s/flux"
 # Production registry (release:publish targets this registry; dev and
-# verify pushes go to the k3d cluster's local registry via .mise/oci-push.sh).
+# verify pushes go to the k3d cluster's local registry via .mise/push-artifact.sh).
 REGISTRY = "ghcr.io/cur8s"
-# Component-specific declarative inputs for the shared .mise/install.sh and
+# Component-specific declarative inputs for the shared .mise/install-component.sh and
 # dev:update scripts: Flux bootstrap YAML (local render here; pinned published
 # Cur8s Flux install.yaml in other component repos) and local cluster Flux
 # manifests (file or directory of Kustomizations, test ConfigMaps, and any

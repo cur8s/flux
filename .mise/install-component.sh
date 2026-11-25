@@ -4,7 +4,7 @@
 # FLUX_BOOTSTRAP_MANIFEST and FLUX_SYNC_MANIFESTS in mise.toml [env].
 # Run by dev:create and verify:run after .mise/cluster.sh create; not a mise task.
 #
-#   .mise/install.sh dev|verify <tag>
+#   .mise/install-component.sh dev|verify <tag>
 set -euo pipefail
 : "${CUR8S_COMPONENT:?must be set (mise.toml [env]); run through mise}"
 : "${KUBECONFIG:?must be set (mise.toml [env]); run through mise}"
@@ -25,7 +25,7 @@ context="$(.mise/cluster.sh context "$cluster")"
 kubectl --context "$context" apply --server-side -f "$FLUX_BOOTSTRAP_MANIFEST"
 kubectl --context "$context" -n flux-system wait deploy --all --for=condition=Available --timeout=3m
 
-.mise/oci-push.sh local "$cluster" "$tag"
+.mise/push-artifact.sh local "$cluster" "$tag"
 
 # Point Flux at this component's local OCI artifact, then apply the repo's
 # declarative cluster manifests (Kustomizations, test ConfigMaps, and any

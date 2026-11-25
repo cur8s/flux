@@ -111,7 +111,7 @@ its updated output is uncommitted.
 
 After that check, verification creates a disposable cluster with
 [`.mise/cluster.sh`](../../.mise/cluster.sh) and installs into it with
-[`.mise/install.sh`](../../.mise/install.sh), which boots Flux, publishes the payload to its local
+[`.mise/install-component.sh`](../../.mise/install-component.sh), which boots Flux, publishes the payload to its local
 registry, and verifies self-management. Drift checking evaluates agreement with the recorded files;
 the cluster test evaluates installation and reconciliation on its selected runtime. The verify task
 combines both checks. [`dev:create`](../../.mise/tasks/dev/create) and

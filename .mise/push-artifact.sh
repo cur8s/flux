@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Push artifacts/rendered/ as an OCI artifact with cur8s.io/* annotations.
-# Run by release:publish, dev:update, and .mise/install.sh; not a mise task.
+# Run by release:publish, dev:update, and .mise/install-component.sh; not a mise task.
 #
-#   .mise/oci-push.sh local dev|verify <tag>
-#   .mise/oci-push.sh remote <tag>
+#   .mise/push-artifact.sh local dev|verify <tag>
+#   .mise/push-artifact.sh remote <tag>
 set -euo pipefail
 : "${CUR8S_COMPONENT:?must be set (mise.toml [env]); run through mise}"
 : "${CUR8S_VERSION:?must be set (mise.toml [env]); run through mise}"

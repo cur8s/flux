@@ -290,3 +290,17 @@ those documents during the lifecycle design todo.
   optional `host.k3d.internal:5051` zot mirror block intact).
 - Added `jq` to the host utilities list in
   [00-local-development.md](../../../docs/how-to/00-local-development.md).
+
+### Helper script naming (`.mise/*.sh`)
+
+**Owner decisions (2026-11-25):**
+
+- **Multi-action helpers** (dispatching on `$1`): `<noun>.sh` — `.mise/cluster.sh`.
+- **Single-action helpers** (linear scripts): `<verb>-<noun>.sh` — `.mise/install-component.sh`,
+  `.mise/push-artifact.sh` (and future helpers such as `package-artifact.sh`, `mirror-images.sh`).
+
+**Applied:**
+
+- Renamed `.mise/install.sh` → `.mise/install-component.sh` and `.mise/oci-push.sh` →
+  `.mise/push-artifact.sh`, updating all callers, `mise.toml`, `.mise/README.md`, and architecture
+  docs.
