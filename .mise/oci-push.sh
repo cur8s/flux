@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Push artifacts/rendered/ as an OCI artifact with cur8s.io/* annotations.
-# Run by release:publish, dev:update, and .mise/env.sh; not a mise task.
+# Run by release:publish, dev:update, and .mise/cluster-setup.sh; not a mise task.
 #
 #   .mise/oci-push.sh local dev|verify <tag>
 #   .mise/oci-push.sh remote <tag>

@@ -249,3 +249,5 @@ those documents during the lifecycle design todo.
   - Helpers open with purpose, callers, and usage comments; every task script opens with a short
     contract/precondition comment after `set -euo pipefail` (without narrating obvious commands).
   - Wrapped multi-step guidance in `upstream:check` into a readable heredoc.
+- Renamed `.mise/env.sh` → `.mise/cluster-setup.sh` (2026-11-25) so it is not confused with an
+  environment-variable file and pairs cleanly with `.mise/cluster.sh` and `.mise/oci-push.sh`.

@@ -2,7 +2,7 @@
 # Create a local cluster running Flux managing itself from artifacts/rendered/.
 # Run by dev:create and verify:run; not a mise task.
 #
-#   .mise/env.sh dev|verify <tag>
+#   .mise/cluster-setup.sh dev|verify <tag>
 set -euo pipefail
 : "${CUR8S_COMPONENT:?must be set (mise.toml [env]); run through mise}"
 : "${KUBECONFIG:?must be set (mise.toml [env]); run through mise}"

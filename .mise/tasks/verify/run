@@ -24,7 +24,7 @@ fi
 echo "✅ committed tree matches the render"
 
 # End-to-end cluster verification: deleted on pass, kept on failure.
-if .mise/env.sh verify e2e && flux --context "$context" get all -A; then
+if .mise/cluster-setup.sh verify e2e && flux --context "$context" get all -A; then
   echo "✅ verification passed — deleting the verify cluster"
   .mise/cluster.sh delete verify
 else
