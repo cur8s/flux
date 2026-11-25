@@ -19,7 +19,7 @@ implicitly capturing it again.
 | [`src/config/overlays/deploy/kustomization.yaml`](../../src/config/overlays/deploy/kustomization.yaml) | Authored composition of the captured installation. | Reviewed changes to the package's installation configuration. |
 | [`src/config/sync.yaml`](../../src/config/sync.yaml) | Current package-owned self-management Kustomization. | Reviewed changes to the shipped reconciliation configuration. |
 
-`FLUX_VERSION` selects the upstream release and the Flux CLI pin. `CUR8S_FLUX_REVISION` identifies
+`UPSTREAM_VERSION` selects the upstream release and the Flux CLI pin. `CUR8S_REVISION` identifies
 configuration changes against that release. The derived package version and component identity
 feed the rendered descriptor. The current version derivation is expressed in the configuration;
 it is separate from how manifests are captured and transformed.

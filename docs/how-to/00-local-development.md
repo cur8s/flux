@@ -132,7 +132,7 @@ be removed with `verify:clean` before retrying.
 
 ## Update an upstream version or tool pin
 
-After changing `FLUX_VERSION` or a tool pin in `mise.toml`, refresh all supported lockfile platforms
+After changing `UPSTREAM_VERSION` or a tool pin in `mise.toml`, refresh all supported lockfile platforms
 and install the selected toolchain:
 
 ```sh

@@ -6,9 +6,9 @@
 #   .mise/oci-push.sh remote <tag>
 set -euo pipefail
 : "${CUR8S_COMPONENT:?must be set (mise.toml [env]); run through mise}"
-: "${CUR8S_FLUX_VERSION:?must be set (mise.toml [env]); run through mise}"
+: "${CUR8S_VERSION:?must be set (mise.toml [env]); run through mise}"
 : "${CUR8S_UPSTREAM_PROJECT:?must be set (mise.toml [env]); run through mise}"
-: "${FLUX_TAG:?must be set (mise.toml [env]); run through mise}"
+: "${UPSTREAM_TAG:?must be set (mise.toml [env]); run through mise}"
 : "${CUR8S_DOCS:?must be set (mise.toml [env]); run through mise}"
 
 usage() {
@@ -43,6 +43,11 @@ case "${1:-}" in
 esac
 
 url="oci://${registry}/${CUR8S_COMPONENT}:${tag}"
+ref="$(git branch --show-current)"
+if [ -z "$ref" ]; then
+  ref="$(git describe --tags --exact-match 2>/dev/null || echo HEAD)"
+fi
+revision="${ref}@sha1:$(git rev-parse HEAD)"
 echo "📦 $url"
 # The same identity facts the descriptor asserts, readable from the
 # registry without pulling the artifact; see
@@ -52,11 +57,11 @@ echo "📦 $url"
 flux push artifact "$url" \
   --path="$artifact" \
   --source="$(git config --get remote.origin.url || echo unknown)" \
-  --revision="$(git branch --show-current)@sha1:$(git rev-parse HEAD)" \
+  --revision="$revision" \
   --annotations="cur8s.io/component=${CUR8S_COMPONENT}" \
-  --annotations="cur8s.io/version=${CUR8S_FLUX_VERSION}" \
+  --annotations="cur8s.io/version=${CUR8S_VERSION}" \
   --annotations="cur8s.io/upstream=${CUR8S_UPSTREAM_PROJECT}" \
-  --annotations="cur8s.io/upstream-version=${FLUX_TAG}" \
+  --annotations="cur8s.io/upstream-version=${UPSTREAM_TAG}" \
   --annotations="cur8s.io/docs=${CUR8S_DOCS}" \
   --timeout=5m
 echo "✅ published $url"

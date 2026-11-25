@@ -234,3 +234,11 @@ those documents during the lifecycle design todo.
   to a single linear script (`.mise/env.sh dev|verify <tag>`) with no functions or `case` dispatch.
 - Verified: `bash -n` on all scripts under `.mise/`, `mise run dev:update` (4.73s against
   `flux-dev`), and `mise run verify:run` (passed and cleaned up `flux-verify`).
+- Fixed 3 script bugs (2026-11-25):
+  - Renamed Flux-specific env vars in `mise.toml` to component-agnostic names (`UPSTREAM_VERSION`,
+    `CUR8S_REVISION`, `UPSTREAM_TAG`, `CUR8S_VERSION`) so `.mise/oci-push.sh`, `release:publish`,
+    and `upstream:check` are truly identical across component repos.
+  - Guarded `git diff ... | head -n 100 || true` in `verify:run` so `SIGPIPE` under `pipefail`
+    does not abort before printing the drift error message.
+  - Added detached-HEAD fallback (`git describe --tags --exact-match` → `HEAD`) for `--revision`
+    in `.mise/oci-push.sh`.

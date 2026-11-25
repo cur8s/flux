@@ -3,11 +3,11 @@
 set -euo pipefail
 # Replaces the previously captured release; build:render consumes it.
 out=upstream/flux.yaml
-echo "🔽 Generating Flux ${FLUX_TAG} install manifest (source/kustomize/notification)..."
+echo "🔽 Generating Flux ${UPSTREAM_TAG} install manifest (source/kustomize/notification)..."
 mkdir -p "$(dirname "$out")"
 flux install \
   --components=source-controller,kustomize-controller,notification-controller \
   --namespace=flux-system \
-  --version="$FLUX_TAG" \
+  --version="$UPSTREAM_TAG" \
   --export > "$out"
 echo "   ✅ $out"

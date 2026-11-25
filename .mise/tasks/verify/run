@@ -17,7 +17,7 @@ mise run upstream:fetch
 mise run build:render
 if [ -n "$(git status --porcelain -- "${paths[@]}")" ]; then
   git status --short -- "${paths[@]}"
-  git --no-pager diff -- "${paths[@]}" | head -100
+  git --no-pager diff -- "${paths[@]}" | head -n 100 || true
   echo "❌ fresh render differs from the committed tree — review and commit the re-render" >&2
   exit 1
 fi

@@ -2,9 +2,9 @@
 # versions so a fetch → render run reproduces byte-for-byte
 # on any workstation and in CI. docker is the one deliberate outsider
 # (the daemon belongs to the host); git, openssl, curl, and jq ride the
-# system. FLUX_VERSION and CUR8S_FLUX_REVISION in [env] are the release
+# system. UPSTREAM_VERSION and CUR8S_REVISION in [env] are the release
 # unit's single authored version source; the Flux pin follows
-# FLUX_VERSION. mise.lock pins each tool's download checksums.
+# UPSTREAM_VERSION. mise.lock pins each tool's download checksums.
 #
 # Task grammar: <object>:<action>. Objects:
 #   upstream  the tracked upstream release: fetch captures it unmodified
@@ -57,20 +57,20 @@ lockfile = true
 locked = true
 
 [tools]
-flux2 = "{{env.FLUX_VERSION}}"
+flux2 = "{{env.UPSTREAM_VERSION}}"
 kustomize = "5.8.1"
 kubectl = "1.36.2"
 k3d = "5.9.0"
 
 [env]
-# The package version: the upstream Flux version, plus a config revision
+# The package version: the upstream version, plus a config revision
 # bumped when the opinion changes on the same upstream (reset to 1 on
 # every upstream bump). 2.9.0 + 1 -> v2.9.0; 2.9.0 + 2 -> v2.9.0-2.
-FLUX_VERSION = "2.9.0"
-CUR8S_FLUX_REVISION = "1"
+UPSTREAM_VERSION = "2.9.0"
+CUR8S_REVISION = "1"
 # Derived, with validation: a malformed value stops every mise command.
-FLUX_TAG = '{% if env.FLUX_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="FLUX_VERSION must be a stable SemVer (for example 2.9.0)") }}{% endif %}v{{ env.FLUX_VERSION }}'
-CUR8S_FLUX_VERSION = '{% if env.CUR8S_FLUX_REVISION is not matching(pat="^[1-9][0-9]*$") %}{{ throw(message="CUR8S_FLUX_REVISION must be a positive integer") }}{% endif %}{{ env.FLUX_TAG }}{% if env.CUR8S_FLUX_REVISION != "1" %}-{{ env.CUR8S_FLUX_REVISION }}{% endif %}'
+UPSTREAM_TAG = '{% if env.UPSTREAM_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="UPSTREAM_VERSION must be a stable SemVer (for example 2.9.0)") }}{% endif %}v{{ env.UPSTREAM_VERSION }}'
+CUR8S_VERSION = '{% if env.CUR8S_REVISION is not matching(pat="^[1-9][0-9]*$") %}{{ throw(message="CUR8S_REVISION must be a positive integer") }}{% endif %}{{ env.UPSTREAM_TAG }}{% if env.CUR8S_REVISION != "1" %}-{{ env.CUR8S_REVISION }}{% endif %}'
 # Component identity facts — the single authoring point for
 # self-description (docs/architecture/02-artifact-contents-and-metadata.md).
 # build:render writes them
