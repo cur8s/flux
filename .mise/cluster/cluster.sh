@@ -3,7 +3,7 @@
 # helper; it is not a task. A repo has two clusters, named from its component
 # and a role: <component>-dev and <component>-verify.
 #
-#   .mise/cluster.sh create|delete|status|registry-port|in-cluster-registry|context dev|verify
+#   .mise/cluster/cluster.sh create|delete|status|registry-port|in-cluster-registry|context dev|verify
 #
 # Each cluster gets its own local OCI registry: container <name>-registry,
 # reached in-cluster as <name>-registry:5000 and from the host on a port k3d
@@ -31,7 +31,7 @@ registry_port() {
 # registry answers (k3d starts it after the server and does not wait for it).
 # k3d fails on an existing name.
 create() {
-  k3d cluster create "$name" --config .mise/k3d-config.yaml --registry-create "$registry"
+  k3d cluster create "$name" --config .mise/cluster/k3d-config.yaml --registry-create "$registry"
   local port
   port="$(registry_port)"
   curl -sf --retry 30 --retry-delay 2 --retry-all-errors "http://localhost:$port/v2/" >/dev/null

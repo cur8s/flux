@@ -2,9 +2,9 @@
 # Install Flux and this component into an existing local cluster from artifacts/rendered/.
 # Identical across Cur8s component repos; component-specific inputs come from
 # FLUX_BOOTSTRAP_MANIFEST and FLUX_SYNC_MANIFESTS in mise.toml [env].
-# Run by dev:create and verify:run after .mise/cluster.sh create; not a mise task.
+# Run by dev:create and verify:run after .mise/cluster/cluster.sh create; not a mise task.
 #
-#   .mise/install-component.sh dev|verify <tag>
+#   .mise/cluster/install-component.sh dev|verify <tag>
 set -euo pipefail
 : "${CUR8S_COMPONENT:?must be set (mise.toml [env]); run through mise}"
 : "${KUBECONFIG:?must be set (mise.toml [env]); run through mise}"
@@ -19,19 +19,19 @@ fi
 cluster="$1"
 tag="$2"
 component="$CUR8S_COMPONENT"
-context="$(.mise/cluster.sh context "$cluster")"
+context="$(.mise/cluster/cluster.sh context "$cluster")"
 
 # Bootstrap Flux; server-side apply handles the large CRDs cleanly.
 kubectl --context "$context" apply --server-side -f "$FLUX_BOOTSTRAP_MANIFEST"
 kubectl --context "$context" -n flux-system wait deploy --all --for=condition=Available --timeout=3m
 
-.mise/push-artifact.sh local "$cluster" "$tag"
+.mise/cluster/push-artifact.sh local "$cluster" "$tag"
 
 # Point Flux at this component's local OCI artifact, then apply the repo's
 # declarative cluster manifests (Kustomizations, test ConfigMaps, and any
 # pinned prerequisite sources).
 flux --context "$context" create source oci "$component" \
-  --url "oci://$(.mise/cluster.sh in-cluster-registry "$cluster")/$component" \
+  --url "oci://$(.mise/cluster/cluster.sh in-cluster-registry "$cluster")/$component" \
   --tag "$tag" --insecure --interval 1m
 kubectl --context "$context" apply -f "$FLUX_SYNC_MANIFESTS"
 

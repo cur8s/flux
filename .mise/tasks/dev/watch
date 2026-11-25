@@ -2,4 +2,4 @@
 #MISE description="Watch Flux Kustomizations on the dev cluster"
 set -euo pipefail
 # Streams Kustomization status until interrupted with Ctrl-C.
-flux --context "$(.mise/cluster.sh context dev)" get kustomizations -A --watch
+flux --context "$(.mise/cluster/cluster.sh context dev)" get kustomizations -A --watch

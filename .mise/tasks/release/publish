@@ -8,4 +8,4 @@ if [[ -n "$(git status --porcelain)" ]]; then
   echo "❌ working tree is not clean — commit or stash changes before publishing" >&2
   exit 1
 fi
-.mise/push-artifact.sh remote "$CUR8S_VERSION"
+.mise/cluster/push-artifact.sh remote "$CUR8S_VERSION"

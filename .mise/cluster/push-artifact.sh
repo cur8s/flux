@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Push artifacts/rendered/ as an OCI artifact with cur8s.io/* annotations.
-# Run by release:publish, dev:update, and .mise/install-component.sh; not a mise task.
+# Run by release:publish, dev:update, and .mise/cluster/install-component.sh; not a mise task.
 #
-#   .mise/push-artifact.sh local dev|verify <tag>
-#   .mise/push-artifact.sh remote <tag>
+#   .mise/cluster/push-artifact.sh local dev|verify <tag>
+#   .mise/cluster/push-artifact.sh remote <tag>
 set -euo pipefail
 : "${CUR8S_COMPONENT:?must be set (mise.toml [env]); run through mise}"
 : "${CUR8S_VERSION:?must be set (mise.toml [env]); run through mise}"
@@ -25,7 +25,7 @@ fi
 case "${1:-}" in
   local)
     [[ $# -eq 3 ]] || usage
-    registry="localhost:$(.mise/cluster.sh registry-port "$2")"
+    registry="localhost:$(.mise/cluster/cluster.sh registry-port "$2")"
     tag="$3"
     # The k3d-local registry is anonymous. A globally-configured docker
     # credential helper (e.g. Docker Desktop's "desktop" credsStore) will be

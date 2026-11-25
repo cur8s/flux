@@ -304,3 +304,6 @@ those documents during the lifecycle design todo.
 - Renamed `.mise/install.sh` → `.mise/install-component.sh` and `.mise/oci-push.sh` →
   `.mise/push-artifact.sh`, updating all callers, `mise.toml`, `.mise/README.md`, and architecture
   docs.
+- Grouped all supporting helpers and config (`cluster.sh`, `install-component.sh`,
+  `push-artifact.sh`, `k3d-config.yaml`) under `.mise/cluster/` (2026-11-25) so `.mise/` root holds
+  only `README.md`, `cluster/`, and `tasks/`.

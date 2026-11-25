@@ -2,10 +2,10 @@
 #MISE description="Check drift and run the end-to-end cluster verification"
 set -euo pipefail
 tracked_paths=(artifacts/rendered upstream)
-context="$(.mise/cluster.sh context verify)"
+context="$(.mise/cluster/cluster.sh context verify)"
 
 # Refuse to start if a leftover verify cluster exists from an earlier failed run.
-if .mise/cluster.sh status verify >/dev/null 2>&1; then
+if .mise/cluster/cluster.sh status verify >/dev/null 2>&1; then
   echo "❌ verify cluster already exists ($context) — inspect it or run 'mise run verify:clean' first" >&2
   exit 1
 fi
@@ -24,9 +24,9 @@ fi
 echo "✅ committed tree matches the render"
 
 # End-to-end cluster verification: deleted on pass, kept on failure.
-if .mise/cluster.sh create verify && .mise/install-component.sh verify e2e && flux --context "$context" get all -A; then
+if .mise/cluster/cluster.sh create verify && .mise/cluster/install-component.sh verify e2e && flux --context "$context" get all -A; then
   echo "✅ verification passed — deleting the verify cluster"
-  .mise/cluster.sh delete verify
+  .mise/cluster/cluster.sh delete verify
 else
   exit_code=$?
   echo "❌ verification failed (exit $exit_code) — verify cluster preserved ($context)"

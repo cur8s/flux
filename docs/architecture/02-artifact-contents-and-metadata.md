@@ -60,9 +60,9 @@ repository and its lockfile.
 
 ## Publication annotations
 
-[`.mise/push-artifact.sh`](../../.mise/push-artifact.sh) (used by
+[`.mise/cluster/push-artifact.sh`](../../.mise/cluster/push-artifact.sh) (used by
 [`release:publish`](../../.mise/tasks/release/publish), [`dev:update`](../../.mise/tasks/dev/update),
-and [`.mise/install-component.sh`](../../.mise/install-component.sh)) packages `artifacts/rendered/` with
+and [`.mise/cluster/install-component.sh`](../../.mise/cluster/install-component.sh)) packages `artifacts/rendered/` with
 `flux push artifact`. It adds these custom OCI manifest annotations from the same configuration
 values used by the descriptor:
 
@@ -81,11 +81,11 @@ commit through `--revision`. Flux stores them as `org.opencontainers.image.sourc
 
 These values are obtained at push time. The descriptor's `source` comes from the authored
 `CUR8S_SOURCE`, while the OCI source annotation comes from the local Git remote; they need not be
-identical. `.mise/push-artifact.sh` records HEAD without requiring a clean working tree so local `dev`
+identical. `.mise/cluster/push-artifact.sh` records HEAD without requiring a clean working tree so local `dev`
 pushes can test uncommitted changes, whereas `release:publish` refuses to run on a dirty working
 tree so remote releases match the recorded commit.
 
-The destination tag is passed explicitly to `.mise/push-artifact.sh`. Local `dev` and `verify` pushes
+The destination tag is passed explicitly to `.mise/cluster/push-artifact.sh`. Local `dev` and `verify` pushes
 use `dev` and `e2e` while the descriptor still records the configured package version.
 `release:publish` always tags with `CUR8S_VERSION` and exposes no tag override.
 
