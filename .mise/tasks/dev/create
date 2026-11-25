@@ -3,4 +3,5 @@
 #MISE depends=["build:render"]
 set -euo pipefail
 # Fails if the dev cluster already exists; use dev:update to iterate on a running one.
-.mise/cluster-setup.sh dev dev
+.mise/cluster.sh create dev
+.mise/install.sh dev dev

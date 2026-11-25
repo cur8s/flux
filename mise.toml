@@ -19,9 +19,9 @@
 #             operate, and remove it.
 #   verify    the automated release-readiness gate (owns the verify cluster):
 #             verify:run proves the committed tree matches a fresh fetch +
-#             render, then runs the end-to-end cluster check via .mise/cluster-setup.sh,
-#             deleting the cluster on pass and keeping it on failure;
-#             verify:clean removes a kept one.
+#             render, then creates the verify cluster and installs via
+#             .mise/install.sh, deleting the cluster on pass and keeping it
+#             on failure; verify:clean removes a kept one.
 #   release   explicit remote publication: release:publish pushes
 #             artifacts/rendered/ to REGISTRY via .mise/oci-push.sh.
 # Clusters: a repo has two local k3d clusters, dev and verify, named
@@ -29,21 +29,21 @@
 # OCI registry. .mise/cluster.sh (identical across component repos) creates,
 # deletes, and inspects them; .mise/oci-push.sh (identical across component
 # repos) is the single choke point for pushing OCI artifacts with cur8s.io/*
-# annotations; .mise/cluster-setup.sh (component-specific) boots Flux and
-# wires up reconciliation on either cluster. dev:* tasks always target dev;
+# annotations; .mise/install.sh (component-specific) installs Flux and this
+# component into an existing cluster. dev:* tasks always target dev;
 # verify:* tasks own verify. Contexts live only in the repo-local KUBECONFIG,
 # so no task reaches a cluster this repo did not create.
 # artifacts/rendered/ is committed for review. artifacts/oci/ is reserved
 # for future local OCI packaging and ignored; no packaging task exists yet.
 # Captured inputs and authored configuration live in upstream/ and src/.
-# Only upstream:fetch, build:render, dev:update, and .mise/cluster-setup.sh
+# Only upstream:fetch, build:render, dev:update, and .mise/install.sh
 # are specific to this component; the rest are meant to be identical across
 # cur8s component repos.
 #
 # Every task is an executable shell script under .mise/tasks/
 # (directories namespace the names: .mise/tasks/upstream/fetch ->
 # upstream:fetch). Supporting files (k3d-config.yaml, any shared
-# scripts such as cluster.sh, cluster-setup.sh, and oci-push.sh) live
+# scripts such as cluster.sh, install.sh, and oci-push.sh) live
 # elsewhere under .mise/ so they never become tasks. Tasks run from the repo
 # root and declare arguments in #USAGE headers, so `mise run <task> --help`
 # documents them.

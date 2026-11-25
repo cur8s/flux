@@ -58,8 +58,8 @@ summary: "Identify the goals and invariants of a Cur8s component's build-to-publ
   rows and name override need reconciling with this. On 2026-11-24, the owner dropped `flux:boot`,
   folded the remaining `flux:*` tasks into `dev:` (`dev:status`, `dev:reconcile`, `dev:watch`),
   specialized `dev:*` to the `dev` cluster only, added `dev:update` (with both `dev:create` and
-  `dev:update` depending on `build:render`), extracted shared cluster setup to
-  `.mise/cluster-setup.sh` and
+  `dev:update` depending on `build:render`), extracted component installation into
+  `.mise/install.sh` (called after `.mise/cluster.sh create`) and
   OCI pushing to `.mise/oci-push.sh`, replaced `test:run`/`test:destroy` with `verify:run`/
   `verify:clean` (cluster role `verify`), and replaced `oci:publish` with `release:publish`
   ([mise conventions working notes](../standardize-mise-and-task-scripts/working-notes.md));

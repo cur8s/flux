@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Create a local cluster running Flux managing itself from artifacts/rendered/.
-# Run by dev:create and verify:run; not a mise task.
+# Install Flux and this component into an existing local cluster from artifacts/rendered/.
+# Run by dev:create and verify:run after .mise/cluster.sh create; not a mise task.
 #
-#   .mise/cluster-setup.sh dev|verify <tag>
+#   .mise/install.sh dev|verify <tag>
 set -euo pipefail
 : "${CUR8S_COMPONENT:?must be set (mise.toml [env]); run through mise}"
 : "${KUBECONFIG:?must be set (mise.toml [env]); run through mise}"
@@ -16,8 +16,6 @@ cluster="$1"
 tag="$2"
 component="$CUR8S_COMPONENT"
 context="$(.mise/cluster.sh context "$cluster")"
-
-.mise/cluster.sh create "$cluster"
 
 # Bootstrap Flux from this repo's local render; server-side apply handles the large CRDs cleanly.
 kubectl --context "$context" apply --server-side -f artifacts/rendered/deploy/flux.yaml
@@ -36,4 +34,4 @@ kubectl --context "$context" apply -f artifacts/rendered/sync.yaml
 # resource the artifact applied.
 kubectl --context "$context" -n flux-system wait --for=condition=Ready --timeout=5m \
   "ocirepository/$component" "kustomization/$component"
-echo "✅ $cluster environment ready ($context)"
+echo "✅ $component installed on $cluster ($context)"

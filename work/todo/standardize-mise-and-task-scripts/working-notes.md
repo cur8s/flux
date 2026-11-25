@@ -251,3 +251,7 @@ those documents during the lifecycle design todo.
   - Wrapped multi-step guidance in `upstream:check` into a readable heredoc.
 - Renamed `.mise/env.sh` → `.mise/cluster-setup.sh` (2026-11-25) so it is not confused with an
   environment-variable file and pairs cleanly with `.mise/cluster.sh` and `.mise/oci-push.sh`.
+- Split cluster creation out of `.mise/cluster-setup.sh` and renamed it to `.mise/install.sh`
+  (2026-11-25): `dev:create` and `verify:run` now explicitly call `.mise/cluster.sh create`
+  followed by `.mise/install.sh`, so `cluster.sh` owns k3d lifecycle exclusively and `install.sh`
+  owns installing Flux and this component into an existing cluster.

@@ -109,8 +109,9 @@ A clean result establishes that fresh capture and rendering agree with the commi
 surface. The current check includes staged changes, so a correct regeneration still fails while
 its updated output is uncommitted.
 
-After that check, verification creates a disposable environment through
-[`.mise/cluster-setup.sh`](../../.mise/cluster-setup.sh), which boots Flux, publishes the payload to its local
+After that check, verification creates a disposable cluster with
+[`.mise/cluster.sh`](../../.mise/cluster.sh) and installs into it with
+[`.mise/install.sh`](../../.mise/install.sh), which boots Flux, publishes the payload to its local
 registry, and verifies self-management. Drift checking evaluates agreement with the recorded files;
 the cluster test evaluates installation and reconciliation on its selected runtime. The verify task
 combines both checks. [`dev:create`](../../.mise/tasks/dev/create) and
