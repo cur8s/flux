@@ -83,8 +83,6 @@ These decisions supersede that and need reconciling there.
   conflict (observed: separate containers, networks, host ports, and kubeconfigs).
 - The zot pull-through mirror at `host.k3d.internal:5051` in `.mise/k3d-config.yaml`: keep, make
   opt-in, or move to user-level configuration.
-- Flux-specific comment "this repo only tests Flux bootstrap" in the shared k3d config.
-- `switchCurrentContext: true` is unnecessary because every task passes `--context`.
 - Kubernetes runtime pinning stays with the implementation planning todo.
 
 ### Flux bootstrap (`flux:boot` removed)
@@ -272,3 +270,23 @@ those documents during the lifecycle design todo.
     - Multi-stage components (2–4 Kustomizations) need `dev:reconcile` targeting settled in the
       lifecycle design todo.
     - Repos probing HTTP Gateways add host port mappings in `.mise/k3d-config.yaml`.
+
+### Tool pinning boundary and config cleanup
+
+**Owner decisions (2026-11-25):**
+
+- **Pin Kubernetes/pipeline tools in `mise.toml`; leave general system tools on the host.** `flux2`,
+  `kustomize`, `kubectl`, and `k3d` are pinned and locked in `mise.lock`; `docker`, `git`, `bash`,
+  `curl`, `openssl`, and `jq` are host prerequisites.
+- **Keep `mise.toml` header concise:** point to `mise tasks` and `.mise/README.md` rather than
+  duplicating the task inventory or stale `#USAGE` notes.
+- **Generalize `.mise/k3d-config.yaml`:** remove the Flux-specific comment and set
+  `switchCurrentContext: false` since every command passes `--context`.
+
+**Applied:**
+
+- Trimmed `mise.toml` header comment from 49 lines to 10 lines.
+- Generalized `.mise/k3d-config.yaml` header and set `switchCurrentContext: false` (left the
+  optional `host.k3d.internal:5051` zot mirror block intact).
+- Added `jq` to the host utilities list in
+  [00-local-development.md](../../../docs/how-to/00-local-development.md).

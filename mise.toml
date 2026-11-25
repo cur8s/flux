@@ -1,52 +1,13 @@
-# Pinned toolchain for the artifact pipeline: mise installs exact
-# versions so a fetch → render run reproduces byte-for-byte
-# on any workstation and in CI. docker is the one deliberate outsider
-# (the daemon belongs to the host); git, openssl, curl, and jq ride the
-# system. UPSTREAM_VERSION and CUR8S_REVISION in [env] are the release
-# unit's single authored version source; the Flux pin follows
-# UPSTREAM_VERSION. mise.lock pins each tool's download checksums.
+# Pinned Kubernetes/pipeline toolchain for byte-for-byte reproducible renders
+# and isolated local k3d clusters. System prerequisites (docker, git, bash,
+# curl, openssl, jq) ride the host; mise.lock pins tool download checksums.
 #
-# Task grammar: <object>:<action>. Objects:
-#   upstream  the tracked upstream release: fetch captures it unmodified
-#             in upstream/flux.yaml; check reports newer ones.
-#   build     the reviewable artifact tree: clean deletes generated
-#             output in artifacts/; render cleans, then regenerates artifacts/rendered/
-#             from the captured inputs, never fetching.
-#   dev       your local dev environment (always targets the dev cluster):
-#             create renders and spins up cluster + Flux + local OCI sync;
-#             update renders, publishes to dev's local registry, and
-#             reconciles Flux; status, reconcile, watch, and delete inspect,
-#             operate, and remove it.
-#   verify    the automated release-readiness gate (owns the verify cluster):
-#             verify:run proves the committed tree matches a fresh fetch +
-#             render, then creates the verify cluster and installs via
-#             .mise/install.sh, deleting the cluster on pass and keeping it
-#             on failure; verify:clean removes a kept one.
-#   release   explicit remote publication: release:publish pushes
-#             artifacts/rendered/ to REGISTRY via .mise/oci-push.sh.
-# Clusters: a repo has two local k3d clusters, dev and verify, named
-# CUR8S_COMPONENT-dev and CUR8S_COMPONENT-verify, each with its own local
-# OCI registry. .mise/cluster.sh creates, deletes, and inspects them;
-# .mise/oci-push.sh is the single choke point for pushing OCI artifacts with
-# cur8s.io/* annotations; .mise/install.sh installs Flux and this component
-# into an existing cluster using FLUX_BOOTSTRAP_MANIFEST and
-# FLUX_SYNC_MANIFESTS from [env]. All three helpers are identical across
-# component repos. dev:* tasks always target dev; verify:* tasks own verify.
-# Contexts live only in the repo-local KUBECONFIG, so no task reaches a
-# cluster this repo did not create.
-# artifacts/rendered/ is committed for review. artifacts/oci/ is reserved
-# for future local OCI packaging and ignored; no packaging task exists yet.
-# Captured inputs and authored configuration live in upstream/ and src/.
-# Only upstream:fetch and build:render are specific to this component; the
-# rest are meant to be identical across cur8s component repos.
-#
-# Every task is an executable shell script under .mise/tasks/
-# (directories namespace the names: .mise/tasks/upstream/fetch ->
-# upstream:fetch). Supporting files (k3d-config.yaml, any shared
-# scripts such as cluster.sh, install.sh, and oci-push.sh) live
-# elsewhere under .mise/ so they never become tasks. Tasks run from the repo
-# root and declare arguments in #USAGE headers, so `mise run <task> --help`
-# documents them.
+# Tasks live as executable scripts under .mise/tasks/<namespace>/<action>
+# (run `mise tasks` to list them). Supporting helpers (.mise/cluster.sh,
+# .mise/install.sh, .mise/oci-push.sh, .mise/k3d-config.yaml) live directly
+# under .mise/ so they are never discovered as tasks; see .mise/README.md.
+# Only upstream:fetch and build:render are component-specific; the rest are
+# meant to be identical across Cur8s component repos.
 
 [settings]
 # mise.lock records each tool's download URL and checksum per platform;

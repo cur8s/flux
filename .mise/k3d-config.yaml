@@ -1,6 +1,6 @@
-# k3d cluster template. Single server, no agents. Traefik disabled — this repo
-# only tests Flux bootstrap + reconciliation, so no ingress is needed (and no
-# host ports are mapped, which keeps it from colliding with other local clusters).
+# k3d cluster template shared by headless Cur8s component repos.
+# Single server, no agents, Traefik disabled, and no host ports mapped so
+# local clusters coexist without port conflicts.
 apiVersion: k3d.io/v1alpha5
 kind: Simple
 servers: 1
@@ -46,4 +46,4 @@ options:
           - server:0
   kubeconfig:
     updateDefaultKubeconfig: true
-    switchCurrentContext: true
+    switchCurrentContext: false

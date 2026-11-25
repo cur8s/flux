@@ -7,7 +7,7 @@
 ## Set up the repository
 
 Install the [software prerequisites](../../README.md#prerequisites) and start the Docker daemon.
-The task scripts also use Git, Bash, curl, OpenSSL, and standard shell utilities from the host.
+The task scripts also use Git, Bash, curl, OpenSSL, jq, and standard shell utilities from the host.
 Run the following from the repository root:
 
 ```sh
