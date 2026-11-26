@@ -34,9 +34,9 @@ boundary, and Notification Controller contract with the settled design decisions
 
 **Work**
 
-- [Adopt capability naming and independent SemVer](../todo/adopt-capability-naming-and-semver/overview.md)
-- [Move self-management Kustomization out of the package](../todo/move-self-management-to-consumer/overview.md)
-- [Clarify the Notification Receiver contract](../todo/clarify-notification-receiver-contract/overview.md)
+- [Adopt capability naming and independent SemVer](../todo/1-adopt-capability-naming-and-semver/overview.md)
+- [Move self-management Kustomization out of the package](../todo/2-move-self-management-to-consumer/overview.md)
+- [Clarify the Notification Receiver contract](../todo/3-clarify-notification-receiver-contract/overview.md)
 
 **Why / what this unlocks**
 
@@ -52,9 +52,9 @@ Flux patch release, and cover self-managed upgrades and recovery.
 
 **Work**
 
-- [Pin the Kubernetes test runtime](../todo/pin-kubernetes-test-runtime/overview.md)
-- [Bump Flux to the latest 2.9.x patch](../todo/bump-flux-to-latest-patch/overview.md)
-- [Add upgrade and recovery verification](../todo/test-upgrades-and-recovery/overview.md)
+- [Pin the Kubernetes test runtime](../todo/4-pin-kubernetes-test-runtime/overview.md)
+- [Bump Flux to the latest 2.9.x patch](../todo/5-bump-flux-to-latest-patch/overview.md)
+- [Add upgrade and recovery verification](../todo/6-test-upgrades-and-recovery/overview.md)
 
 **Why / what this unlocks**
 
@@ -73,7 +73,7 @@ remain parked until prioritized.
 
 **Work**
 
-- [Harden OCI packaging and release publication](../todo/harden-release-publication/overview.md)
+- [Harden OCI packaging and release publication](../todo/7-harden-release-publication/overview.md)
 
 **Why / what this unlocks**
 
@@ -88,7 +88,7 @@ at a time, capturing the pre-rendered-manifest philosophy in the product section
 
 **Work**
 
-- [Rebuild the docs as product, architecture, how-to, and standards](../todo/rebuild-docs-by-category/overview.md)
+- [Rebuild the docs as product, architecture, how-to, and standards](../todo/8-rebuild-docs-by-category/overview.md)
 
 **Why / what this unlocks**
 

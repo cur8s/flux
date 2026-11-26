@@ -30,10 +30,10 @@ When picking this up, also incorporate the CI concerns recorded elsewhere:
 - **CI release safety:** per-version concurrency that never cancels an in-progress publication;
   third-party GitHub Actions pinned to immutable commit SHAs; tag check in `release.yml` matching
   `CUR8S_VERSION` in `mise.toml`; and alignment with whatever publication safeguards land in
-  [Harden OCI packaging and release publication](../../todo/harden-release-publication/overview.md)
+  [Harden OCI packaging and release publication](../../todo/7-harden-release-publication/overview.md)
   (immutability preflight, partial-success recovery, post-publish verification, and signing).
 - **Mise in GitHub Actions:** action pinning, caching, and locked installs following
   [Mise standard](../../../docs/standards/mise-standard.md).
 - **CI runner architecture:** running the pinned Kubernetes test runtime from
-  [Pin the Kubernetes test runtime](../../todo/pin-kubernetes-test-runtime/overview.md) on CI's
+  [Pin the Kubernetes test runtime](../../todo/4-pin-kubernetes-test-runtime/overview.md) on CI's
   `linux/amd64` runners.

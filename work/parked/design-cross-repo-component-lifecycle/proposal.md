@@ -32,7 +32,7 @@ This is a **component lifecycle** convention, not a requirement for a single sha
 8. **Debuggable test cleanup.** Successful end-to-end tests delete the test cluster; failed tests preserve it and report its name and inspection commands. Preserve the original test failure exit status.
 9. **Explicit publication.** Validating locally does not implicitly publish to a remote registry. Remote publication remains a separately requested action. Respect the repository's existing immutability and release-channel requirements.
 
-The repo's extracted work items record additional requirements for provenance records, mirrored runtime images, OCI layouts and safe publication (see [overview.md](overview.md), [Harden OCI packaging and release publication](../../todo/harden-release-publication/overview.md), and [Mirror runtime images to ghcr.io/cur8s](../mirror-images-to-ghcr/overview.md)). Those are not superseded by this proposal.
+The repo's extracted work items record additional requirements for provenance records, mirrored runtime images, OCI layouts and safe publication (see [overview.md](overview.md), [Harden OCI packaging and release publication](../../todo/7-harden-release-publication/overview.md), and [Mirror runtime images to ghcr.io/cur8s](../mirror-images-to-ghcr/overview.md)). Those are not superseded by this proposal.
 
 ## 3. Repository responsibilities and dependencies
 
@@ -192,7 +192,7 @@ Suggested migration sequence:
 - The final namespace/task names for local OCI packaging, registry staging, Flux installation/verification, and remote publication.
 - Whether `test:run` is the final orchestrator name or whether separate `test:drift` / `test:e2e` commands remain part of the stable public vocabulary.
 - The exact `flux:reconcile` target convention when a component contains multiple reconciliation stages.
-- The digest-preserving on-disk OCI packaging/copying mechanism and provenance-record format (see [Harden OCI packaging and release publication](../../todo/harden-release-publication/overview.md) and [overview.md](overview.md)).
+- The digest-preserving on-disk OCI packaging/copying mechanism and provenance-record format (see [Harden OCI packaging and release publication](../../todo/7-harden-release-publication/overview.md) and [overview.md](overview.md)).
 - The point at which mirrored runtime images are staged and how to do so without accidental remote publication.
 - Any universal component-ready synchronization Kustomization beyond the three optional/required installation stages.
 
