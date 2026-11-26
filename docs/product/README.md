@@ -11,7 +11,7 @@ owns the question you are considering.
 | --- | --- | --- |
 | 1 | [Vision](00-vision.md) | Whom the package serves, its intended value, success conditions, and boundaries. |
 | 2 | [Pre-rendered manifests](01-pre-rendered-manifests.md) | Decisions before deployment, deterministic reconciliation, and explicitly declared environment values. |
-| 3 | [The package's opinion](02-the-opinion.md) | Controller selection, recommended source usage, exclusions, and the unresolved Receiver webhook contract. |
+| 3 | [The package's opinion](02-the-opinion.md) | Controller selection, recommended source usage, Notification Controller contract, and exclusions. |
 
 Continue with the [architecture overview](../architecture/00-overview.md) to understand the package mechanisms, or use the
 [user guide](../user-guide.md) to install, operate, upgrade, and recover it. The

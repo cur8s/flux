@@ -16,7 +16,7 @@ manifests.
 | --- | --- |
 | Source Controller | Acquire the declared deployment artifact and make it available for reconciliation. |
 | Kustomize Controller | Compose and apply its manifests, then maintain convergence. |
-| Notification Controller | Report reconciliation events to configured destinations. Its incoming webhook surface is discussed below. |
+| Notification Controller | Report reconciliation events to configured destinations, and optionally trigger immediate reconciliation of declared resources via incoming webhooks. |
 
 These are the three controller Deployments in the rendered installation. Their upstream APIs
 remain installed even when Cur8s recommends only a narrower use of them. A recommendation here
@@ -71,19 +71,25 @@ author's responsibility; the published payload must follow this reconciliation m
 
 ## Reporting and incoming webhooks
 
-The intended notification role is to report reconciliation events. Upstream `Alert` and `Provider`
-resources configure outgoing event delivery. This gives operators information about the GitOps
-engine while keeping deployment intent in external declarations.
+Notification Controller supports two complementary roles:
 
-The installed surface also includes the `Receiver` API and the internal `webhook-receiver`
-Service. A configured [Receiver](https://fluxcd.io/flux/components/notification/receivers/) accepts
-external events and can request reconciliation of referenced Flux resources. Reporting is therefore
-not the controller's only installed capability. The package does not configure Receiver resources.
+- **Outgoing reporting (`Alert` and `Provider`):** Report reconciliation events to configured
+  external destinations, giving operators visibility into the GitOps engine.
+- **Incoming webhooks (`Receiver`):** Accept authenticated external events through the internal
+  `webhook-receiver` Service (and its `allow-webhooks` NetworkPolicy) to request immediate
+  reconciliation of referenced Flux resources instead of waiting for the next polling interval.
 
-**Unresolved contract:** the intended role is informational reporting, but the incoming webhook
-capability is present. Whether the package will explicitly exclude Receivers from its recommended
-contract or reduce that installed surface remains an open design decision. This document records
-the current surface without treating either outcome as agreed.
+Both capabilities remain installed as part of the unmodified upstream controller. The package does
+not configure `Alert`, `Provider`, or `Receiver` resources and does not expose `webhook-receiver`
+outside the cluster (`ClusterIP` only). Operators may opt into either capability by creating the
+corresponding Flux resources and, for incoming webhooks, exposing `webhook-receiver` through their
+own ingress or gateway configuration.
+
+Using a [Receiver](https://fluxcd.io/flux/components/notification/receivers/) to trigger
+reconciliation is compatible with Cur8s' operating model. A Receiver only accelerates convergence
+toward state that is already declared; it does not discover newer image tags, select artifact
+versions, or rewrite configuration. Those responsibilities stay outside the cluster, which is why
+Image Reflector Controller and Image Automation Controller remain excluded below.
 
 ## Excluded controllers
 

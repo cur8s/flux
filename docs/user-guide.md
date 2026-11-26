@@ -4,7 +4,7 @@
 > Use this guide to install, operate, upgrade, and recover the Cur8s Flux package.
 
 Read [the package's opinion](product/02-the-opinion.md) for controller selection, source
-recommendations, and the unresolved Receiver webhook contract. Follow
+recommendations, and the Notification Controller contract. Follow
 [Pre-rendered manifests](product/01-pre-rendered-manifests.md) for the reconciliation model.
 
 ## Installation and operation

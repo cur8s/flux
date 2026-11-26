@@ -49,7 +49,7 @@ repository README and other documents.
 | --- | --- |
 | [Vision](product/00-vision.md) | Why this package exists, its audience, success, and boundaries. |
 | [Pre-rendered manifests](product/01-pre-rendered-manifests.md) | Why artifacts are constructed before deployment, and the constraints on runtime composition and declared values. |
-| [The package's opinion](product/02-the-opinion.md) | Controller selection, source recommendations, exclusions, and the unresolved Receiver webhook contract. |
+| [The package's opinion](product/02-the-opinion.md) | Controller selection, source recommendations, Notification Controller contract, and exclusions. |
 | [User guide](user-guide.md) | Bootstrap, operation, upgrades, recovery, and their verification. |
 | [Local development](how-to/00-local-development.md) | Toolchain setup, rendering, candidate environments, committed-tree verification, and lockfile refresh. |
 | [Architecture overview](architecture/00-overview.md) | Package and consumer responsibilities, bootstrap, and the self-management boundary. |
