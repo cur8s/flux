@@ -64,6 +64,11 @@ Cur8s-owned changes:
 - **PATCH:** Backward-compatible fixes, packaging corrections, or dependency updates that do not
   introduce new functionality or incompatibility.
 
+An upstream major, minor, or patch designation is a useful signal, not a mechanical rule: the actual
+effect on the Cur8s package's compatibility contract determines the bump, and a Cur8s-only change
+can trigger any appropriate increment. See [Why independent SemVer](#why-independent-semver) for the
+rejected alternatives and trade-offs behind this model.
+
 Once a production version is published, it must keep identifying the same content. Development
 tags such as `dev` and `verify` serve local workflows via `.mise/cluster/push-artifact.sh`; `release:publish` only
 targets `RELEASE_REGISTRY` at `CUR8S_TAG`, though it does not yet refuse an existing production
@@ -136,3 +141,24 @@ The publication contract still requires implementation and verification of:
 
 Signing and provenance policy remain unsettled. These are requirements and open decisions for the
 publication design; the current scripts do not provide them merely by attaching origin annotations.
+
+## Why independent SemVer
+
+Upstream software and Cur8s-maintained manifests, defaults, and integration choices evolve on
+different schedules. A Cur8s-only manifest correction needs a new immutable release even when the
+bundled upstream version has not changed, and capabilities must evolve independently without forcing
+a shared repository-wide version number. Upstream-derived version schemes were evaluated and
+rejected:
+
+| Rejected scheme | Example | Why it fails |
+| --- | --- | --- |
+| Reuse upstream version | `2.7.0` | A Cur8s-only fix has no distinct version without overwriting an immutable release. |
+| Fourth numeric component | `2.7.0.1` | Does not conform to SemVer's `MAJOR.MINOR.PATCH` structure. |
+| SemVer build metadata | `2.7.0+r.1` | Build metadata does not affect SemVer precedence, and `+` is invalid in OCI tags. |
+| Prerelease-style packaging suffix | `2.7.0-r.1`, `v2.9.0-2` | SemVer treats suffixes as prereleases sorting *before* the base version, and subordinates Cur8s' compatibility history to upstream's version. |
+
+The trade-off is that a package version alone no longer reveals the bundled upstream version.
+Cur8s accepts that cost by surfacing upstream provenance explicitly in `cur8s.yaml` and OCI
+annotations, maintaining a compatibility contract per capability, and pinning exact tested
+combinations in a separate platform BOM (whose canonical schema and repository location remain open
+design work).
