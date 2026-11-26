@@ -32,9 +32,9 @@ maintainers advance it when a new GA patch is published.
 The image tag contains a k3s packaging suffix (`k3s1` today), but it does not introduce another
 Kubernetes version setting. Then pass the derived image to k3d, assert the created API server and
 client report the selected version, run Flux preflight against it, and document both the e2e target
-and Flux's supported Kubernetes range. How the version is authored in `mise.toml` and whether
-the `kubectl` pin may be derived from it by template follow the conventions settled by
-[`standardize-mise-and-task-scripts`](../standardize-mise-and-task-scripts/overview.md). Kubeconform and its static schema target were intentionally
+and Flux's supported Kubernetes range. How the version is authored in `mise.toml` follows
+[Mise standard](../../../docs/standards/mise-standard.md) (`MISE-003` keeps `[tools]` pins literal
+rather than templated). Kubeconform and its static schema target were intentionally
 removed in `46bc99c`; this todo does not replace that validator or modify Flux-generated YAML.
 
 Its detailed plan, with the agreed pinning decisions, is preserved in
@@ -127,6 +127,6 @@ review surface, runs policy, drift, and end-to-end checks, and opens a proposal 
 upstream release information. It must never merge, tag, or publish automatically. Determine how to
 authenticate automated proposals safely, how to handle a newer release while a proposal is already
 open, and whether upstream release notes provide enough compatibility information to summarize
-without adding another source of truth. Whether Renovate can read the version pins depends on
-the templated-pin decision in
-[`standardize-mise-and-task-scripts`](../../todo/standardize-mise-and-task-scripts/overview.md).
+without adding another source of truth. Tool pins in `mise.toml` are literal strings per
+[Mise standard](../../../docs/standards/mise-standard.md) (`MISE-003`), so Renovate can read them
+directly.

@@ -22,26 +22,9 @@ depth-first and breadth-first work.
 
 | Work area | Rationale |
 | --- | --- |
-| mise and script conventions | The lifecycle is expressed in mise tasks and bash; settling those mechanics first keeps the design discussion about the problem rather than the tooling. |
-| Component lifecycle design | Decides what every component repository does and guarantees; it needs the docs structure to publish into and the mise conventions to express it. |
+| Component lifecycle design | Decides what every component repository does and guarantees; it builds on the published docs structure and mise/bash standards. |
 | Implementation planning | Implementation can only be planned against a documented lifecycle; it gathers all remaining known work into the new sequence. |
-| Documentation structure | The category directories, strategy, product and architecture documents, and local development guide already exist for earlier work to write into. The owner chose to finish the rest last: the remaining operator how-tos and standards describe procedures that the conventions, lifecycle design, and implementation planning are likely to change. |
-
-## mise and script conventions
-
-Review every mechanical aspect of how the repository uses mise and bash, settle and apply each
-convention interactively, and document the results.
-
-**Work**
-
-- [Review and standardize the mise configuration and task scripts](../todo/standardize-mise-and-task-scripts/overview.md)
-
-**Why / what this unlocks**
-
-Written standards and guides that the lifecycle design and every implementation todo follow, and
-that keep the per-repository copies of task scripts consistent.
-
----
+| Documentation structure | The category directories, strategy, product and architecture documents, local development guide, and mise/bash standards already exist for earlier work to write into. The owner chose to finish the rest last: the remaining operator how-tos and standards describe procedures that the lifecycle design and implementation planning are likely to change. |
 
 ## Component lifecycle design
 

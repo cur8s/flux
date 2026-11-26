@@ -31,9 +31,9 @@ repository composing them. Account for components unlike Flux — cert-manager f
 and remote files, renders several Kustomizations, and depends on a published Flux.
 
 Experiments are disposable: scratch directories, throwaway k3d clusters, and local registries
-only. Nothing is pushed to `ghcr.io` unless the owner explicitly requests it. Any mise mechanics
-follow the conventions settled by
-[`standardize-mise-and-task-scripts`](../standardize-mise-and-task-scripts/overview.md).
+only. Nothing is pushed to `ghcr.io` unless the owner explicitly requests it. Any mise and bash
+mechanics follow [Mise standard](../../../docs/standards/mise-standard.md) and
+[Bash script standard](../../../docs/standards/bash-script-standard.md).
 
 ## Phases
 

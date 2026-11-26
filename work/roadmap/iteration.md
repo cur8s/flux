@@ -20,22 +20,23 @@ open questions about what comes next. Horizontal rules separate the sections.
 
 ## Target
 
-**Settled mise and bash conventions.** Every mechanical aspect of how the repository uses mise and
-bash has an agreed convention, the repository follows it, and the conventions are published in
-durable documentation.
+**Settled mise and bash conventions (completed 2026-11-26 — awaiting next target).** Every
+mechanical aspect of how the repository uses mise and bash has an agreed convention, the repository
+follows it, and the conventions are published in durable documentation.
 
 - **Why:** each Cur8s component repository keeps its own copies of tiny task scripts; these
   conventions keep the copies consistent, and the lifecycle design is expressed in them.
-- **Success:** the outcome of
-  [Review and standardize the mise configuration and task scripts](../todo/standardize-mise-and-task-scripts/overview.md)
-  is met, and the drift and e2e gates pass.
+- **Success:** met — [Mise standard](../../docs/standards/mise-standard.md) and
+  [Bash script standard](../../docs/standards/bash-script-standard.md) are published, the repository
+  conforms, and `bash -n`, `shellcheck`, and `mise run verify:run` pass. See
+  [Journal](journal.md).
 
 ---
 
 ## Week 42: October 12–16, 2026
 
-**Active work:** [Review and standardize the mise configuration and task scripts](../todo/standardize-mise-and-task-scripts/overview.md),
-starting with the Phase 1 inventory.
+**Active work:** None — the mise and bash conventions todo is complete and removed; awaiting owner
+selection of the next target and weekly contribution.
 
 **Success:** `working-notes.md` holds the inventory of mise features and script patterns, and the
 owner has agreed the topic order for the review rounds.
@@ -52,6 +53,10 @@ owner has agreed the topic order for the review rounds.
 
 - 2026-10-14: The owner moved the docs rebuild to last in [Areas](areas.md) and selected the mise
   and script conventions as the next work.
+- 2026-11-26: Completed the mise and task-scripts review, applied all conventions, published
+  [Mise standard](../../docs/standards/mise-standard.md) and
+  [Bash script standard](../../docs/standards/bash-script-standard.md), drafted the closeout account
+  in [Journal](journal.md), and removed `work/todo/standardize-mise-and-task-scripts/`.
 
 ---
 

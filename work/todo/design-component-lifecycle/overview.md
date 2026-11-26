@@ -51,21 +51,20 @@ summary: "Identify the goals and invariants of a Cur8s component's build-to-publ
   `flux:boot` still boots the Flux repository from its local render; `build:render` does not
   package; `dev:create` absorbs `artifact:deploy|verify`; and `oci:publish` replaces
   `artifact:push` and `release`, publishing to a cluster's local registry with `--cluster`.
-  Since superseded by the owner (2026-10-14, [mise conventions working notes](../standardize-mise-and-task-scripts/working-notes.md)):
-  the `cluster:*` tasks became the `.mise/cluster.sh` helper, and cluster names became the fixed
-  roles `dev` and `test` (`<component>-dev`, `<component>-test`) that the `flux:*`, `dev:*`, and
-  `oci:publish --cluster` tasks take. The [lifecycle proposal](proposal.md)'s agreed `cluster:*`
-  rows and name override need reconciling with this. On 2026-11-24, the owner dropped `flux:boot`,
-  folded the remaining `flux:*` tasks into `dev:` (`dev:status`, `dev:reconcile`, `dev:watch`),
-  specialized `dev:*` to the `dev` cluster only, added `dev:update` (with both `dev:create` and
-  `dev:update` depending on `build:render`), extracted component installation into
-  `.mise/cluster/install-component.sh` (called after `.mise/cluster/cluster.sh create`) and
-  OCI pushing to `.mise/cluster/push-artifact.sh`, replaced `test:run`/`test:destroy` with `verify:run`/
-  `verify:clean` (cluster role `verify`), and replaced `oci:publish` with `release:publish`
-  ([mise conventions working notes](../standardize-mise-and-task-scripts/working-notes.md));
-  the `flux:*`, `test:*`, and `oci:publish` entries in the [lifecycle proposal](proposal.md),
+  Since superseded by the owner (2026-10-14 through 2026-11-26, recorded in
+  [Journal](../../roadmap/journal.md)):
+  the `cluster:*` tasks became `.mise/cluster/cluster.sh` (with fixed targets `dev` and `verify`),
+  `flux:boot` was dropped and the remaining `flux:*` tasks folded into `dev:` (`dev:status`,
+  `dev:reconcile`, `dev:watch`), `dev:*` was specialized to `dev` only, `dev:update` was added
+  (with both `dev:create` and `dev:update` depending on `build:render`), component installation moved
+  into `.mise/cluster/install-component.sh` (single `dev|verify` arg, data-driven via
+  `FLUX_BOOTSTRAP_MANIFEST` and `FLUX_SYNC_MANIFESTS`) and OCI pushing into
+  `.mise/cluster/push-artifact.sh`, `test:run`/`test:destroy` became `verify:run`/`verify:clean`
+  (using the `verify` OCI tag), and `oci:publish` became `release:publish` (targeting
+  `RELEASE_REGISTRY`). The `cluster:*`, `flux:*`, `test:*`, and `oci:publish` entries in the
+  [lifecycle proposal](proposal.md),
   [task namespace reference](task-namespaces-proposal.md), and
-  [Flux bootstrap proposal](flux-bootstrap-proposal.md) need reconciling with this too.
+  [Flux bootstrap proposal](flux-bootstrap-proposal.md) need reconciling with this.
 - The earlier six-phase proposal, top-level Maven-style phases rather than namespaces, is kept as
   an alternative considered in [candidate: six chained phases](candidate-six-phases.md).
 
@@ -149,6 +148,6 @@ or revise there:
   is obvious. Authored major directories explain themselves in short READMEs; generated output is
   documented outside `artifacts/` so cleaning cannot delete authored content.
 
-The mise mechanics any design uses follow
-[`standardize-mise-and-task-scripts`](../standardize-mise-and-task-scripts/overview.md), which
-comes first.
+The mise and bash mechanics any design uses follow
+[Mise standard](../../../docs/standards/mise-standard.md) and
+[Bash script standard](../../../docs/standards/bash-script-standard.md).
