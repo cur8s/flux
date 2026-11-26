@@ -41,9 +41,9 @@ CUR8S_COMPONENT = "flux"
 CUR8S_UPSTREAM_PROJECT = "fluxcd/flux2"
 CUR8S_SOURCE = "https://github.com/cur8s/flux"
 CUR8S_DOCS = "https://github.com/cur8s/flux"
-# Production registry (release:publish targets this registry; dev and
+# Production release registry (release:publish targets this registry; dev and
 # verify pushes go to the k3d cluster's local registry via .mise/cluster/push-artifact.sh).
-REGISTRY = "ghcr.io/cur8s"
+RELEASE_REGISTRY = "ghcr.io/cur8s"
 # Component-specific declarative inputs for the shared .mise/cluster/install-component.sh and
 # dev:update scripts: Flux bootstrap YAML (local render here; pinned published
 # Cur8s Flux install.yaml in other component repos) and local cluster Flux

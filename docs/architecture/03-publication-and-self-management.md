@@ -23,7 +23,7 @@ a separate installation for each channel. Their packaging differs, but the resou
 installs must be the resources Flux subsequently reconciles.
 
 [`release:publish`](../../.mise/tasks/release/publish) requires a clean working tree and publishes
-the existing rendered tree to `REGISTRY` at `CUR8S_VERSION` (with no tag override). It does
+the existing rendered tree to `RELEASE_REGISTRY` at `CUR8S_VERSION` (with no tag override). It does
 not fetch or render inputs, run `verify:run`, or check whether that version already
 exists in either distribution channel. There is currently no live GitHub Actions workflow in the
 repository; the verification gates run locally.
@@ -43,7 +43,7 @@ That versioning change has not been implemented in the current configuration.
 
 Once a production version is published, it must keep identifying the same content. Development
 tags such as `dev` and `e2e` serve local workflows via `.mise/cluster/push-artifact.sh`; `release:publish` only
-targets `REGISTRY` at `CUR8S_VERSION`, though it does not yet refuse an existing production
+targets `RELEASE_REGISTRY` at `CUR8S_VERSION`, though it does not yet refuse an existing production
 version.
 
 The intended publication path also requires one packaged OCI artifact to be tested and promoted

@@ -317,3 +317,7 @@ those documents during the lifecycle design todo.
 - Renamed `cluster.sh` subcommands and caller variables from `host-registry`/`in-cluster-registry`
   to `registry-host-address`/`registry-cluster-address` (2026-11-26) so they clearly describe two
   network addresses for the same local registry container rather than two separate registries.
+- Disambiguated `registry` naming across `mise.toml` and `cluster.sh` (2026-11-26): renamed
+  `REGISTRY` → `RELEASE_REGISTRY` in `mise.toml` and `release:publish` (plus architecture docs),
+  and renamed `cluster.sh` internals from `name`/`context`/`registry` to `cluster_name`,
+  `kube_context`, and `registry_container`.

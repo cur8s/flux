@@ -19,13 +19,13 @@ usage() {
 }
 [[ $# -eq 2 ]] || usage
 case "$2" in dev | verify) ;; *) usage ;; esac
-name="$CUR8S_COMPONENT-$2"
-context="k3d-$name"
-registry="$name-registry"
+cluster_name="$CUR8S_COMPONENT-$2"
+kube_context="k3d-$cluster_name"
+registry_container="$cluster_name-registry"
 
 registry_host_address() {
   local port
-  port="$(docker inspect -f '{{(index .NetworkSettings.Ports "5000/tcp" 0).HostPort}}' "$registry")"
+  port="$(docker inspect -f '{{(index .NetworkSettings.Ports "5000/tcp" 0).HostPort}}' "$registry_container")"
   echo "localhost:$port"
 }
 
@@ -33,30 +33,30 @@ registry_host_address() {
 # registry answers (k3d starts it after the server and does not wait for it).
 # k3d fails on an existing name.
 create() {
-  k3d cluster create "$name" --config .mise/cluster/k3d-config.yaml --registry-create "$registry"
+  k3d cluster create "$cluster_name" --config .mise/cluster/k3d-config.yaml --registry-create "$registry_container"
   local address
   address="$(registry_host_address)"
   curl -sf --retry 30 --retry-delay 2 --retry-all-errors "http://$address/v2/" >/dev/null
-  echo "✅ cluster $name (context $context), registry $address (in-cluster $registry:5000)"
+  echo "✅ cluster $cluster_name (context $kube_context), registry $address (in-cluster $registry_container:5000)"
 }
 
 # Succeeds when the cluster is already gone; k3d removes its registry too.
 delete() {
-  k3d cluster delete "$name"
+  k3d cluster delete "$cluster_name"
 }
 
 # Fails only when the cluster does not exist; a stopped or unhealthy cluster
 # is reported, not failed.
 status() {
-  k3d cluster list "$name"
-  if kubectl --context "$context" get nodes >/dev/null 2>&1; then
+  k3d cluster list "$cluster_name"
+  if kubectl --context "$kube_context" get nodes >/dev/null 2>&1; then
     echo "api: reachable"
   else
     echo "api: unreachable"
   fi
   local address
   if address="$(registry_host_address 2>/dev/null)"; then
-    echo "registry: $address (in-cluster $registry:5000)"
+    echo "registry: $address (in-cluster $registry_container:5000)"
   else
     echo "registry: not running"
   fi
@@ -67,7 +67,7 @@ case "$1" in
   delete) delete ;;
   status) status ;;
   registry-host-address) registry_host_address ;;
-  registry-cluster-address) echo "$registry:5000" ;;
-  context) echo "$context" ;;
+  registry-cluster-address) echo "$registry_container:5000" ;;
+  context) echo "$kube_context" ;;
   *) usage ;;
 esac

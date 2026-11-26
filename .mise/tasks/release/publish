@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #MISE description="Publish artifacts/rendered/ to the remote OCI registry"
 set -euo pipefail
-# Publishes the committed render to REGISTRY at CUR8S_VERSION as-is;
+# Publishes the committed render to RELEASE_REGISTRY at CUR8S_VERSION as-is;
 # never re-renders. Remote publication happens only on an explicit ask (AGENTS.md).
 if [[ -n "$(git status --porcelain)" ]]; then
   git status --short >&2
   echo "❌ working tree is not clean — commit or stash changes before publishing" >&2
   exit 1
 fi
-.mise/cluster/push-artifact.sh "$REGISTRY" "$CUR8S_VERSION"
+.mise/cluster/push-artifact.sh "$RELEASE_REGISTRY" "$CUR8S_VERSION"
