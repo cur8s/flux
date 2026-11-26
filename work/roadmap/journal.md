@@ -100,3 +100,39 @@ git show <commit-id>:work/roadmap/iteration.md
 ```shell
 git show fd7572b:work/todo/1-adopt-capability-naming-and-semver/versioning-proposal.md
 ```
+
+### 2026-11-26 — Move self-management Kustomization out of the package (Draft)
+
+- **Accomplishments:** Removed `sync.yaml` from `src/config/` and `artifacts/rendered/` (stopping
+  `.mise/tasks/build/render` from copying it), relocated this repository's local dev/verify
+  self-management `Kustomization` to [`test/sync.yaml`](../../test/sync.yaml) (with
+  [`test/README.md`](../../test/README.md) and `FLUX_SYNC_MANIFESTS = "test/sync.yaml"` in
+  `mise.toml`), added an explicit Flux CRD `Established` readiness check
+  (`kubectl wait crd -l app.kubernetes.io/part-of=flux --for=condition=Established --timeout=2m`)
+  to [`.mise/cluster/install-component.sh`](../../.mise/cluster/install-component.sh), rewrote
+  [User guide](../../docs/user-guide.md) with a complete copy-and-paste production bootstrap path,
+  and updated durable documentation across `src/README.md`, `docs/README.md`,
+  `docs/product/01-pre-rendered-manifests.md`, `docs/how-to/00-local-development.md`, and
+  `docs/architecture/` (commit `ce5a6c7`).
+- **Key decisions:**
+  - Placed the repo-local dev/verify sync fixture at `test/sync.yaml` (rather than
+    `.mise/cluster/sync.yaml`) so `.mise/cluster/` stays identical across component repositories.
+  - Kept the production self-management manifest (`OCIRepository` + `Kustomization`) as a
+    documented copy-and-paste example in [User guide](../../docs/user-guide.md) only, rather than
+    publishing a third release asset.
+  - Used `kubectl wait crd -l app.kubernetes.io/part-of=flux --for=condition=Established` in
+    `install-component.sh` so all Flux CRDs installed by `FLUX_BOOTSTRAP_MANIFEST` are established
+    before any Flux custom resources are applied, while keeping the helper identical across
+    component repositories.
+- **Verification:** `mise run build:render`, `bash -n .mise/cluster/*.sh .mise/tasks/*/*`,
+  `mise exec -- shellcheck .mise/cluster/*.sh .mise/tasks/*/*` (0 warnings), `git diff --check`,
+  `mise run dev:create` / `dev:update` / `dev:status` / `dev:delete`, and `mise run verify:run` on
+  committed `ce5a6c7` (fresh drift check, `gitops-verify` bootstrap with all 10 Flux CRDs
+  `Established` and all 3 controllers `Available`, reconciliation to `Ready` on
+  `verify@sha256:e63d2842`, and cluster cleanup) all passed.
+- **Original proposal:** The unedited Flux bootstrap proposal removed with
+  `work/todo/2-move-self-management-to-consumer/` remains in Git history:
+
+```shell
+git show ce5a6c7:work/todo/2-move-self-management-to-consumer/flux-bootstrap-proposal.md
+```

@@ -5,7 +5,7 @@ summary: "Extend end-to-end verification beyond fresh bootstrap to test self-man
 
 # Add upgrade and recovery verification
 
-Today `verify:run` proves that a fresh cluster can bootstrap Flux and hand control to the OCI artifact, but it does not exercise an already self-managed installation moving between component versions. That transition is where controller, CRD, and reconciliation compatibility problems are most likely to appear. (The [Flux bootstrap proposal](../2-move-self-management-to-consumer/flux-bootstrap-proposal.md) also calls for fresh-cluster coverage through phase 1, readiness, phase 2, first reconciliation, and a subsequent version update.)
+Today `verify:run` proves that a fresh cluster can bootstrap Flux and hand control to the OCI artifact, but it does not exercise an already self-managed installation moving between component versions. That transition is where controller, CRD, and reconciliation compatibility problems are most likely to appear. (The Flux bootstrap proposal—preserved at `git show ce5a6c7:work/todo/2-move-self-management-to-consumer/flux-bootstrap-proposal.md`—also calls for fresh-cluster coverage through phase 1, readiness, phase 2, first reconciliation, and a subsequent version update.)
 
 **Scope:**
 

@@ -34,7 +34,6 @@ boundary, and Notification Controller contract with the settled design decisions
 
 **Work**
 
-- [Move self-management Kustomization out of the package](../todo/2-move-self-management-to-consumer/overview.md)
 - [Clarify the Notification Receiver contract](../todo/3-clarify-notification-receiver-contract/overview.md)
 
 **Why / what this unlocks**

@@ -62,6 +62,12 @@ owner has agreed the topic order for the review rounds.
   rationale in [Publication and self-management](../../docs/architecture/03-publication-and-self-management.md)),
   drafted the closeout account in [Journal](journal.md), and removed
   `work/todo/1-adopt-capability-naming-and-semver/`.
+- 2026-11-26: Moved the self-management `Kustomization` out of `src/config/` and
+  `artifacts/rendered/` into repo-local [`test/sync.yaml`](../../test/sync.yaml), added the
+  explicit Flux CRD `Established` wait to `.mise/cluster/install-component.sh`, documented the
+  copy-and-paste production bootstrap path in [User guide](../../docs/user-guide.md) and updated
+  the architecture docs (`ce5a6c7`), drafted the closeout account in [Journal](journal.md), and
+  removed `work/todo/2-move-self-management-to-consumer/`.
 
 ---
 

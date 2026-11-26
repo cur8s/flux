@@ -109,7 +109,8 @@ governs the directory README. References into work material stay within work mat
   explanation rather than porting the monorepo layer structure.
 - Describe the actual artifact: controller installation, inert descriptor, and shipped sync file.
   The consuming cluster owns its OCIRepository; the package currently owns the sync Kustomization.
-- The owner's [Flux bootstrap proposal](../2-move-self-management-to-consumer/flux-bootstrap-proposal.md)
+- The owner's Flux bootstrap proposal (preserved at
+  `git show ce5a6c7:work/todo/2-move-self-management-to-consumer/flux-bootstrap-proposal.md`)
   explicitly selects consumer ownership of both self-management resources. Preserve that as the
   intended boundary while stating that the current package still ships sync.yaml. Documentation
   must not claim the ownership transition has been implemented.
