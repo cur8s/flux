@@ -324,3 +324,5 @@ those documents during the lifecycle design todo.
 - Renamed `artifact_url` → `oci_repository_url` in `.mise/cluster/install-component.sh`
   (2026-11-26) to distinguish the untagged `OCIRepository` URL from the tagged `artifact_url`
   (`...:<tag>`) in `.mise/cluster/push-artifact.sh`.
+- Renamed `CUR8S_UPSTREAM_PROJECT` → `UPSTREAM_PROJECT` across `mise.toml`, `.mise/`, and
+  architecture docs (2026-11-26) so all upstream variables share the `UPSTREAM_*` prefix.

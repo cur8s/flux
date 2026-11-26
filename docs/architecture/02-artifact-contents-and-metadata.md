@@ -43,7 +43,7 @@ derived versions, and the captured upstream file. The current schema is
 | `schema` | Literal schema identifier in the render script. | Format of this descriptor. |
 | `component` | `CUR8S_COMPONENT`. | Cur8s component identity. |
 | `version` | `CUR8S_VERSION`. | Package version derived by the current configuration. |
-| `upstream.project` | `CUR8S_UPSTREAM_PROJECT`. | Upstream project identity. |
+| `upstream.project` | `UPSTREAM_PROJECT`. | Upstream project identity. |
 | `upstream.version` | `UPSTREAM_TAG`. | Selected upstream release. |
 | `upstream.digest` | SHA-256 of the captured `upstream/flux.yaml` bytes. | Identity of the captured installation input before the authored overlay is applied. |
 | `source` | `CUR8S_SOURCE`. | Declared package source location. |
@@ -70,7 +70,7 @@ values used by the descriptor:
 | --- | --- |
 | `cur8s.io/component` | `CUR8S_COMPONENT`. |
 | `cur8s.io/version` | `CUR8S_VERSION`. |
-| `cur8s.io/upstream` | `CUR8S_UPSTREAM_PROJECT`. |
+| `cur8s.io/upstream` | `UPSTREAM_PROJECT`. |
 | `cur8s.io/upstream-version` | `UPSTREAM_TAG`. |
 | `cur8s.io/docs` | `CUR8S_DOCS`. |
 

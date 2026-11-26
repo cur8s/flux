@@ -6,7 +6,7 @@
 set -euo pipefail
 : "${CUR8S_COMPONENT:?must be set (mise.toml [env]); run through mise}"
 : "${CUR8S_VERSION:?must be set (mise.toml [env]); run through mise}"
-: "${CUR8S_UPSTREAM_PROJECT:?must be set (mise.toml [env]); run through mise}"
+: "${UPSTREAM_PROJECT:?must be set (mise.toml [env]); run through mise}"
 : "${UPSTREAM_TAG:?must be set (mise.toml [env]); run through mise}"
 : "${CUR8S_DOCS:?must be set (mise.toml [env]); run through mise}"
 
@@ -54,7 +54,7 @@ flux push artifact "$artifact_url" \
   --revision="$revision" \
   --annotations="cur8s.io/component=${CUR8S_COMPONENT}" \
   --annotations="cur8s.io/version=${CUR8S_VERSION}" \
-  --annotations="cur8s.io/upstream=${CUR8S_UPSTREAM_PROJECT}" \
+  --annotations="cur8s.io/upstream=${UPSTREAM_PROJECT}" \
   --annotations="cur8s.io/upstream-version=${UPSTREAM_TAG}" \
   --annotations="cur8s.io/docs=${CUR8S_DOCS}" \
   --timeout=5m

@@ -2,7 +2,7 @@
 #MISE description="Check for a newer upstream release"
 set -euo pipefail
 # Queries the GitHub Releases API to compare the latest release with UPSTREAM_TAG.
-latest="$(curl -fsSL "https://api.github.com/repos/$CUR8S_UPSTREAM_PROJECT/releases/latest" | jq -r .tag_name)"
+latest="$(curl -fsSL "https://api.github.com/repos/$UPSTREAM_PROJECT/releases/latest" | jq -r .tag_name)"
 echo "tracked: $UPSTREAM_TAG"
 echo "latest:  $latest"
 if [[ "$UPSTREAM_TAG" == "$latest" ]]; then
