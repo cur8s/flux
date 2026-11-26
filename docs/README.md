@@ -57,3 +57,5 @@ repository README and other documents.
 | [Artifact contents and metadata](architecture/02-artifact-contents-and-metadata.md) | Applied content, descriptor fields, publication annotations, and file versus OCI identity. |
 | [Publication and self-management](architecture/03-publication-and-self-management.md) | The release contract, current automation, bootstrap readiness, self-management, and verification scope. |
 | [Repository entry files standard](standards/repository-entry-files-standard.md) | What belongs in the root README, agent instructions, and directory READMEs. |
+| [Mise standard](standards/mise-standard.md) | Lockfile enforcement, tool pinning, `[env]` validation, file tasks, and `#MISE` headers. |
+| [Bash script standard](standards/bash-script-standard.md) | Linear task scripts, executed helpers, flat statements, self-contained comments, and `shellcheck` verification. |

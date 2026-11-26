@@ -39,35 +39,35 @@ The remaining rounds still settle mise and bash mechanics; this migration does n
 
 A shared picture of current usage and the topics to review.
 
-- [ ] Catalogue every mise feature the repository uses (settings, tools, lockfile, env directives
+- [x] Catalogue every mise feature the repository uses (settings, tools, lockfile, env directives
   and templates, task headers, usage specs, `depends`, `raw`) and every recurring script pattern.
-- [ ] Note the installed mise version and the mise features relevant to each topic.
-- [ ] Create `working-notes.md` with the inventory and the proposed topic order. Review with the
+- [x] Note the installed mise version and the mise features relevant to each topic.
+- [x] Create `working-notes.md` with the inventory and the proposed topic order. Review with the
   owner before starting rounds.
 
 ### Phase 2: Review rounds
 
 Each topic has an agreed, applied, and recorded convention.
 
-- [ ] Settings and the lockfile: `lockfile`, `locked`, locked platforms, refresh procedure.
-- [ ] Tool pinning: registry backends, tools outside the default registry, Flux plugins and
+- [x] Settings and the lockfile: `lockfile`, `locked`, locked platforms, refresh procedure.
+- [x] Tool pinning: registry backends, tools outside the default registry, Flux plugins and
   container-distributed tools, host prerequisites mise does not manage (docker, git, openssl,
   curl, jq).
-- [ ] `[env]` design: authored versus derived values, templates and in-template validation, value
+- [x] `[env]` design: authored versus derived values, templates and in-template validation, value
   naming, version values that drive tool pins, and the Renovate trade-off of templated pins.
-- [ ] Task definition: file versus TOML tasks, `#MISE` and `#USAGE` headers, argument and flag
+- [x] Task definition: file versus TOML tasks, `#MISE` and `#USAGE` headers, argument and flag
   conventions and defaults, `depends` versus `mise run`, working directory, `raw`.
-- [ ] Repository layout under `.mise/`: tasks, configuration, and shared scripts.
-- [ ] Bash conventions: shebang and strict mode, variable naming and quoting, output and error
+- [x] Repository layout under `.mise/`: tasks, configuration, and shared scripts.
+- [x] Bash conventions: shebang and strict mode, variable naming and quoting, output and error
   messages, comments, script size, and when logic justifies a shared helper.
 
 ### Phase 3: Documentation
 
 The conventions are published where they belong.
 
-- [ ] Decide with the owner which documents to write and their homes (standards, how-to,
+- [x] Decide with the owner which documents to write and their homes (standards, how-to,
   architecture, or a mix).
-- [ ] Write each document from `working-notes.md`; review each with the owner, then commit it
+- [x] Write each document from `working-notes.md`; review each with the owner, then commit it
   on its own.
 - [ ] Move or delete `working-notes.md` content that now lives in durable documentation.
 

@@ -20,6 +20,11 @@
 - When editing the root `README.md`, `AGENTS.md`, or a directory README, follow
   `docs/standards/repository-entry-files-standard.md`.
 
+## Mise and task scripts
+
+- When editing `mise.toml` or scripts under `.mise/`, follow `docs/standards/mise-standard.md` and
+  `docs/standards/bash-script-standard.md`.
+
 ## Verification
 
 - Follow `docs/how-to/00-local-development.md` for local setup and verification.

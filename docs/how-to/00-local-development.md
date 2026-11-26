@@ -18,13 +18,12 @@ mise tasks
 ```
 
 Expected result: mise installs the locked toolchain, Docker responds, and mise lists the repository
-tasks. [`mise.toml`](../../mise.toml) owns tool selections, environment values, and task conventions;
-[`mise.lock`](../../mise.lock) records the tool downloads and checksums. Use
-`mise run <task> --help` for a task's arguments and flags.
+tasks. [`mise.toml`](../../mise.toml) owns tool selections and environment values;
+[`mise.lock`](../../mise.lock) records the tool downloads and checksums.
 
 The repository has two local k3d clusters: `dev` (`flux-dev`) and `verify` (`flux-verify`). All
 `dev:*` tasks target `dev`; `verify:*` tasks own `verify`. Their contexts live in the repository's
-ignored `.kube/config`, so use `mise run` for tasks, or `mise exec -- kubectl ...` /
+ignored `.kube/config`. Use `mise run` for tasks, or `mise exec -- kubectl ...` and
 `mise exec -- flux ...` for direct inspection, so the repository's environment is loaded.
 
 ## Regenerate the deployment payload
@@ -54,7 +53,7 @@ identifies the generated files.
 
 ## Try an uncommitted candidate locally
 
-Create the development environment (which runs `build:render` first, then boots Flux, publishes to
+Create the development environment (which runs `build:render` first, then boots Flux, pushes to
 the local registry, and wires up self-management):
 
 ```sh
@@ -63,7 +62,7 @@ mise run dev:status
 ```
 
 Expected result: `artifacts/rendered/` is regenerated, Flux's controllers become available, the
-payload is published to the new cluster's local registry, and `OCIRepository/flux` and
+payload is pushed to the new cluster's local registry, and `OCIRepository/flux` and
 `Kustomization/flux` report Ready.
 
 After further edits under `src/config/`, push the regenerated payload to the running `dev` cluster
@@ -93,11 +92,13 @@ the additional guarantee that fresh capture and rendering match the recorded fil
 
 ## Verify the committed result
 
-Check whitespace in both unstaged and staged changes:
+Check whitespace in both unstaged and staged changes (and lint bash scripts when `.mise/` changed):
 
 ```sh
 git diff --check
 git diff --cached --check
+bash -n .mise/cluster/*.sh .mise/tasks/*/*
+mise exec -- shellcheck .mise/cluster/*.sh .mise/tasks/*/*
 ```
 
 Commit changed captured inputs or authored configuration together with their regenerated output
@@ -113,7 +114,7 @@ creating a cluster. Staged changes count too: it stops before the cluster test i
 input or rendered output is uncommitted, even when that output was regenerated correctly. Use the
 candidate workflow above while preparing that change for review.
 
-After the committed-tree check, the task creates the verify cluster, boots Flux, publishes
+After the committed-tree check, the task creates the verify cluster, boots Flux, pushes
 to its local registry, and verifies self-management. Expected result: the task exits successfully
 and removes its cluster and registry. It exercises fresh installation and self-management on the
 selected runtime; the [verification scope](../architecture/03-publication-and-self-management.md#verification-scope-and-remaining-publication-work)
@@ -132,8 +133,8 @@ be removed with `verify:clean` before retrying.
 
 ## Update an upstream version or tool pin
 
-After changing `UPSTREAM_VERSION` or a tool pin in `mise.toml`, refresh all supported lockfile platforms
-and install the selected toolchain:
+After changing a tool pin in `mise.toml` (including `flux2` when updating `UPSTREAM_VERSION`),
+refresh all supported lockfile platforms and install the selected toolchain:
 
 ```sh
 mise lock --platform linux-x64,linux-arm64,macos-x64,macos-arm64
@@ -150,7 +151,7 @@ Render, inspect the source and output diffs, and use the candidate and committed
 above. Review the lockfile with the pin change. A green run on the selected runtime is required
 before treating a changed installation as verified.
 
-The development and test tasks publish to local registries. Remote publication is a separate,
+The development and verify tasks push to local registries. Remote publication is a separate,
 explicitly authorized operation described in
 [Publication and self-management](../architecture/03-publication-and-self-management.md); it is
 not a setup or verification step.
