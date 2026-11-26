@@ -2,7 +2,7 @@
 # Install Flux and this component into an existing local cluster from artifacts/rendered/.
 # Runs Flux preflight checks, bootstraps Flux from FLUX_BOOTSTRAP_MANIFEST, waits for
 # Flux CRDs and controller Deployments to become ready, pushes the rendered artifact to
-# the cluster's local OCI registry, applies FLUX_SYNC_MANIFESTS, and waits until all
+# the cluster's local OCI registry, applies FLUX_SYNC_PATH, and waits until all
 # Flux sources and Kustomizations in flux-system report Ready.
 # Run by dev:create and verify:run after .mise/cluster/cluster.sh create; not a mise task.
 #
@@ -11,7 +11,7 @@ set -euo pipefail
 : "${COMPONENT_NAME:?must be set (mise.toml [env]); run through mise}"
 : "${KUBECONFIG:?must be set (mise.toml [env]); run through mise}"
 : "${FLUX_BOOTSTRAP_MANIFEST:?must be set (mise.toml [env]); run through mise}"
-: "${FLUX_SYNC_MANIFESTS:?must be set (mise.toml [env]); run through mise}"
+: "${FLUX_SYNC_PATH:?must be set (mise.toml [env]); run through mise}"
 
 if [[ $# -ne 1 ]]; then
   echo "usage: $0 dev|verify" >&2
@@ -46,7 +46,7 @@ oci_repository_url="oci://${registry_cluster_address}/${COMPONENT_NAME}"
 flux --context "$kube_context" create source oci "$COMPONENT_NAME" \
   --url "$oci_repository_url" \
   --tag "$artifact_tag" --insecure --interval 1m
-kubectl --context "$kube_context" apply -f "$FLUX_SYNC_MANIFESTS"
+kubectl --context "$kube_context" apply -f "$FLUX_SYNC_PATH"
 
 # Wait for every source and Kustomization in this disposable cluster to converge.
 kubectl --context "$kube_context" -n flux-system \

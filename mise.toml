@@ -43,10 +43,10 @@ UPSTREAM_VERSION = "2.9.0"
 # - KUBERNETES_VERSION: latest reviewed GA patch of the tested Kubernetes GA N-1
 #   minor (within the pinned Flux release's support range); keep [tools].kubectl equal.
 # - FLUX_BOOTSTRAP_MANIFEST: installs the Flux controllers into a fresh cluster.
-# - FLUX_SYNC_MANIFESTS: file or directory of Flux manifests applied after bootstrap.
+# - FLUX_SYNC_PATH: repo file or directory of Flux manifests applied after bootstrap.
 KUBERNETES_VERSION = "1.36.6"
 FLUX_BOOTSTRAP_MANIFEST = "artifacts/rendered/deploy/flux.yaml"
-FLUX_SYNC_MANIFESTS = "test/sync.yaml"
+FLUX_SYNC_PATH = "test/sync.yaml"
 
 
 # ------------------------------------------------------------------------------

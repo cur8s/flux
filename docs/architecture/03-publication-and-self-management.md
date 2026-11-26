@@ -93,7 +93,7 @@ declared OCI source.
 | --- | --- | --- |
 | Install controllers | The selected Flux installation resources exist in the cluster. | [`.mise/cluster/install-component.sh`](../../.mise/cluster/install-component.sh) (called by [`dev:create`](../../.mise/tasks/dev/create) and [`verify:run`](../../.mise/tasks/verify/run) after `.mise/cluster/cluster.sh create`) applies the locally rendered installation with server-side apply. |
 | Establish readiness | Required CRDs and controllers are usable before Flux custom resources are applied. | `.mise/cluster/install-component.sh` waits for Flux CRDs (`app.kubernetes.io/part-of=flux`) to be `Established` and controller Deployments to be `Available`. |
-| Declare self-management | A source selects the artifact and a Kustomization selects its installation content. | `.mise/cluster/install-component.sh` creates the local OCI source and applies the repo-local [`test/sync.yaml`](../../test/sync.yaml) fixture (`FLUX_SYNC_MANIFESTS`) after CRD and controller readiness and local publication. |
+| Declare self-management | A source selects the artifact and a Kustomization selects its installation content. | `.mise/cluster/install-component.sh` creates the local OCI source and applies the repo-local [`test/sync.yaml`](../../test/sync.yaml) fixture (`FLUX_SYNC_PATH`) after CRD and controller readiness and local publication. |
 | Verify convergence | The declared artifact is acquired and its installation is healthy. | The development task waits for the source and Kustomization to report Ready. |
 
 The local source uses the disposable cluster's registry and selected test tag. Production source

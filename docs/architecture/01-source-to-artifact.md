@@ -113,7 +113,7 @@ After that check, verification creates a disposable cluster with
 [`.mise/cluster/cluster.sh`](../../.mise/cluster/cluster.sh) and installs into it with
 [`.mise/cluster/install-component.sh`](../../.mise/cluster/install-component.sh), which boots Flux,
 publishes the payload to its local registry, and verifies self-management using the repo-local
-[`test/sync.yaml`](../../test/sync.yaml) fixture (`FLUX_SYNC_MANIFESTS` in `mise.toml`). Drift
+[`test/sync.yaml`](../../test/sync.yaml) fixture (`FLUX_SYNC_PATH` in `mise.toml`). Drift
 checking evaluates agreement with the recorded files;
 the cluster test evaluates installation and reconciliation on its selected runtime. The verify task
 combines both checks. [`dev:create`](../../.mise/tasks/dev/create) and

@@ -3,11 +3,11 @@
 #MISE depends=["build:render"]
 set -euo pipefail
 # Requires a running dev cluster; pushes the rendered artifact, applies
-# FLUX_SYNC_MANIFESTS, and triggers immediate reconciliation.
+# FLUX_SYNC_PATH, and triggers immediate reconciliation.
 if ! registry_host_address="$(.mise/cluster/cluster.sh registry-host-address dev 2>/dev/null)"; then
   echo "❌ dev cluster is not running — run 'mise run dev:create' first" >&2
   exit 1
 fi
 .mise/cluster/push-artifact.sh "$registry_host_address" dev
-kubectl --context "$(.mise/cluster/cluster.sh context dev)" apply -f "$FLUX_SYNC_MANIFESTS"
+kubectl --context "$(.mise/cluster/cluster.sh context dev)" apply -f "$FLUX_SYNC_PATH"
 mise run dev:reconcile
