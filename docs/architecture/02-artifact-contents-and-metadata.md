@@ -86,7 +86,7 @@ pushes can test uncommitted changes, whereas `release:publish` refuses to run on
 tree so remote releases match the recorded commit.
 
 The destination tag is passed explicitly to `.mise/cluster/push-artifact.sh`. Local `dev` and `verify` pushes
-use `dev` and `e2e` while the descriptor still records the configured package version.
+use `dev` and `verify` while the descriptor still records the configured package version.
 `release:publish` always tags with `CUR8S_VERSION` and exposes no tag override.
 
 ## Cluster-side identification

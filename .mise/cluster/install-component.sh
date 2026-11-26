@@ -5,21 +5,21 @@
 # sources and Kustomizations in flux-system report Ready.
 # Run by dev:create and verify:run after .mise/cluster/cluster.sh create; not a mise task.
 #
-#   .mise/cluster/install-component.sh dev|verify <tag>
+#   .mise/cluster/install-component.sh dev|verify
 set -euo pipefail
 : "${CUR8S_COMPONENT:?must be set (mise.toml [env]); run through mise}"
 : "${KUBECONFIG:?must be set (mise.toml [env]); run through mise}"
 : "${FLUX_BOOTSTRAP_MANIFEST:?must be set (mise.toml [env]); run through mise}"
 : "${FLUX_SYNC_MANIFESTS:?must be set (mise.toml [env]); run through mise}"
 
-if [[ $# -ne 2 ]]; then
-  echo "usage: $0 dev|verify <tag>" >&2
+if [[ $# -ne 1 ]]; then
+  echo "usage: $0 dev|verify" >&2
   exit 1
 fi
 
-# Parse target cluster (dev|verify) and OCI artifact tag.
+# Target cluster (dev|verify); also used as the local OCI tag in its isolated registry.
 target_cluster="$1"
-artifact_tag="$2"
+artifact_tag="$target_cluster"
 
 # Bootstrap Flux; server-side apply handles the large CRDs cleanly.
 kube_context="$(.mise/cluster/cluster.sh context "$target_cluster")"

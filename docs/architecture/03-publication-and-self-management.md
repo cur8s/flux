@@ -42,7 +42,7 @@ describes its compatibility contract, while recording upstream versions as depen
 That versioning change has not been implemented in the current configuration.
 
 Once a production version is published, it must keep identifying the same content. Development
-tags such as `dev` and `e2e` serve local workflows via `.mise/cluster/push-artifact.sh`; `release:publish` only
+tags such as `dev` and `verify` serve local workflows via `.mise/cluster/push-artifact.sh`; `release:publish` only
 targets `RELEASE_REGISTRY` at `CUR8S_VERSION`, though it does not yet refuse an existing production
 version.
 

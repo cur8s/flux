@@ -326,3 +326,6 @@ those documents during the lifecycle design todo.
   (`...:<tag>`) in `.mise/cluster/push-artifact.sh`.
 - Renamed `CUR8S_UPSTREAM_PROJECT` → `UPSTREAM_PROJECT` across `mise.toml`, `.mise/`, and
   architecture docs (2026-11-26) so all upstream variables share the `UPSTREAM_*` prefix.
+- Replaced the leftover `e2e` OCI tag in `verify:run` (and architecture docs) with `verify`
+  and simplified `.mise/cluster/install-component.sh` to take a single `dev|verify` argument
+  (2026-11-26), using the target cluster name as the local OCI tag in its isolated registry.
