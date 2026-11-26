@@ -79,12 +79,19 @@ without packaging consumer configuration into the published OCI artifact.
 
 The package must reproduce its committed deployment payload from the pinned inputs and authored
 configuration. Its end-to-end verification must establish that a fresh installation starts and
-then converges under Flux self-management from the OCI artifact. A green end-to-end run is a release
-acceptance requirement.
+then converges under Flux self-management from the OCI artifact against a live Kubernetes API
+server. A green end-to-end run is a release acceptance requirement.
+
+End-to-end verification runs against an explicit, pinned `rancher/k3s` image derived from
+`KUBERNETES_VERSION` in [`mise.toml`](../../mise.toml) (the latest reviewed GA patch of the
+Kubernetes GA N-1 minor) with `kubectl` pinned to the same version. Before applying controller
+manifests, verification asserts both the client and server Kubernetes versions and runs
+`flux check --pre`. Upstream Flux owns the broader Kubernetes compatibility contract; package
+verification establishes the installation and handoff on one explicit runtime within that range
+rather than claiming coverage of every Kubernetes distribution or patch.
 
 Consuming repositories own verification of their source configuration and interactions with other
-components. Package verification establishes the Flux installation and handoff; it does not prove
-every consumer composition or Kubernetes runtime compatible.
+components.
 
 The [user guide](../user-guide.md) contains the current installation and operation procedures.
 Continue with [From source to artifact](01-source-to-artifact.md) for the rendering pipeline.

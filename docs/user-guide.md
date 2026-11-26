@@ -7,6 +7,18 @@ Read [the package's opinion](product/02-the-opinion.md) for controller selection
 recommendations, and the Notification Controller contract. Follow
 [Pre-rendered manifests](product/01-pre-rendered-manifests.md) for the reconciliation model.
 
+## Kubernetes compatibility
+
+Upstream Flux owns the Kubernetes compatibility contract: this package is expected to work on every
+Kubernetes version supported by the pinned Flux release. Flux `v2.9.0` supports Kubernetes `1.34`
+(`>= 1.34.1`), `1.35` (`>= 1.35.0`), and `1.36` (`>= 1.36.0`) (see the
+[Flux v2.9.0 release notes](https://github.com/fluxcd/flux2/releases/tag/v2.9.0)).
+
+Cur8s' automated end-to-end verification tests one explicit Kubernetes minor at a time: the current
+Kubernetes GA N-1 minor (**`1.36`**, pinned to the latest reviewed GA patch via `KUBERNETES_VERSION`
+in [`mise.toml`](../mise.toml)). That single target provides explicit API-server and controller
+verification within Flux's supported range; it does not narrow Flux's upstream compatibility range.
+
 ## Installation and operation
 
 The package is installed once and then continuously manages its own installation. Each release

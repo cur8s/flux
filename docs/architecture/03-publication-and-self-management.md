@@ -123,11 +123,19 @@ installation. The [user guide](../user-guide.md) contains the current operator p
 
 [`verify:run`](../../.mise/tasks/verify/run) captures upstream, renders, and checks agreement with the
 committed files before creating a disposable cluster with `.mise/cluster/cluster.sh` and installing into it
-with `.mise/cluster/install-component.sh`. That flow creates
-the cluster and registry, boots Flux, publishes locally, declares self-management, and waits for
-Ready conditions. A successful run deletes the cluster; a failed cluster run preserves it for investigation.
-The test establishes fresh installation and self-management on its selected Kubernetes runtime.
-It does not exercise version upgrades, rollback, or recovery from a failed GitOps engine.
+with `.mise/cluster/install-component.sh`. That flow creates the cluster from the explicit `K3S_IMAGE`
+tag derived from `KUBERNETES_VERSION` in [`mise.toml`](../../mise.toml) (with `kubectl` pinned to the
+same version), asserts that both the `kubectl` client and Kubernetes API server versions match
+`KUBERNETES_VERSION` (allowing k3s' `+k3s…` suffix), runs `flux check --pre`, boots Flux, publishes
+locally, declares self-management, and waits for Ready conditions. A successful run deletes the
+cluster; a failed cluster run preserves it for investigation.
+
+Applying the rendered manifest to a live pinned API server and running Flux's preflight and
+readiness checks is the package's Kubernetes compatibility boundary (there is no separate static
+schema validator). Upstream Flux owns the supported Kubernetes version range (`1.34`–`1.36` for
+`v2.9.0`), while `KUBERNETES_VERSION` pins one explicit GA N-1 e2e target within that range. The
+test establishes fresh installation and self-management on that selected runtime; it does not
+exercise version upgrades, rollback, or recovery from a failed GitOps engine.
 
 The current verification path checks Flux CRD `Established` status and controller availability
 during bootstrap, and source and Kustomization readiness after the handoff. Package verification

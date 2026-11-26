@@ -115,8 +115,10 @@ creating a cluster. Staged changes count too: it stops before the cluster test i
 input or rendered output is uncommitted, even when that output was regenerated correctly. Use the
 candidate workflow above while preparing that change for review.
 
-After the committed-tree check, the task creates the verify cluster, boots Flux, pushes
-to its local registry, and verifies self-management. Expected result: the task exits successfully
+After the committed-tree check, the task creates the verify cluster from the pinned `K3S_IMAGE`
+derived from `KUBERNETES_VERSION`, asserts that both `kubectl` and the Kubernetes API server match
+that version, runs `flux check --pre`, boots Flux, pushes to its local registry, and verifies
+self-management. Expected result: the task exits successfully
 and removes its cluster and registry. It exercises fresh installation and self-management on the
 selected runtime; the [verification scope](../architecture/03-publication-and-self-management.md#verification-scope-and-remaining-publication-work)
 describes its limits.
@@ -134,8 +136,10 @@ be removed with `verify:clean` before retrying.
 
 ## Update an upstream version or tool pin
 
-After changing a tool pin in `mise.toml` (including `flux2` when updating `UPSTREAM_VERSION`),
-refresh all supported lockfile platforms and install the selected toolchain:
+After changing `UPSTREAM_VERSION`, `KUBERNETES_VERSION`, or any standalone tool pin in
+[`mise.toml`](../../mise.toml) (`flux2` and `kubectl` derive their versions automatically from
+`UPSTREAM_VERSION` and `KUBERNETES_VERSION`), refresh all supported lockfile platforms and install
+the selected toolchain:
 
 ```sh
 mise lock --platform linux-x64,linux-arm64,macos-x64,macos-arm64
@@ -151,6 +155,41 @@ mise run upstream:fetch
 Render, inspect the source and output diffs, and use the candidate and committed-result workflows
 above. Review the lockfile with the pin change. A green run on the selected runtime is required
 before treating a changed installation as verified.
+
+### Advance the Kubernetes test runtime
+
+The local `dev` and `verify` clusters pin `KUBERNETES_VERSION` to the newest reviewed GA patch of
+the current Kubernetes **GA N-1** minor (rolling latest-patch tag rather than a fixed container
+digest). Advancing the runtime is always a reviewed repository change:
+
+1. Confirm the current Kubernetes GA N-1 minor and verify it lies within the pinned Flux release's
+   documented Kubernetes support range.
+2. Check the newest stable k3s patch release and packaging suffix (such as `k3s1`) for that minor
+   (for example via `curl -fsSL https://update.k3s.io/v1-release/channels`).
+3. Confirm the `rancher/k3s:v<version>-<suffix>` OCI image index publishes both `linux/amd64` and
+   `linux/arm64` manifests:
+
+   ```sh
+   docker manifest inspect rancher/k3s:v<version>-k3s1
+   ```
+
+4. Update `KUBERNETES_VERSION` in [`mise.toml`](../../mise.toml) (and update the `K3S_IMAGE`
+   packaging suffix if upstream uses a suffix other than `k3s1`). `[tools].kubectl` tracks
+   `KUBERNETES_VERSION` automatically.
+5. Refresh `mise.lock` for all four supported platforms and install the updated `kubectl`:
+
+   ```sh
+   mise lock --platform linux-x64,linux-arm64,macos-x64,macos-arm64
+   mise install
+   ```
+
+6. If the tested Kubernetes minor changed, update [the user guide](../user-guide.md#kubernetes-compatibility).
+7. Run the drift, whitespace, and end-to-end verification gates:
+
+   ```sh
+   git diff --check
+   mise run verify:run
+   ```
 
 The development and verify tasks push to local registries. Remote publication is a separate,
 explicitly authorized operation described in
