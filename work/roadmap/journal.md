@@ -136,3 +136,23 @@ git show fd7572b:work/todo/1-adopt-capability-naming-and-semver/versioning-propo
 ```shell
 git show ce5a6c7:work/todo/2-move-self-management-to-consumer/flux-bootstrap-proposal.md
 ```
+
+### 2026-11-26 — Clarify the Notification Receiver contract (Draft)
+
+- **Accomplishments:** Resolved the Notification Controller `Receiver` contract and updated
+  [The package's opinion](../../docs/product/02-the-opinion.md),
+  [Product README](../../docs/product/README.md), [Documentation strategy](../../docs/README.md),
+  and [User guide](../../docs/user-guide.md) (commit `62b51b4`).
+- **Key decisions:**
+  - Kept the upstream `notification-controller` surface (`Receiver` CRD, `webhook-receiver`
+    ClusterIP Service, and `allow-webhooks` NetworkPolicy) unmodified; upstream unconditionally
+    registers `ReceiverReconciler` and starts its port `9292` webhook server with no disable flag.
+  - Documented both outgoing reporting (`Alert`, `Provider`) and incoming webhooks (`Receiver`) as
+    optional operator opt-ins: the package configures none of them and does not expose
+    `webhook-receiver` outside the cluster.
+  - Clarified that webhook-triggered reconciliation of already-declared resources is compatible with
+    Cur8s' model, contrasting it explicitly with the excluded Image Reflector and Image Automation
+    controllers (which discover versions and rewrite configuration).
+- **Verification:** `git diff --check` and `git diff --cached --check` passed; verified no remaining
+  unresolved contract references, trailing whitespace, or `work/` boundary violations in `README.md`
+  and `docs/`. No manifests or overlays changed.

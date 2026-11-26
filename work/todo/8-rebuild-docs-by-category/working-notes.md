@@ -84,10 +84,10 @@ governs the directory README. References into work material stay within work mat
   identifies Source Watcher's composition role. Avoid attributing generation to ExternalArtifact
   itself, as the old user guide does.
 - The [Receiver documentation](https://fluxcd.io/flux/components/notification/receivers/) confirms
-  that incoming webhooks request reconciliation. The known
-  [Notification Receiver contract todo](../3-clarify-notification-receiver-contract/overview.md)
-  defers deciding whether to exclude that use from the recommended contract or reduce the installed
-  surface. The accepted document preserves this as an unresolved boundary; neither outcome is chosen.
+  that incoming webhooks request reconciliation. The accepted document originally preserved this as
+  an unresolved boundary pending a decision; it was subsequently settled in commit `62b51b4` (keep
+  upstream `notification-controller` unmodified and document `Receiver` as an optional opt-in for
+  reconciling already-declared state).
 - Treat the current three-controller selection as implementation evidence. The lifecycle design
   may later revise it; the draft does not silently adopt that proposal as current behavior.
 - The user guide's controller and source sections now link to this primary home. Its installation

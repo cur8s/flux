@@ -22,26 +22,9 @@ depth-first and breadth-first work.
 
 | Work area | Rationale |
 | --- | --- |
-| Package contract and identity | Settles what the package is named, how it is versioned, and what it ships versus what consumers own before bumping upstream or hardening releases. |
-| Verification and upstream currency | Pins the Kubernetes test runtime, advances upstream Flux to the latest patch, and extends e2e verification beyond fresh install once package identity is settled. |
+| Verification and upstream currency | Pins the Kubernetes test runtime, advances upstream Flux to the latest patch, and extends e2e verification beyond fresh install on top of the settled package contract and identity. |
 | Release readiness | Hardens OCI packaging and publication before cutting 1.0 releases. |
-| Documentation structure | The category directories, strategy, product and architecture documents, local development guide, and mise/bash standards already exist for earlier work to write into. The owner chose to finish the remaining operator how-tos and standards last, after the package contract and release procedures settle. |
-
-## Package contract and identity
-
-Align the repository's package naming, independent SemVer versioning, consumer-owned self-management
-boundary, and Notification Controller contract with the settled design decisions.
-
-**Work**
-
-- [Clarify the Notification Receiver contract](../todo/3-clarify-notification-receiver-contract/overview.md)
-
-**Why / what this unlocks**
-
-Clean, unambiguous package identity (`ghcr.io/cur8s/gitops` with independent SemVer) and a crisp
-boundary between reusable package manifests and consumer-owned reconciliation.
-
----
+| Documentation structure | The category directories, strategy, product and architecture documents, local development guide, and mise/bash standards already exist for earlier work to write into. The owner chose to finish the remaining operator how-tos and standards last, after verification and release procedures settle. |
 
 ## Verification and upstream currency
 

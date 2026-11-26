@@ -68,6 +68,12 @@ owner has agreed the topic order for the review rounds.
   copy-and-paste production bootstrap path in [User guide](../../docs/user-guide.md) and updated
   the architecture docs (`ce5a6c7`), drafted the closeout account in [Journal](journal.md), and
   removed `work/todo/2-move-self-management-to-consumer/`.
+- 2026-11-26: Clarified the Notification Receiver contract in
+  [The package's opinion](../../docs/product/02-the-opinion.md) and linked docs (`62b51b4`)—keeping
+  the upstream `notification-controller` surface unmodified and contrasting opt-in webhook
+  reconciliation of already-declared state with the excluded Image Reflector / Image Automation
+  controllers—drafted the closeout account in [Journal](journal.md), and removed
+  `work/todo/3-clarify-notification-receiver-contract/`.
 
 ---
 
