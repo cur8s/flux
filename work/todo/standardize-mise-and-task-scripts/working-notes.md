@@ -334,3 +334,23 @@ those documents during the lifecycle design todo.
   `.mise/cluster/` as the helper folder.
 - Renamed generic `output`/`input`/`digest` to `upstream_manifest` and `upstream_digest` in
   `upstream:fetch` and `build:render` (2026-11-26).
+
+### Final Phase 2 decisions and documentation placement
+
+**Owner decisions (2026-11-26):**
+
+- **Keep `[tools]` pins literal in `mise.toml`** (e.g. `flux2 = "2.9.0"`, not
+  `"{{env.UPSTREAM_VERSION}}"`) so Renovate and readers can parse tool pins directly.
+- **Tool pinning hierarchy:** prefer mise's default registry (`aqua:`/`core:`; verified with
+  mise 2026.10.8 that `crane`, `oras`, and `shellcheck` are built in); for GitHub-released
+  binaries not in the registry (such as `flux-mirror`), use mise's `github:<owner>/<repo>`
+  backend locked in `mise.lock`; for container-only tools, run digest-pinned images via
+  `docker run`.
+- **Single-checkout k3d naming:** keep `<component>-dev` and `<component>-verify` simple and
+  document the single-checkout assumption rather than adding worktree suffixes or kubeconfig
+  guards.
+- **Require `bash -n` and `shellcheck`:** pin `shellcheck` in `mise.toml` (locked in `mise.lock`)
+  so developers and CI run the exact same version.
+- **Documentation layout (Option A):** publish two focused standards under `docs/standards/` —
+  `mise-standard.md` and `bash-script-standard.md` — matching `repository-entry-files-standard.md`,
+  with procedures staying in `docs/how-to/00-local-development.md`.
