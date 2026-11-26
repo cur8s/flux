@@ -34,6 +34,7 @@ When picking this up, also incorporate the CI concerns recorded elsewhere:
   (immutability preflight, partial-success recovery, post-publish verification, and signing).
 - **Mise in GitHub Actions:** action pinning, caching, and locked installs following
   [Mise standard](../../../docs/standards/mise-standard.md).
-- **CI runner architecture:** running the pinned Kubernetes test runtime from
-  [Pin the Kubernetes test runtime](../../todo/4-pin-kubernetes-test-runtime/overview.md) on CI's
-  `linux/amd64` runners.
+- **CI runner architecture:** running the pinned Kubernetes test runtime (`KUBERNETES_VERSION` /
+  `K3S_IMAGE` in [`mise.toml`](../../../mise.toml); see
+  [Advance the Kubernetes test runtime](../../../docs/how-to/00-local-development.md#advance-the-kubernetes-test-runtime))
+  on CI's `linux/amd64` runners.

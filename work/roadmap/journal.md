@@ -156,3 +156,51 @@ git show ce5a6c7:work/todo/2-move-self-management-to-consumer/flux-bootstrap-pro
 - **Verification:** `git diff --check` and `git diff --cached --check` passed; verified no remaining
   unresolved contract references, trailing whitespace, or `work/` boundary violations in `README.md`
   and `docs/`. No manifests or overlays changed.
+
+### 2026-11-26 — Pin the Kubernetes test runtime (Draft)
+
+- **Accomplishments:** Pinned the local `dev` and `verify` Kubernetes test runtime to the latest
+  reviewed GA patch of the current Kubernetes GA N-1 minor (`KUBERNETES_VERSION = "1.36.6"`,
+  derived `K3S_IMAGE = "rancher/k3s:v1.36.6-k3s1"`, matching `kubectl` pin across all four
+  `mise.lock` platforms), passed `--image "$K3S_IMAGE"` explicitly in
+  [`.mise/cluster/cluster.sh`](../../.mise/cluster/cluster.sh), added client/server version
+  assertions after cluster creation, added `flux check --pre` in
+  [`.mise/cluster/install-component.sh`](../../.mise/cluster/install-component.sh), and documented
+  the compatibility contract, verification boundary, and runtime advance procedure in
+  [User guide](../../docs/user-guide.md#kubernetes-compatibility),
+  [Architecture overview](../../docs/architecture/00-overview.md#verification-responsibilities),
+  [Publication and self-management](../../docs/architecture/03-publication-and-self-management.md#verification-scope-and-remaining-publication-work),
+  and [Local development](../../docs/how-to/00-local-development.md#advance-the-kubernetes-test-runtime)
+  (commits `9999769`, `8fed67b`).
+- **Companion `mise.toml` and metadata cleanups:** While wiring the pin, simplified and clarified
+  `mise.toml` and cross-repo metadata conventions (commits `8932ce6`, `d9627ec`, `0d2e08f`,
+  `44beeae`, `eb9c7d3`, `9f6bf53`):
+  - Replaced bare `UPSTREAM_PROJECT` with full URL `UPSTREAM_SOURCE` (updating `cur8s.yaml` to
+    `upstream.source` and OCI/Kustomization annotations to `cur8s.io/upstream-source`).
+  - Renamed component-scoped variables (`CUR8S_COMPONENT`, `CUR8S_VERSION`, `CUR8S_SOURCE`,
+    `CUR8S_DOCS`) to `COMPONENT_*` and renamed `RELEASE_REGISTRY` to `CUR8S_REGISTRY` so
+    `CUR8S_*` stays reserved for org-wide values.
+  - Renamed `FLUX_SYNC_MANIFESTS` to `FLUX_SYNC_PATH` to clarify it takes a single repo file or
+    directory path.
+  - Simplified `[env]` by grouping raw inputs linearly above derived templates, removing inline
+    Tera `throw(...)` validation conditionals and `COMPONENT_TAG` (`MISE-004`), and moving
+    `[tools]` after `[env]` so `flux2` and `kubectl` reference `{{ env.UPSTREAM_VERSION }}` and
+    `{{ env.KUBERNETES_VERSION }}` directly (`MISE-003`).
+- **Key decisions:**
+  - Selected Kubernetes `1.36.6` rather than the `1.35.x` example from the earlier plan because
+    Kubernetes `1.37` reached GA on 2026-08-26 (making `1.36` the current GA N-1 minor) and Flux
+    `v2.9.0` supports Kubernetes `1.34`–`1.36`.
+  - Placed both the client/server version assertion and `flux check --pre` in the shared
+    `.mise/cluster/` helpers so both `dev:create` and `verify:run` enforce the same runtime checks.
+  - Kept the Kubernetes runtime advance procedure in
+    [Local development](../../docs/how-to/00-local-development.md#advance-the-kubernetes-test-runtime)
+    rather than introducing a new `CONTRIBUTING.md`.
+- **Verification:** Verified `rancher/k3s:v1.36.6-k3s1` publishes both `linux/amd64` and
+  `linux/arm64` via `docker manifest inspect`; verified `mise lock`, `mise install`, `mise env`,
+  `mise run upstream:check`, `mise run build:render`, `bash -n`, `shellcheck` (0 warnings),
+  `git diff --check`, and full `mise run verify:run` (confirming `client=v1.36.6`,
+  `server=v1.36.6+k3s1`, `flux check --pre` passed, Flux bootstrap, OCI push, self-management
+  `Ready`, and cluster cleanup).
+- **Deferred:** Testing the pinned `rancher/k3s` image on GitHub Actions `linux/amd64` runners
+  remains parked in [Finalize the CI workflows](../parked/finalize-ci-workflows/overview.md) until
+  live CI workflows are restored.

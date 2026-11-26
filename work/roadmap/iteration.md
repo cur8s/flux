@@ -74,6 +74,14 @@ owner has agreed the topic order for the review rounds.
   reconciliation of already-declared state with the excluded Image Reflector / Image Automation
   controllers—drafted the closeout account in [Journal](journal.md), and removed
   `work/todo/3-clarify-notification-receiver-contract/`.
+- 2026-11-26: Pinned the local `dev`/`verify` Kubernetes runtime to `1.36.6` (current GA N-1,
+  within Flux `v2.9.0`'s `1.34`–`1.36` range) via `KUBERNETES_VERSION` / `K3S_IMAGE` (`9999769`),
+  added client/server version assertions in `.mise/cluster/cluster.sh` and `flux check --pre` in
+  `.mise/cluster/install-component.sh`, simplified `mise.toml` (`UPSTREAM_SOURCE`, `COMPONENT_*`,
+  `CUR8S_REGISTRY`, `FLUX_SYNC_PATH`, plain derived templates, single-sourced `[tools]` pins in
+  `8932ce6`..`9f6bf53`), documented the compatibility contract and advance procedure (`8fed67b`),
+  drafted the closeout account in [Journal](journal.md), and removed
+  `work/todo/4-pin-kubernetes-test-runtime/`.
 
 ---
 

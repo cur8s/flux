@@ -22,18 +22,17 @@ depth-first and breadth-first work.
 
 | Work area | Rationale |
 | --- | --- |
-| Verification and upstream currency | Pins the Kubernetes test runtime, advances upstream Flux to the latest patch, and extends e2e verification beyond fresh install on top of the settled package contract and identity. |
+| Verification and upstream currency | Advances upstream Flux to the latest patch and extends e2e verification beyond fresh install on top of the settled package contract, identity, and pinned Kubernetes test runtime. |
 | Release readiness | Hardens OCI packaging and publication before cutting 1.0 releases. |
 | Documentation structure | The category directories, strategy, product and architecture documents, local development guide, and mise/bash standards already exist for earlier work to write into. The owner chose to finish the remaining operator how-tos and standards last, after verification and release procedures settle. |
 
 ## Verification and upstream currency
 
-Make end-to-end verification deterministic on an explicit Kubernetes runtime, advance to the latest
-Flux patch release, and cover self-managed upgrades and recovery.
+Advance to the latest Flux patch release and cover self-managed upgrades and recovery on top of
+the pinned Kubernetes test runtime.
 
 **Work**
 
-- [Pin the Kubernetes test runtime](../todo/4-pin-kubernetes-test-runtime/overview.md)
 - [Bump Flux to the latest 2.9.x patch](../todo/5-bump-flux-to-latest-patch/overview.md)
 - [Add upgrade and recovery verification](../todo/6-test-upgrades-and-recovery/overview.md)
 
