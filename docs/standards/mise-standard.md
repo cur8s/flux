@@ -40,15 +40,18 @@ Apply every applicable convention in this section.
 
 ---
 
-### MISE-003: Keep tool pins literal and choose backends by priority
+### MISE-003: Single-source shared version pins and choose backends by priority
 
-**Applies to:** `[tools]` in `mise.toml`.
+**Applies to:** `[env]` and `[tools]` in `mise.toml`.
 
 **Rule:**
 
-- Write every tool version as a literal string (for example, `flux2 = "2.9.0"`), never a template
-  such as `"{{env.UPSTREAM_VERSION}}"`, so humans and automated updaters such as Renovate can parse
-  pins directly.
+- Place `[env]` before `[tools]` so authored version inputs are declared above the tools that
+  reference them.
+- When a tool pin shares a version with an authored `[env]` input (such as `UPSTREAM_VERSION` or
+  `KUBERNETES_VERSION`), reference it with `{{ env.<VAR> }}` (for example,
+  `kubectl = "{{ env.KUBERNETES_VERSION }}"`) so the version has a single source of truth; use
+  literal strings for standalone tool pins.
 - Select tool backends in this order:
   1. Mise's default registry (`aqua:` or `core:`).
   2. Mise's `github:<owner>/<repo>` backend locked in `mise.lock`, for GitHub-released binaries

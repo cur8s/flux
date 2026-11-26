@@ -15,13 +15,6 @@ lockfile = true
 # silent unverified download — so a pin bumped without re-locking fails to install.
 locked = true
 
-[tools]
-flux2 = "2.9.0"
-kustomize = "5.8.1"
-kubectl = "1.36.6"
-k3d = "5.9.0"
-shellcheck = "0.11.0"
-
 [env]
 # Cur8s organization-wide OCI registry targeted by release:publish (dev and
 # verify push to the k3d cluster's local registry via .mise/cluster/push-artifact.sh).
@@ -35,13 +28,13 @@ COMPONENT_SOURCE = "https://github.com/cur8s/gitops"
 COMPONENT_DOCS = "https://github.com/cur8s/gitops"
 
 # Upstream repository URL and release version (provenance metadata; independent
-# of COMPONENT_VERSION). Keep [tools].flux2 equal to UPSTREAM_VERSION.
+# of COMPONENT_VERSION).
 UPSTREAM_SOURCE = "https://github.com/fluxcd/flux2"
 UPSTREAM_VERSION = "2.9.0"
 
 # Local k3d cluster runtime and manifests used by dev and verify tasks:
 # - KUBERNETES_VERSION: latest reviewed GA patch of the tested Kubernetes GA N-1
-#   minor (within the pinned Flux release's support range); keep [tools].kubectl equal.
+#   minor (within the pinned Flux release's support range).
 # - FLUX_BOOTSTRAP_MANIFEST: installs the Flux controllers into a fresh cluster.
 # - FLUX_SYNC_PATH: repo file or directory of Flux manifests applied after bootstrap.
 KUBERNETES_VERSION = "1.36.6"
@@ -65,3 +58,10 @@ K3S_IMAGE = "rancher/k3s:v{{ env.KUBERNETES_VERSION }}-k3s1"
 # here, and kubectl and flux read only it, so no task can reach a
 # cluster this repo did not create.
 KUBECONFIG = "{{config_root}}/.kube/config"
+
+[tools]
+flux2 = "{{ env.UPSTREAM_VERSION }}"
+kustomize = "5.8.1"
+kubectl = "{{ env.KUBERNETES_VERSION }}"
+k3d = "5.9.0"
+shellcheck = "0.11.0"
