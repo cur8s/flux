@@ -34,7 +34,6 @@ boundary, and Notification Controller contract with the settled design decisions
 
 **Work**
 
-- [Adopt capability naming and independent SemVer](../todo/1-adopt-capability-naming-and-semver/overview.md)
 - [Move self-management Kustomization out of the package](../todo/2-move-self-management-to-consumer/overview.md)
 - [Clarify the Notification Receiver contract](../todo/3-clarify-notification-receiver-contract/overview.md)
 

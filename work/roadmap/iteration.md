@@ -57,6 +57,11 @@ owner has agreed the topic order for the review rounds.
   [Mise standard](../../docs/standards/mise-standard.md) and
   [Bash script standard](../../docs/standards/bash-script-standard.md), drafted the closeout account
   in [Journal](journal.md), and removed `work/todo/standardize-mise-and-task-scripts/`.
+- 2026-11-26: Completed capability naming (`gitops`), independent SemVer (`0.1.0`), GitHub repo
+  rename (`cur8s/flux` → `cur8s/gitops`), and durable docs updates (including independent SemVer
+  rationale in [Publication and self-management](../../docs/architecture/03-publication-and-self-management.md)),
+  drafted the closeout account in [Journal](journal.md), and removed
+  `work/todo/1-adopt-capability-naming-and-semver/`.
 
 ---
 

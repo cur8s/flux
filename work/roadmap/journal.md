@@ -62,3 +62,41 @@ git show <commit-id>:work/roadmap/iteration.md
 - **Handoff:** Historical cross-repo lifecycle proposals under
   [Design cross-repo patterns for non-Flux components](../parked/design-cross-repo-component-lifecycle/overview.md)
   still need reconciling with the settled five-namespace task layout when that parked work resumes.
+
+### 2026-11-26 — Adopt capability naming and independent SemVer (Draft)
+
+- **Accomplishments:** Switched the package identity from `flux` to the `gitops` capability name
+  (`ghcr.io/cur8s/gitops`), replaced upstream-derived `CUR8S_REVISION` versioning in `mise.toml`
+  with an explicitly authored independent SemVer (`0.1.0`) validated via `CUR8S_TAG`, updated
+  deploy overlay labels (`cur8s.io/component: gitops`) and sync manifests (`OCIRepository/gitops`,
+  `Kustomization/gitops`), re-rendered `artifacts/rendered/`, renamed the GitHub repository from
+  `cur8s/flux` to `cur8s/gitops`, and updated durable documentation across `README.md`,
+  `docs/product/`, `docs/architecture/`, `docs/how-to/00-local-development.md`,
+  `docs/user-guide.md`, and `docs/standards/repository-entry-files-standard.md` (commits `05f3ca1`,
+  `080b3fa`, `fd7572b`).
+- **Key decisions:**
+  - Confirmed via GitHub API (`404`) that no package had been published to `ghcr.io/cur8s/flux`, so
+    no legacy OCI tag migration was needed.
+  - Started `gitops` at bare pre-1.0 SemVer `0.1.0` (`CUR8S_VERSION = "0.1.0"`, validated by
+    derived `CUR8S_TAG` per `MISE-004`) until release hardening completes.
+  - Kept `cur8s.io/release-descriptor/v1` and internal `upstream/flux.yaml` /
+    `artifacts/rendered/deploy/flux.yaml` filenames unchanged while renaming the package and GitHub
+    repository to `gitops`.
+  - Recorded the eight agreed Cur8s capability package names (`gitops`, `certificates`, `secrets`,
+    `gateway`, `postgres`, `metrics`, `logging`, `grafana`) and carried the independent SemVer
+    rationale (rejected alternatives, compatibility-contract bump policy, and provenance/BOM
+    trade-offs) into
+    [Publication and self-management](../../docs/architecture/03-publication-and-self-management.md#version-identity-and-immutable-publication).
+- **Verification:** `git diff --check`, `bash -n .mise/cluster/*.sh .mise/tasks/*/*`,
+  `mise exec -- shellcheck .mise/cluster/*.sh .mise/tasks/*/*`, `MISE-004` malformed-version
+  rejection check (`v0.1.0`), `mise run dev:create` / `dev:status` / `dev:reconcile` /
+  `dev:delete` (confirming `gitops-dev`, `OCIRepository/gitops`, `Kustomization/gitops`, and
+  `cur8s.io/component=gitops` on all three controllers), and `mise run verify:run` passed on
+  `05f3ca1`; `mise run build:render` and `git diff --check` passed after updating repo URLs in
+  `080b3fa`; trailing-whitespace check passed on docs-only `fd7572b`.
+- **Original proposal:** The unedited versioning proposal removed with
+  `work/todo/1-adopt-capability-naming-and-semver/` remains in Git history:
+
+```shell
+git show fd7572b:work/todo/1-adopt-capability-naming-and-semver/versioning-proposal.md
+```

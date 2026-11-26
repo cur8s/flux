@@ -185,7 +185,9 @@ governs the directory README. References into work material stay within work mat
 - Keep the two matching distribution forms as the publication contract. The current release task
   renders captured input and pushes OCI; it does not publish the YAML asset, run e2e, check clean
   Git state, or reject an existing version. No registry state or release asset was inspected.
-- The owner's [versioning proposal](../1-adopt-capability-naming-and-semver/versioning-proposal.md) selects
+- The owner's versioning proposal (now settled in
+  [Publication and self-management](../../../docs/architecture/03-publication-and-self-management.md#why-independent-semver);
+  original unedited proposal preserved in Git at `fd7572b`) selects
   independent package SemVer. State that intended identity separately from the current upstream
   version plus configuration revision scheme; do not claim the migration has happened.
 - Consolidate the selected [publication requirements](../7-harden-release-publication/overview.md):

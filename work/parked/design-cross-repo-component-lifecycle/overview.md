@@ -10,7 +10,7 @@ summary: "Settle and document the cross-repository lifecycle patterns needed for
 The mechanical conventions and single-component workflow are already settled and implemented in this repository:
 - Directory layout (`upstream/`, `src/config/`, committed `artifacts/rendered/`, reserved `artifacts/oci/`): [From source to artifact](../../../docs/architecture/01-source-to-artifact.md).
 - Five zero-argument mise namespaces (`upstream:`, `build:`, `dev:`, `verify:`, `release:`) and standalone `.mise/cluster/` helpers: [Local development](../../../docs/how-to/00-local-development.md), [Mise standard](../../../docs/standards/mise-standard.md), and [Bash script standard](../../../docs/standards/bash-script-standard.md).
-- Independent SemVer and eight agreed capability package names (`gitops`, `certificates`, `secrets`, `gateway`, `postgres`, `metrics`, `logging`, `grafana`): [Adopt capability naming and independent SemVer](../../todo/1-adopt-capability-naming-and-semver/overview.md).
+- Independent SemVer and eight agreed capability package names (`gitops`, `certificates`, `secrets`, `gateway`, `postgres`, `metrics`, `logging`, `grafana`): [Publication and self-management](../../../docs/architecture/03-publication-and-self-management.md#version-identity-and-immutable-publication).
 
 **Remaining cross-repo design work to settle when resuming:**
 
