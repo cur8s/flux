@@ -4,7 +4,7 @@
 set -euo pipefail
 # Requires a running dev cluster; pushes the rendered artifact, applies
 # FLUX_SYNC_MANIFESTS, and triggers immediate reconciliation.
-if ! .mise/cluster/cluster.sh registry-port dev >/dev/null 2>&1; then
+if ! .mise/cluster/cluster.sh host-registry dev >/dev/null 2>&1; then
   echo "❌ dev cluster is not running — run 'mise run dev:create' first" >&2
   exit 1
 fi

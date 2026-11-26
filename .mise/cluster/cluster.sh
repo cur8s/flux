@@ -3,7 +3,7 @@
 # Tasks run this helper; it is not a mise task. Clusters are named from
 # CUR8S_COMPONENT and the target: <component>-dev and <component>-verify.
 #
-#   .mise/cluster/cluster.sh create|delete|status|registry-port|in-cluster-registry|context dev|verify
+#   .mise/cluster/cluster.sh create|delete|status|host-registry|in-cluster-registry|context dev|verify
 #
 # Each cluster gets its own local OCI registry: container <name>-registry,
 # reached in-cluster as <name>-registry:5000 and from the host on a port k3d
@@ -14,7 +14,7 @@ set -euo pipefail
 : "${KUBECONFIG:?must be set (mise.toml [env]); run through mise}"
 
 usage() {
-  echo "usage: $0 create|delete|status|registry-port|in-cluster-registry|context dev|verify" >&2
+  echo "usage: $0 create|delete|status|host-registry|in-cluster-registry|context dev|verify" >&2
   exit 1
 }
 [[ $# -eq 2 ]] || usage
@@ -23,8 +23,10 @@ name="$CUR8S_COMPONENT-$2"
 context="k3d-$name"
 registry="$name-registry"
 
-registry_port() {
-  docker inspect -f '{{(index .NetworkSettings.Ports "5000/tcp" 0).HostPort}}' "$registry"
+host_registry() {
+  local port
+  port="$(docker inspect -f '{{(index .NetworkSettings.Ports "5000/tcp" 0).HostPort}}' "$registry")"
+  echo "localhost:$port"
 }
 
 # Returns once the API server accepts requests (k3d's wait: true) and the
@@ -32,10 +34,10 @@ registry_port() {
 # k3d fails on an existing name.
 create() {
   k3d cluster create "$name" --config .mise/cluster/k3d-config.yaml --registry-create "$registry"
-  local port
-  port="$(registry_port)"
-  curl -sf --retry 30 --retry-delay 2 --retry-all-errors "http://localhost:$port/v2/" >/dev/null
-  echo "✅ cluster $name (context $context), registry localhost:$port (in-cluster $registry:5000)"
+  local endpoint
+  endpoint="$(host_registry)"
+  curl -sf --retry 30 --retry-delay 2 --retry-all-errors "http://$endpoint/v2/" >/dev/null
+  echo "✅ cluster $name (context $context), registry $endpoint (in-cluster $registry:5000)"
 }
 
 # Succeeds when the cluster is already gone; k3d removes its registry too.
@@ -52,9 +54,9 @@ status() {
   else
     echo "api: unreachable"
   fi
-  local port
-  if port="$(registry_port 2>/dev/null)"; then
-    echo "registry: localhost:$port (in-cluster $registry:5000)"
+  local endpoint
+  if endpoint="$(host_registry 2>/dev/null)"; then
+    echo "registry: $endpoint (in-cluster $registry:5000)"
   else
     echo "registry: not running"
   fi
@@ -64,7 +66,7 @@ case "$1" in
   create) create ;;
   delete) delete ;;
   status) status ;;
-  registry-port) registry_port ;;
+  host-registry) host_registry ;;
   in-cluster-registry) echo "$registry:5000" ;;
   context) echo "$context" ;;
   *) usage ;;

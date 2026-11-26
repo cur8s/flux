@@ -25,7 +25,7 @@ fi
 case "${1:-}" in
   local)
     [[ $# -eq 3 ]] || usage
-    registry="localhost:$(.mise/cluster/cluster.sh registry-port "$2")"
+    registry="$(.mise/cluster/cluster.sh host-registry "$2")"
     tag="$3"
     # The k3d-local registry is anonymous. A globally-configured docker
     # credential helper (e.g. Docker Desktop's "desktop" credsStore) will be

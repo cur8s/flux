@@ -307,3 +307,6 @@ those documents during the lifecycle design todo.
 - Grouped all supporting helpers and config (`cluster.sh`, `install-component.sh`,
   `push-artifact.sh`, `k3d-config.yaml`) under `.mise/cluster/` (2026-11-25) so `.mise/` root holds
   only `README.md`, `cluster/`, and `tasks/`.
+- Replaced `cluster.sh registry-port` with `cluster.sh host-registry` (2026-11-25) so both
+  `host-registry` (`localhost:<port>`) and `in-cluster-registry` (`<name>-registry:5000`) return
+  symmetric `host:port` endpoints without leaking `localhost:` to callers.
