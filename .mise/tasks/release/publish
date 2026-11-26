@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #MISE description="Publish artifacts/rendered/ to the remote OCI registry"
 set -euo pipefail
-# Publishes the committed artifacts/rendered/ tree to RELEASE_REGISTRY at
-# CUR8S_TAG as-is, without re-rendering.
+# Publishes the committed artifacts/rendered/ tree to CUR8S_REGISTRY at
+# COMPONENT_TAG as-is, without re-rendering.
 if [[ -n "$(git status --porcelain)" ]]; then
   git status --short >&2
   echo "❌ working tree is not clean — commit or stash changes before publishing" >&2
   exit 1
 fi
-.mise/cluster/push-artifact.sh "$RELEASE_REGISTRY" "$CUR8S_TAG"
+.mise/cluster/push-artifact.sh "$CUR8S_REGISTRY" "$COMPONENT_TAG"

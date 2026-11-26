@@ -19,8 +19,8 @@ implicitly capturing it again.
 | [`src/config/overlays/deploy/kustomization.yaml`](../../src/config/overlays/deploy/kustomization.yaml) | Authored composition of the captured installation. | Reviewed changes to the package's installation configuration. |
 
 `UPSTREAM_VERSION` selects the upstream Flux release (provenance metadata) alongside the pinned
-Flux CLI. `CUR8S_VERSION` is authored independently as a `MAJOR.MINOR.PATCH` Semantic Version for
-the Cur8s package and validated by `CUR8S_TAG`. `CUR8S_COMPONENT` sets the capability package
+Flux CLI. `COMPONENT_VERSION` is authored independently as a `MAJOR.MINOR.PATCH` Semantic Version for
+this component package and validated by `COMPONENT_TAG`. `COMPONENT_NAME` sets the capability package
 identity (`gitops`). Together these feed the rendered descriptor and OCI metadata independently of
 how manifests are captured and transformed.
 

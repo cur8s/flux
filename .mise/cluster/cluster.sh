@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Manage this repository's local k3d clusters (dev and verify).
 # Tasks run this helper; it is not a mise task. Clusters are named from
-# CUR8S_COMPONENT and the target: <component>-dev and <component>-verify.
+# COMPONENT_NAME and the target: <component>-dev and <component>-verify.
 #
 #   .mise/cluster/cluster.sh create|delete|status|registry-host-address|registry-cluster-address|context dev|verify
 #
@@ -9,7 +9,7 @@
 # reached in-cluster as <name>-registry:5000 and from the host on a port k3d
 # picks, so clusters coexist without port conflicts.
 set -euo pipefail
-: "${CUR8S_COMPONENT:?must be set (mise.toml [env]); run through mise}"
+: "${COMPONENT_NAME:?must be set (mise.toml [env]); run through mise}"
 # k3d writes contexts here; unset, it would write ~/.kube/config.
 : "${KUBECONFIG:?must be set (mise.toml [env]); run through mise}"
 : "${KUBERNETES_VERSION:?must be set (mise.toml [env]); run through mise}"
@@ -21,7 +21,7 @@ usage() {
 }
 [[ $# -eq 2 ]] || usage
 case "$2" in dev | verify) ;; *) usage ;; esac
-cluster_name="$CUR8S_COMPONENT-$2"
+cluster_name="$COMPONENT_NAME-$2"
 kube_context="k3d-$cluster_name"
 registry_container="$cluster_name-registry"
 

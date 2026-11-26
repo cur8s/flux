@@ -23,31 +23,28 @@ k3d = "5.9.0"
 shellcheck = "0.11.0"
 
 [env]
+# Cur8s organization-wide OCI registry targeted by release:publish (dev and
+# verify push to the k3d cluster's local registry via .mise/cluster/push-artifact.sh).
+CUR8S_REGISTRY = "ghcr.io/cur8s"
+
+# Component package identity and independent SemVer (MAJOR.MINOR.PATCH), written
+# into cur8s.yaml by build:render and attached as cur8s.io/* OCI annotations.
+COMPONENT_NAME = "gitops"
+COMPONENT_VERSION = "0.1.0"
+COMPONENT_SOURCE = "https://github.com/cur8s/gitops"
+COMPONENT_DOCS = "https://github.com/cur8s/gitops"
+
 # Upstream repository URL and release version (provenance metadata; independent
-# of CUR8S_VERSION). Keep [tools].flux2 equal to UPSTREAM_VERSION.
+# of COMPONENT_VERSION). Keep [tools].flux2 equal to UPSTREAM_VERSION.
 UPSTREAM_SOURCE = "https://github.com/fluxcd/flux2"
 UPSTREAM_VERSION = "2.9.0"
 
-# Independent SemVer for this Cur8s package (MAJOR.MINOR.PATCH).
-CUR8S_VERSION = "0.1.0"
-
-# Latest reviewed GA patch of the tested Kubernetes GA N-1 minor (within the
-# pinned Flux release's support range); keep [tools].kubectl equal.
-KUBERNETES_VERSION = "1.36.6"
-
-# Component metadata written into cur8s.yaml by build:render and attached
-# as cur8s.io/* OCI annotations by .mise/cluster/push-artifact.sh.
-CUR8S_COMPONENT = "gitops"
-CUR8S_SOURCE = "https://github.com/cur8s/gitops"
-CUR8S_DOCS = "https://github.com/cur8s/gitops"
-
-# Production release registry (release:publish targets this registry; dev and
-# verify pushes go to the k3d cluster's local registry via .mise/cluster/push-artifact.sh).
-RELEASE_REGISTRY = "ghcr.io/cur8s"
-
-# Manifests applied by install-component.sh and dev:update:
+# Local k3d cluster runtime and manifests used by dev and verify tasks:
+# - KUBERNETES_VERSION: latest reviewed GA patch of the tested Kubernetes GA N-1
+#   minor (within the pinned Flux release's support range); keep [tools].kubectl equal.
 # - FLUX_BOOTSTRAP_MANIFEST: installs the Flux controllers into a fresh cluster.
-# - FLUX_SYNC_MANIFESTS: file or directory of Flux manifests (e.g. Kustomizations) applied after bootstrap.
+# - FLUX_SYNC_MANIFESTS: file or directory of Flux manifests applied after bootstrap.
+KUBERNETES_VERSION = "1.36.6"
 FLUX_BOOTSTRAP_MANIFEST = "artifacts/rendered/deploy/flux.yaml"
 FLUX_SYNC_MANIFESTS = "test/sync.yaml"
 
@@ -61,8 +58,8 @@ FLUX_SYNC_MANIFESTS = "test/sync.yaml"
 # the derivation format (for example, the k3s packaging revision suffix).
 # ------------------------------------------------------------------------------
 
+COMPONENT_TAG = '{% if env.COMPONENT_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="COMPONENT_VERSION must be a stable SemVer (for example 0.1.0)") }}{% endif %}{{ env.COMPONENT_VERSION }}'
 UPSTREAM_TAG = '{% if env.UPSTREAM_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="UPSTREAM_VERSION must be a stable SemVer (for example 2.9.0)") }}{% endif %}v{{ env.UPSTREAM_VERSION }}'
-CUR8S_TAG = '{% if env.CUR8S_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="CUR8S_VERSION must be a stable SemVer (for example 0.1.0)") }}{% endif %}{{ env.CUR8S_VERSION }}'
 # `k3s1` is the k3s packaging revision, not a second Kubernetes version.
 K3S_IMAGE = '{% if env.KUBERNETES_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="KUBERNETES_VERSION must be a stable SemVer (for example 1.36.6)") }}{% endif %}rancher/k3s:v{{ env.KUBERNETES_VERSION }}-k3s1'
 

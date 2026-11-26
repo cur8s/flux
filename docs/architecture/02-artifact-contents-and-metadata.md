@@ -38,13 +38,13 @@ the independent package version, and the captured upstream file. The current sch
 | Field | Render-time source | Meaning |
 | --- | --- | --- |
 | `schema` | Literal schema identifier in the render script. | Format of this descriptor. |
-| `component` | `CUR8S_COMPONENT` (`gitops`). | Cur8s capability package identity. |
-| `version` | `CUR8S_VERSION`. | Independent Cur8s package Semantic Version. |
+| `component` | `COMPONENT_NAME` (`gitops`). | Cur8s capability package identity. |
+| `version` | `COMPONENT_VERSION`. | Independent component package Semantic Version. |
 | `upstream.source` | `UPSTREAM_SOURCE`. | Upstream repository URL. |
 | `upstream.version` | `UPSTREAM_TAG`. | Selected upstream release. |
 | `upstream.digest` | SHA-256 of the captured `upstream/flux.yaml` bytes. | Identity of the captured installation input before the authored overlay is applied. |
-| `source` | `CUR8S_SOURCE`. | Declared package source location. |
-| `docs` | `CUR8S_DOCS`. | Declared package documentation location. |
+| `source` | `COMPONENT_SOURCE`. | Declared package source location. |
+| `docs` | `COMPONENT_DOCS`. | Declared package documentation location. |
 
 The authored identity values live in [`mise.toml`](../../mise.toml). The descriptor omits a render
 timestamp and Git revision so it can be regenerated from the same recorded inputs without those
@@ -65,11 +65,11 @@ values used by the descriptor:
 
 | Annotation | Value source |
 | --- | --- |
-| `cur8s.io/component` | `CUR8S_COMPONENT`. |
-| `cur8s.io/version` | `CUR8S_VERSION`. |
+| `cur8s.io/component` | `COMPONENT_NAME`. |
+| `cur8s.io/version` | `COMPONENT_VERSION`. |
 | `cur8s.io/upstream-source` | `UPSTREAM_SOURCE`. |
 | `cur8s.io/upstream-version` | `UPSTREAM_TAG`. |
-| `cur8s.io/docs` | `CUR8S_DOCS`. |
+| `cur8s.io/docs` | `COMPONENT_DOCS`. |
 
 The script also supplies the Git origin URL through `--source` and the current branch and HEAD
 commit through `--revision`. Flux stores them as `org.opencontainers.image.source` and
@@ -77,14 +77,14 @@ commit through `--revision`. Flux stores them as `org.opencontainers.image.sourc
 [Flux OCI metadata documentation](https://fluxcd.io/flux/cheatsheets/oci-artifacts/).
 
 These values are obtained at push time. The descriptor's `source` comes from the authored
-`CUR8S_SOURCE`, while the OCI source annotation comes from the local Git remote; they need not be
+`COMPONENT_SOURCE`, while the OCI source annotation comes from the local Git remote; they need not be
 identical. `.mise/cluster/push-artifact.sh` records HEAD without requiring a clean working tree so local `dev`
 pushes can test uncommitted changes, whereas `release:publish` refuses to run on a dirty working
 tree so remote releases match the recorded commit.
 
 The destination tag is passed explicitly to `.mise/cluster/push-artifact.sh`. Local `dev` and `verify` pushes
 use `dev` and `verify` while the descriptor still records the configured package version.
-`release:publish` always tags with `CUR8S_TAG` (validated from `CUR8S_VERSION`) and exposes no tag override.
+`release:publish` always tags with `COMPONENT_TAG` (validated from `COMPONENT_VERSION`) and exposes no tag override.
 
 ## Cluster-side identification
 

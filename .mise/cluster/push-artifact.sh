@@ -4,11 +4,11 @@
 #
 #   .mise/cluster/push-artifact.sh <registry> <tag>
 set -euo pipefail
-: "${CUR8S_COMPONENT:?must be set (mise.toml [env]); run through mise}"
-: "${CUR8S_VERSION:?must be set (mise.toml [env]); run through mise}"
+: "${COMPONENT_NAME:?must be set (mise.toml [env]); run through mise}"
+: "${COMPONENT_VERSION:?must be set (mise.toml [env]); run through mise}"
 : "${UPSTREAM_SOURCE:?must be set (mise.toml [env]); run through mise}"
 : "${UPSTREAM_TAG:?must be set (mise.toml [env]); run through mise}"
-: "${CUR8S_DOCS:?must be set (mise.toml [env]); run through mise}"
+: "${COMPONENT_DOCS:?must be set (mise.toml [env]); run through mise}"
 
 if [[ $# -ne 2 ]]; then
   echo "usage: $0 <registry> <tag>" >&2
@@ -37,7 +37,7 @@ fi
 
 # Build the destination OCI reference and Flux's "<ref>@sha1:<commit>" revision
 # string (using the current branch, or an exact git tag / "HEAD" when detached).
-artifact_url="oci://${registry}/${CUR8S_COMPONENT}:${artifact_tag}"
+artifact_url="oci://${registry}/${COMPONENT_NAME}:${artifact_tag}"
 ref="$(git branch --show-current)"
 if [[ -z "$ref" ]]; then
   ref="$(git describe --tags --exact-match 2>/dev/null || echo HEAD)"
@@ -52,10 +52,10 @@ flux push artifact "$artifact_url" \
   --path="$artifact_dir" \
   --source="$(git config --get remote.origin.url || echo unknown)" \
   --revision="$revision" \
-  --annotations="cur8s.io/component=${CUR8S_COMPONENT}" \
-  --annotations="cur8s.io/version=${CUR8S_VERSION}" \
+  --annotations="cur8s.io/component=${COMPONENT_NAME}" \
+  --annotations="cur8s.io/version=${COMPONENT_VERSION}" \
   --annotations="cur8s.io/upstream-source=${UPSTREAM_SOURCE}" \
   --annotations="cur8s.io/upstream-version=${UPSTREAM_TAG}" \
-  --annotations="cur8s.io/docs=${CUR8S_DOCS}" \
+  --annotations="cur8s.io/docs=${COMPONENT_DOCS}" \
   --timeout=5m
 echo "✅ pushed $artifact_url"

@@ -8,7 +8,7 @@
 #
 #   .mise/cluster/install-component.sh dev|verify
 set -euo pipefail
-: "${CUR8S_COMPONENT:?must be set (mise.toml [env]); run through mise}"
+: "${COMPONENT_NAME:?must be set (mise.toml [env]); run through mise}"
 : "${KUBECONFIG:?must be set (mise.toml [env]); run through mise}"
 : "${FLUX_BOOTSTRAP_MANIFEST:?must be set (mise.toml [env]); run through mise}"
 : "${FLUX_SYNC_MANIFESTS:?must be set (mise.toml [env]); run through mise}"
@@ -42,8 +42,8 @@ registry_host_address="$(.mise/cluster/cluster.sh registry-host-address "$target
 # Point Flux (inside the cluster) at that same local registry via its in-cluster
 # address (<cluster>-registry:5000), then apply the repo's declarative sync manifests.
 registry_cluster_address="$(.mise/cluster/cluster.sh registry-cluster-address "$target_cluster")"
-oci_repository_url="oci://${registry_cluster_address}/${CUR8S_COMPONENT}"
-flux --context "$kube_context" create source oci "$CUR8S_COMPONENT" \
+oci_repository_url="oci://${registry_cluster_address}/${COMPONENT_NAME}"
+flux --context "$kube_context" create source oci "$COMPONENT_NAME" \
   --url "$oci_repository_url" \
   --tag "$artifact_tag" --insecure --interval 1m
 kubectl --context "$kube_context" apply -f "$FLUX_SYNC_MANIFESTS"
@@ -54,4 +54,4 @@ kubectl --context "$kube_context" -n flux-system \
 kubectl --context "$kube_context" -n flux-system \
   wait kustomization --all --for=condition=Ready --timeout=5m
 
-echo "✅ $CUR8S_COMPONENT installed on $target_cluster ($kube_context)"
+echo "✅ $COMPONENT_NAME installed on $target_cluster ($kube_context)"
