@@ -40,7 +40,7 @@ the independent package version, and the captured upstream file. The current sch
 | `schema` | Literal schema identifier in the render script. | Format of this descriptor. |
 | `component` | `CUR8S_COMPONENT` (`gitops`). | Cur8s capability package identity. |
 | `version` | `CUR8S_VERSION`. | Independent Cur8s package Semantic Version. |
-| `upstream.project` | `UPSTREAM_PROJECT`. | Upstream project identity. |
+| `upstream.source` | `UPSTREAM_SOURCE`. | Upstream repository URL. |
 | `upstream.version` | `UPSTREAM_TAG`. | Selected upstream release. |
 | `upstream.digest` | SHA-256 of the captured `upstream/flux.yaml` bytes. | Identity of the captured installation input before the authored overlay is applied. |
 | `source` | `CUR8S_SOURCE`. | Declared package source location. |
@@ -67,7 +67,7 @@ values used by the descriptor:
 | --- | --- |
 | `cur8s.io/component` | `CUR8S_COMPONENT`. |
 | `cur8s.io/version` | `CUR8S_VERSION`. |
-| `cur8s.io/upstream` | `UPSTREAM_PROJECT`. |
+| `cur8s.io/upstream-source` | `UPSTREAM_SOURCE`. |
 | `cur8s.io/upstream-version` | `UPSTREAM_TAG`. |
 | `cur8s.io/docs` | `CUR8S_DOCS`. |
 
@@ -89,7 +89,7 @@ use `dev` and `verify` while the descriptor still records the configured package
 ## Cluster-side identification
 
 The deploy overlay adds `cur8s.io/component: gitops` to installation resources. Consuming
-repositories may also place `cur8s.io/docs` and `cur8s.io/upstream` annotations on their
+repositories may also place `cur8s.io/docs` and `cur8s.io/upstream-source` annotations on their
 self-management `Kustomization` (as shown in the [user guide](../user-guide.md) and used by this
 repository's local [`test/sync.yaml`](../../test/sync.yaml)). These are stable component markers,
 rather than version-bearing records.

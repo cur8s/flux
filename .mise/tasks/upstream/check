@@ -2,7 +2,13 @@
 #MISE description="Check for a newer upstream release"
 set -euo pipefail
 # Queries the GitHub Releases API to compare the latest release with UPSTREAM_TAG.
-latest="$(curl -fsSL "https://api.github.com/repos/$UPSTREAM_PROJECT/releases/latest" | jq -r .tag_name)"
+if [[ "$UPSTREAM_SOURCE" != https://github.com/*/* ]]; then
+  echo "❌ upstream:check expects a GitHub URL in UPSTREAM_SOURCE (got $UPSTREAM_SOURCE)" >&2
+  exit 1
+fi
+github_repo="${UPSTREAM_SOURCE#https://github.com/}"
+github_repo="${github_repo%/}"
+latest="$(curl -fsSL "https://api.github.com/repos/$github_repo/releases/latest" | jq -r .tag_name)"
 echo "tracked: $UPSTREAM_TAG"
 echo "latest:  $latest"
 if [[ "$UPSTREAM_TAG" == "$latest" ]]; then

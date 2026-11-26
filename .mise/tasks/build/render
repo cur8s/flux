@@ -26,7 +26,7 @@ schema: cur8s.io/release-descriptor/v1
 component: ${CUR8S_COMPONENT}
 version: ${CUR8S_VERSION}
 upstream:
-  project: ${UPSTREAM_PROJECT}
+  source: ${UPSTREAM_SOURCE}
   version: ${UPSTREAM_TAG}
   digest: ${upstream_digest}
 source: ${CUR8S_SOURCE}

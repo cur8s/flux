@@ -91,7 +91,7 @@ metadata:
   namespace: flux-system
   annotations:
     cur8s.io/docs: https://github.com/cur8s/gitops
-    cur8s.io/upstream: fluxcd/flux2
+    cur8s.io/upstream-source: https://github.com/fluxcd/flux2
 spec:
   interval: 10m
   # Select only deploy/ so the inert cur8s.yaml descriptor at the artifact root is ignored.
