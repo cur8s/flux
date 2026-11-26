@@ -144,8 +144,7 @@ Make a wrong, ignored, or substituted image reference fail close to cluster crea
   compatibility-range source.
 - [ ] Preserve the existing API-server apply, controller availability, artifact fetch,
   self-management readiness, failure-preservation, and successful-cleanup behavior.
-- [ ] Run the drift and e2e gates, under whatever task names
-  [`design-component-lifecycle`](../design-component-lifecycle/overview.md) settles, and
+- [ ] Run the drift and e2e gates (`mise run verify:run`) and
   `git diff --check` on the resulting change.
 
 ### Phase 4: Record the maintained contract

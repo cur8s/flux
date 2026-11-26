@@ -59,6 +59,6 @@ git show <commit-id>:work/roadmap/iteration.md
   against `flux-dev`, `mise run verify:run` (fresh drift check, `flux-verify` bootstrap,
   reconciliation to Ready on `verify@sha256:...`, and cluster cleanup), and `git diff --check` all
   passed.
-- **Handoff:** Lifecycle proposal docs under
-  [Design the component lifecycle](../todo/design-component-lifecycle/overview.md) still need
-  reconciling with the settled five-namespace task layout when that todo runs.
+- **Handoff:** Historical cross-repo lifecycle proposals under
+  [Design cross-repo patterns for non-Flux components](../parked/design-cross-repo-component-lifecycle/overview.md)
+  still need reconciling with the settled five-namespace task layout when that parked work resumes.

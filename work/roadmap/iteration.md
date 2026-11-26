@@ -78,5 +78,5 @@ owner has agreed the topic order for the review rounds.
 
 ## Later / unresolved
 
-- The remaining docs rebuild (operator how-tos, standards, finish) now comes after implementation
-  planning; resume it once the conventions and lifecycle it describes are settled.
+- The remaining docs rebuild (operator how-tos, standards, finish) comes last in [Areas](areas.md);
+  resume it once the package contract, verification, and release procedures settle.

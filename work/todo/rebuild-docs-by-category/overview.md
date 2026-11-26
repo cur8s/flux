@@ -45,6 +45,6 @@ current docs and `mise.toml`, and is in Git history before the commit that trimm
 
 **Current implemented layout:** architecture and navigation now describe captured inputs under
 `upstream/`, authored configuration under `src/config/`, and disposable generated output under
-`artifacts/`, with the rendered subtree committed and future local OCI packaging ignored.
-The [layout working notes](../design-component-lifecycle/working-notes.md) preserve the selected
-scope. How-to replacement, standards, and final documentation consistency work remain open.
+`artifacts/`, with the rendered subtree committed and future local OCI packaging ignored, as
+documented in [From source to artifact](../../../docs/architecture/01-source-to-artifact.md).
+How-to replacement, standards, and final documentation consistency work remain open.

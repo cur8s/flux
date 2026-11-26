@@ -85,7 +85,7 @@ governs the directory README. References into work material stay within work mat
   itself, as the old user guide does.
 - The [Receiver documentation](https://fluxcd.io/flux/components/notification/receivers/) confirms
   that incoming webhooks request reconciliation. The known
-  [Notification Receiver contract input](../plan-lifecycle-implementation/inputs.md#notification-receiver-contract)
+  [Notification Receiver contract todo](../clarify-notification-receiver-contract/overview.md)
   defers deciding whether to exclude that use from the recommended contract or reduce the installed
   surface. The accepted document preserves this as an unresolved boundary; neither outcome is chosen.
 - Treat the current three-controller selection as implementation evidence. The lifecycle design
@@ -109,7 +109,7 @@ governs the directory README. References into work material stay within work mat
   explanation rather than porting the monorepo layer structure.
 - Describe the actual artifact: controller installation, inert descriptor, and shipped sync file.
   The consuming cluster owns its OCIRepository; the package currently owns the sync Kustomization.
-- The owner's [Flux bootstrap proposal](../design-component-lifecycle/flux-bootstrap-proposal.md)
+- The owner's [Flux bootstrap proposal](../move-self-management-to-consumer/flux-bootstrap-proposal.md)
   explicitly selects consumer ownership of both self-management resources. Preserve that as the
   intended boundary while stating that the current package still ships sync.yaml. Documentation
   must not claim the ownership transition has been implemented.
@@ -185,10 +185,10 @@ governs the directory README. References into work material stay within work mat
 - Keep the two matching distribution forms as the publication contract. The current release task
   renders captured input and pushes OCI; it does not publish the YAML asset, run e2e, check clean
   Git state, or reject an existing version. No registry state or release asset was inspected.
-- The owner's [versioning proposal](../design-component-lifecycle/versioning-proposal.md) selects
+- The owner's [versioning proposal](../adopt-capability-naming-and-semver/versioning-proposal.md) selects
   independent package SemVer. State that intended identity separately from the current upstream
   version plus configuration revision scheme; do not claim the migration has happened.
-- Consolidate the selected [publication requirements](../design-component-lifecycle/requirements.md):
+- Consolidate the selected [publication requirements](../harden-release-publication/overview.md):
   immutable versions, one tested and promoted packaged artifact, matching installation bytes,
   post-publication verification, and partial-success recovery. Avoid choosing packaging tools,
   signing policy, workflow timing, or other unresolved implementation details.

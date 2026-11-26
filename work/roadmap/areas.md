@@ -22,41 +22,62 @@ depth-first and breadth-first work.
 
 | Work area | Rationale |
 | --- | --- |
-| Component lifecycle design | Decides what every component repository does and guarantees; it builds on the published docs structure and mise/bash standards. |
-| Implementation planning | Implementation can only be planned against a documented lifecycle; it gathers all remaining known work into the new sequence. |
-| Documentation structure | The category directories, strategy, product and architecture documents, local development guide, and mise/bash standards already exist for earlier work to write into. The owner chose to finish the rest last: the remaining operator how-tos and standards describe procedures that the lifecycle design and implementation planning are likely to change. |
+| Package contract and identity | Settles what the package is named, how it is versioned, and what it ships versus what consumers own before bumping upstream or hardening releases. |
+| Verification and upstream currency | Pins the Kubernetes test runtime, advances upstream Flux to the latest patch, and extends e2e verification beyond fresh install once package identity is settled. |
+| Release readiness | Hardens OCI packaging and publication before cutting 1.0 releases. |
+| Documentation structure | The category directories, strategy, product and architecture documents, local development guide, and mise/bash standards already exist for earlier work to write into. The owner chose to finish the remaining operator how-tos and standards last, after the package contract and release procedures settle. |
 
-## Component lifecycle design
+## Package contract and identity
 
-Identify the goals and invariants of a component's lifecycle, try candidate designs in disposable
-experiments, and document the chosen design. Traceable fetching, tested-equals-published
-packaging, safe publication, and owned images are folded in as requirements.
+Align the repository's package naming, independent SemVer versioning, consumer-owned self-management
+boundary, and Notification Controller contract with the settled design decisions.
 
 **Work**
 
-- [Design the component lifecycle](../todo/design-component-lifecycle/overview.md)
+- [Adopt capability naming and independent SemVer](../todo/adopt-capability-naming-and-semver/overview.md)
+- [Move self-management Kustomization out of the package](../todo/move-self-management-to-consumer/overview.md)
+- [Clarify the Notification Receiver contract](../todo/clarify-notification-receiver-contract/overview.md)
 
 **Why / what this unlocks**
 
-The cross-repository contract that the cert-manager repository and later components follow.
+Clean, unambiguous package identity (`ghcr.io/cur8s/gitops` with independent SemVer) and a crisp
+boundary between reusable package manifests and consumer-owned reconciliation.
 
 ---
 
-## Implementation planning
+## Verification and upstream currency
 
-Turn the documented lifecycle, its requirements, and every other piece of known work into a new
-ordered sequence of implementation todos.
+Make end-to-end verification deterministic on an explicit Kubernetes runtime, advance to the latest
+Flux patch release, and cover self-managed upgrades and recovery.
 
 **Work**
 
-- [Plan the lifecycle implementation](../todo/plan-lifecycle-implementation/overview.md): folds in
-  Kubernetes test-runtime pinning, the Flux patch bump, the production bootstrap path, the
-  Notification Receiver contract, upgrade and recovery testing, licensing and security policy, and
-  the automated upstream-update-proposals idea.
+- [Pin the Kubernetes test runtime](../todo/pin-kubernetes-test-runtime/overview.md)
+- [Bump Flux to the latest 2.9.x patch](../todo/bump-flux-to-latest-patch/overview.md)
+- [Add upgrade and recovery verification](../todo/test-upgrades-and-recovery/overview.md)
 
 **Why / what this unlocks**
 
-The path to 1.0, planned from settled conventions and design rather than from older notes.
+Dependable verification coverage against a known Kubernetes N-1 runtime and proven upgrade/recovery
+behavior before cutting 1.0 releases.
+
+---
+
+## Release readiness
+
+Harden how releases are packaged, checked, and published. CI workflows
+([finalize-ci-workflows](../parked/finalize-ci-workflows/overview.md)), mirrored runtime images
+([mirror-images-to-ghcr](../parked/mirror-images-to-ghcr/overview.md)), and cross-repo patterns for
+non-Flux components ([design-cross-repo-component-lifecycle](../parked/design-cross-repo-component-lifecycle/overview.md))
+remain parked until prioritized.
+
+**Work**
+
+- [Harden OCI packaging and release publication](../todo/harden-release-publication/overview.md)
+
+**Why / what this unlocks**
+
+Immutable, reproducible, verified 1.0 releases.
 
 ---
 
@@ -71,6 +92,6 @@ at a time, capturing the pre-rendered-manifest philosophy in the product section
 
 **Why / what this unlocks**
 
-Operator guides and standards that describe the settled conventions and lifecycle rather than
-procedures about to change. The existing structure and strategy already give the earlier areas a
-home for their documentation.
+Operator guides and standards that describe the settled conventions, package contract, and release
+procedures rather than details about to change. The existing structure and strategy already give the
+earlier areas a home for their documentation.

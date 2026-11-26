@@ -1,8 +1,10 @@
 <!-- Provenance: the owner's lifecycle proposal, copied from ~/Downloads/cur8s-component-lifecycle-proposal.md on 2026-10-11 and recorded here unedited. Its relative links assume this location. -->
 
-> Historical design input: local directory examples below predate the
-> [decided and implemented layout](working-notes.md). Preserve the proposal body as provenance;
-> follow the later layout decision for current paths. Broader lifecycle questions remain open.
+> Historical design input: local directory and task examples below predate the
+> [decided and implemented layout](../../../docs/architecture/01-source-to-artifact.md) and the
+> five-namespace task layout (`upstream:`, `build:`, `dev:`, `verify:`, `release:`). Preserve the
+> proposal body as provenance; follow the later layout and task standards for current paths.
+> Cross-repo lifecycle questions remain parked in [overview.md](overview.md).
 
 # Proposal: Consistent component lifecycle across Cur8s repositories
 
@@ -30,7 +32,7 @@ This is a **component lifecycle** convention, not a requirement for a single sha
 8. **Debuggable test cleanup.** Successful end-to-end tests delete the test cluster; failed tests preserve it and report its name and inspection commands. Preserve the original test failure exit status.
 9. **Explicit publication.** Validating locally does not implicitly publish to a remote registry. Remote publication remains a separately requested action. Respect the repository's existing immutability and release-channel requirements.
 
-The repo's existing work item records additional requirements for provenance records, mirrored runtime images, OCI layouts and safe publication in [`requirements.md`](requirements.md). Those are not superseded by this proposal.
+The repo's extracted work items record additional requirements for provenance records, mirrored runtime images, OCI layouts and safe publication (see [overview.md](overview.md), [Harden OCI packaging and release publication](../../todo/harden-release-publication/overview.md), and [Mirror runtime images to ghcr.io/cur8s](../mirror-images-to-ghcr/overview.md)). Those are not superseded by this proposal.
 
 ## 3. Repository responsibilities and dependencies
 
@@ -70,7 +72,7 @@ These names are intentionally few. Examples use `mise run <task>`; the mise CLI 
 
 Read the repo's pinned upstream version or source identity. Obtain source files using the tool appropriate to the component (for example `gh`, Helm, or a project CLI). Record exactly what was downloaded, with no edits or normalization to the captured content. The fetch operation is **explicit**; it must not be a hidden network side effect of ordinary rendering.
 
-Fetching may deliberately replace the previously captured release when a version pin is changed. Any download integrity metadata must live outside the untouched upstream payload. The provenance format and checksum verification strategy should follow [`requirements.md`](requirements.md).
+Fetching may deliberately replace the previously captured release when a version pin is changed. Any download integrity metadata must live outside the untouched upstream payload. The provenance format and checksum verification strategy should follow [overview.md](overview.md).
 
 ### `build:clean` and `build:render`
 
@@ -163,7 +165,7 @@ The currently checked-in interface is **not** the proposed one. In particular, t
 
 Suggested migration sequence:
 
-1. Inventory existing task entry points, their callers, task arguments, documentation, tests and CI workflows. Read [`../../../mise.toml`](../../../mise.toml), [the architecture overview](../../../docs/architecture/00-overview.md) and [`../plan-lifecycle-implementation/overview.md`](../plan-lifecycle-implementation/overview.md).
+1. Inventory existing task entry points, their callers, task arguments, documentation, tests and CI workflows. Read [`../../../mise.toml`](../../../mise.toml) and [the architecture overview](../../../docs/architecture/00-overview.md).
 2. Preserve the current working Flux installation and release behavior while changing names; do not combine a task-interface refactor with unnecessary controller changes.
 3. Implement `upstream:fetch` by adapting the existing fetch logic, ensuring fetched input is not deleted as a side effect of `build:render` or `build:clean`.
 4. Implement `build:clean` and `build:render`; have render clean and transform the checked-in inputs without contacting upstream. Update or adapt drift verification.
@@ -190,7 +192,7 @@ Suggested migration sequence:
 - The final namespace/task names for local OCI packaging, registry staging, Flux installation/verification, and remote publication.
 - Whether `test:run` is the final orchestrator name or whether separate `test:drift` / `test:e2e` commands remain part of the stable public vocabulary.
 - The exact `flux:reconcile` target convention when a component contains multiple reconciliation stages.
-- The digest-preserving on-disk OCI packaging/copying mechanism and provenance-record format, as detailed in [`requirements.md`](requirements.md).
+- The digest-preserving on-disk OCI packaging/copying mechanism and provenance-record format (see [Harden OCI packaging and release publication](../../todo/harden-release-publication/overview.md) and [overview.md](overview.md)).
 - The point at which mirrored runtime images are staged and how to do so without accidental remote publication.
 - Any universal component-ready synchronization Kustomization beyond the three optional/required installation stages.
 
