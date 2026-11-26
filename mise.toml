@@ -18,7 +18,7 @@ locked = true
 [tools]
 flux2 = "2.9.0"
 kustomize = "5.8.1"
-kubectl = "1.36.2"
+kubectl = "1.36.6"
 k3d = "5.9.0"
 shellcheck = "0.11.0"
 
@@ -28,9 +28,14 @@ UPSTREAM_PROJECT = "fluxcd/flux2"
 UPSTREAM_VERSION = "2.9.0"
 # Independent SemVer for this Cur8s package (MAJOR.MINOR.PATCH).
 CUR8S_VERSION = "0.1.0"
+# Latest reviewed GA patch of the tested Kubernetes GA N-1 minor (within the
+# pinned Flux release's support range); keep [tools].kubectl equal.
+KUBERNETES_VERSION = "1.36.6"
 # Derived, with validation: a malformed value stops every mise command.
 UPSTREAM_TAG = '{% if env.UPSTREAM_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="UPSTREAM_VERSION must be a stable SemVer (for example 2.9.0)") }}{% endif %}v{{ env.UPSTREAM_VERSION }}'
 CUR8S_TAG = '{% if env.CUR8S_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="CUR8S_VERSION must be a stable SemVer (for example 0.1.0)") }}{% endif %}{{ env.CUR8S_VERSION }}'
+# `k3s1` is the k3s packaging revision, not a second Kubernetes version.
+K3S_IMAGE = '{% if env.KUBERNETES_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="KUBERNETES_VERSION must be a stable SemVer (for example 1.36.6)") }}{% endif %}rancher/k3s:v{{ env.KUBERNETES_VERSION }}-k3s1'
 # Component metadata written into cur8s.yaml by build:render and attached
 # as cur8s.io/* OCI annotations by .mise/cluster/push-artifact.sh.
 CUR8S_COMPONENT = "gitops"
