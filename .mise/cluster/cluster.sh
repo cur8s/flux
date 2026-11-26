@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Local k3d clusters, identical in every Cur8s component repo. Tasks run this
-# helper; it is not a task. A repo has two clusters, named from its component
-# and a role: <component>-dev and <component>-verify.
+# Manage this repository's local k3d clusters (dev and verify).
+# Tasks run this helper; it is not a mise task. Clusters are named from
+# CUR8S_COMPONENT and the target: <component>-dev and <component>-verify.
 #
 #   .mise/cluster/cluster.sh create|delete|status|registry-port|in-cluster-registry|context dev|verify
 #

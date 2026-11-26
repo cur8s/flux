@@ -40,8 +40,9 @@ flux --context "$kube_context" create source oci "$CUR8S_COMPONENT" \
 kubectl --context "$kube_context" apply -f "$FLUX_SYNC_MANIFESTS"
 
 # Wait for every source and Kustomization in this disposable cluster to converge.
-kubectl --context "$kube_context" -n flux-system wait ocirepository --all \
-  --for=condition=Ready --timeout=5m
-kubectl --context "$kube_context" -n flux-system wait kustomization --all \
-  --for=condition=Ready --timeout=5m
+kubectl --context "$kube_context" -n flux-system \
+  wait ocirepository --all --for=condition=Ready --timeout=5m
+kubectl --context "$kube_context" -n flux-system \
+  wait kustomization --all --for=condition=Ready --timeout=5m
+
 echo "✅ $CUR8S_COMPONENT installed on $target_cluster ($kube_context)"
