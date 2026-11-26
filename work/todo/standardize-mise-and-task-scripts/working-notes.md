@@ -310,3 +310,7 @@ those documents during the lifecycle design todo.
 - Replaced `cluster.sh registry-port` with `cluster.sh host-registry` (2026-11-25) so both
   `host-registry` (`localhost:<port>`) and `in-cluster-registry` (`<name>-registry:5000`) return
   symmetric `host:port` endpoints without leaking `localhost:` to callers.
+- Simplified `.mise/cluster/push-artifact.sh` to a linear `<registry> <tag>` script (2026-11-25):
+  removed `case local|remote` and `cluster.sh` coupling; callers pass `"$REGISTRY"` or
+  `"$(cluster.sh host-registry ...)"` directly, and `push-artifact.sh` uses anonymous
+  `DOCKER_CONFIG` whenever `registry` starts with `localhost:`.

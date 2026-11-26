@@ -28,7 +28,8 @@ kubectl --context "$kube_context" -n flux-system wait deploy --all --for=conditi
 
 # Push the rendered artifact from the host to the cluster's local registry
 # before creating the OCIRepository so Flux finds it immediately.
-.mise/cluster/push-artifact.sh local "$target_cluster" "$artifact_tag"
+host_registry="$(.mise/cluster/cluster.sh host-registry "$target_cluster")"
+.mise/cluster/push-artifact.sh "$host_registry" "$artifact_tag"
 
 # Point Flux (inside the cluster) at the same local registry via its in-cluster
 # hostname, then apply the repo's declarative sync manifests.

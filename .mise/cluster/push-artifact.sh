@@ -2,8 +2,7 @@
 # Push artifacts/rendered/ as an OCI artifact with cur8s.io/* annotations.
 # Run by release:publish, dev:update, and .mise/cluster/install-component.sh; not a mise task.
 #
-#   .mise/cluster/push-artifact.sh local dev|verify <tag>
-#   .mise/cluster/push-artifact.sh remote <tag>
+#   .mise/cluster/push-artifact.sh <registry> <tag>
 set -euo pipefail
 : "${CUR8S_COMPONENT:?must be set (mise.toml [env]); run through mise}"
 : "${CUR8S_VERSION:?must be set (mise.toml [env]); run through mise}"
@@ -11,10 +10,10 @@ set -euo pipefail
 : "${UPSTREAM_TAG:?must be set (mise.toml [env]); run through mise}"
 : "${CUR8S_DOCS:?must be set (mise.toml [env]); run through mise}"
 
-usage() {
-  echo "usage: $0 local dev|verify <tag> | $0 remote <tag>" >&2
+if [[ $# -ne 2 ]]; then
+  echo "usage: $0 <registry> <tag>" >&2
   exit 1
-}
+fi
 
 artifact_dir="artifacts/rendered"
 if [[ ! -d "$artifact_dir" ]]; then
@@ -22,47 +21,34 @@ if [[ ! -d "$artifact_dir" ]]; then
   exit 1
 fi
 
-# Resolve the target registry endpoint, artifact tag, and auth mode:
-#   local  - push anonymously to a dev/verify cluster's local k3d registry
-#   remote - push to the production REGISTRY using existing Docker credentials
-case "${1:-}" in
-  local)
-    [[ $# -eq 3 ]] || usage
-    registry="$(.mise/cluster/cluster.sh host-registry "$2")"
-    tag="$3"
-    # The k3d-local registry is anonymous. A globally-configured docker
-    # credential helper (e.g. Docker Desktop's "desktop" credsStore) will be
-    # invoked for it anyway and can hang indefinitely on a localhost registry.
-    # Point this push at a throwaway docker config with no credsStore so the
-    # OCI client uses anonymous auth.
-    DOCKER_CONFIG="$(mktemp -d)"
-    export DOCKER_CONFIG
-    echo '{"auths":{}}' > "$DOCKER_CONFIG/config.json"
-    trap 'rm -rf "$DOCKER_CONFIG"' EXIT
-    ;;
-  remote)
-    [[ $# -eq 2 ]] || usage
-    : "${REGISTRY:?must be set (mise.toml [env]); run through mise}"
-    registry="$REGISTRY"
-    tag="$2"
-    ;;
-  *) usage ;;
-esac
+registry="$1"
+artifact_tag="$2"
 
-url="oci://${registry}/${CUR8S_COMPONENT}:${tag}"
+# Local k3d registries are anonymous. A globally-configured docker credential
+# helper (e.g. Docker Desktop's "desktop" credsStore) will still be invoked
+# for localhost and can hang indefinitely, so use a throwaway config with no
+# credsStore for anonymous auth.
+if [[ "$registry" == localhost:* ]]; then
+  DOCKER_CONFIG="$(mktemp -d)"
+  export DOCKER_CONFIG
+  echo '{"auths":{}}' > "$DOCKER_CONFIG/config.json"
+  trap 'rm -rf "$DOCKER_CONFIG"' EXIT
+fi
+
+artifact_url="oci://${registry}/${CUR8S_COMPONENT}:${artifact_tag}"
 ref="$(git branch --show-current)"
 if [[ -z "$ref" ]]; then
   ref="$(git describe --tags --exact-match 2>/dev/null || echo HEAD)"
 fi
 revision="${ref}@sha1:$(git rev-parse HEAD)"
 
-echo "📦 $url"
+echo "📦 $artifact_url"
 # The same identity facts the descriptor asserts, readable from the
 # registry without pulling the artifact; see
 # docs/architecture/02-artifact-contents-and-metadata.md. Source and
 # revision ride flux push's standard OCI annotations — they are
 # push-time facts, deliberately absent from the committed descriptor.
-flux push artifact "$url" \
+flux push artifact "$artifact_url" \
   --path="$artifact_dir" \
   --source="$(git config --get remote.origin.url || echo unknown)" \
   --revision="$revision" \
@@ -72,4 +58,4 @@ flux push artifact "$url" \
   --annotations="cur8s.io/upstream-version=${UPSTREAM_TAG}" \
   --annotations="cur8s.io/docs=${CUR8S_DOCS}" \
   --timeout=5m
-echo "✅ published $url"
+echo "✅ published $artifact_url"
