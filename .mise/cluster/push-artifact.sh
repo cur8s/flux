@@ -58,4 +58,4 @@ flux push artifact "$artifact_url" \
   --annotations="cur8s.io/upstream-version=${UPSTREAM_TAG}" \
   --annotations="cur8s.io/docs=${CUR8S_DOCS}" \
   --timeout=5m
-echo "✅ published $artifact_url"
+echo "✅ pushed $artifact_url"

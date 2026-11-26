@@ -329,3 +329,8 @@ those documents during the lifecycle design todo.
 - Replaced the leftover `e2e` OCI tag in `verify:run` (and architecture docs) with `verify`
   and simplified `.mise/cluster/install-component.sh` to take a single `dev|verify` argument
   (2026-11-26), using the target cluster name as the local OCI tag in its isolated registry.
+- Updated `.mise/cluster/push-artifact.sh` output from `✅ published` to `✅ pushed` (2026-11-26)
+  so local cluster pushes match the `push` (local) vs `publish` (remote) terminology; kept
+  `.mise/cluster/` as the helper folder.
+- Renamed generic `output`/`input`/`digest` to `upstream_manifest` and `upstream_digest` in
+  `upstream:fetch` and `build:render` (2026-11-26).

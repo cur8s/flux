@@ -3,9 +3,9 @@
 #MISE depends=["build:clean"]
 set -euo pipefail
 # Offline render from captured upstream/ and authored src/; never fetches upstream.
-input="upstream/flux.yaml"
-if [[ ! -f "$input" ]]; then
-  echo "❌ $input missing (run 'mise run upstream:fetch')" >&2
+upstream_manifest="upstream/flux.yaml"
+if [[ ! -f "$upstream_manifest" ]]; then
+  echo "❌ $upstream_manifest missing (run 'mise run upstream:fetch')" >&2
   exit 1
 fi
 
@@ -20,7 +20,7 @@ cp src/config/sync.yaml artifacts/rendered/sync.yaml
 # Deliberately free of anything unknowable at render time (no git revision,
 # no timestamp) so the committed tree regenerates byte-for-byte — source and
 # revision are attached by .mise/cluster/push-artifact.sh as OCI annotations instead.
-digest="sha256:$(openssl dgst -sha256 "$input" | awk '{print $NF}')"
+upstream_digest="sha256:$(openssl dgst -sha256 "$upstream_manifest" | awk '{print $NF}')"
 cat > artifacts/rendered/cur8s.yaml <<DESCRIPTOR
 # Cur8s release descriptor — the artifact asserts its own identity.
 # Inert: read by humans and tooling, never applied to a cluster.
@@ -31,7 +31,7 @@ version: ${CUR8S_VERSION}
 upstream:
   project: ${UPSTREAM_PROJECT}
   version: ${UPSTREAM_TAG}
-  digest: ${digest}
+  digest: ${upstream_digest}
 source: ${CUR8S_SOURCE}
 docs: ${CUR8S_DOCS}
 DESCRIPTOR
