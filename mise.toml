@@ -23,18 +23,17 @@ k3d = "5.9.0"
 shellcheck = "0.11.0"
 
 [env]
-# Upstream project and version, plus a Cur8s config revision bumped when the
-# opinion changes on the same upstream (reset to 1 on every upstream bump).
-# 2.9.0 + 1 -> v2.9.0; 2.9.0 + 2 -> v2.9.0-2.
+# Upstream project and version (provenance metadata; independent of CUR8S_VERSION).
 UPSTREAM_PROJECT = "fluxcd/flux2"
 UPSTREAM_VERSION = "2.9.0"
-CUR8S_REVISION = "1"
+# Independent SemVer for this Cur8s package (MAJOR.MINOR.PATCH).
+CUR8S_VERSION = "0.1.0"
 # Derived, with validation: a malformed value stops every mise command.
 UPSTREAM_TAG = '{% if env.UPSTREAM_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="UPSTREAM_VERSION must be a stable SemVer (for example 2.9.0)") }}{% endif %}v{{ env.UPSTREAM_VERSION }}'
-CUR8S_VERSION = '{% if env.CUR8S_REVISION is not matching(pat="^[1-9][0-9]*$") %}{{ throw(message="CUR8S_REVISION must be a positive integer") }}{% endif %}{{ env.UPSTREAM_TAG }}{% if env.CUR8S_REVISION != "1" %}-{{ env.CUR8S_REVISION }}{% endif %}'
+CUR8S_TAG = '{% if env.CUR8S_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="CUR8S_VERSION must be a stable SemVer (for example 0.1.0)") }}{% endif %}{{ env.CUR8S_VERSION }}'
 # Component metadata written into cur8s.yaml by build:render and attached
 # as cur8s.io/* OCI annotations by .mise/cluster/push-artifact.sh.
-CUR8S_COMPONENT = "flux"
+CUR8S_COMPONENT = "gitops"
 CUR8S_SOURCE = "https://github.com/cur8s/flux"
 CUR8S_DOCS = "https://github.com/cur8s/flux"
 # Production release registry (release:publish targets this registry; dev and

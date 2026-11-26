@@ -46,7 +46,12 @@ Flux takes over managing itself from the artifact.
 
 ## Boundaries
 
-This package owns the opinionated Flux installation. Consuming cluster definitions own their
+This repository produces the Cur8s `gitops` capability package (`ghcr.io/cur8s/gitops`), owning the
+opinionated Flux installation and its independent Semantic Version contract. Cur8s packages use
+short capability names rather than upstream product names so package versions are not confused with
+upstream software versions; see
+[Capability package naming and version identity](../architecture/03-publication-and-self-management.md#version-identity-and-immutable-publication)
+for the agreed Cur8s capability set and versioning policy. Consuming cluster definitions own their
 artifact sources, selected versions, credentials, and integration with other components.
 
 It serves the Cur8s operating model rather than every Flux use case. Application and component

@@ -12,7 +12,7 @@ recommendations, and the unresolved Receiver webhook contract. Follow
 The package is installed once and then continuously manages its own installation. Each release
 must provide two matching distribution forms:
 
-1. An immutable OCI artifact (`oci://ghcr.io/cur8s/flux:<version>`), which is the steady-state
+1. An immutable OCI artifact (`oci://ghcr.io/cur8s/gitops:<version>`), which is the steady-state
    deployment source.
 2. A bootstrap manifest (`install.yaml`), attached to the GitHub release.
 
@@ -45,7 +45,7 @@ From this point onward, Flux manages its own installation.
 ### Normal operation
 
 During normal operation, the cluster continuously reconciles the OCI artifact referenced by
-`OCIRepository/flux`.
+`OCIRepository/gitops`.
 
 The external cluster definition remains the authoritative source of intent: it records which
 immutable artifact version the cluster should reconcile. The OCI artifact is the deployment
@@ -80,9 +80,9 @@ Flux will reconcile the declared deployment artifact and restore the installatio
 After recovery, verify that:
 
 - all three controller Deployments are Ready
-- `OCIRepository/flux` is Ready
-- `Kustomization/flux` is Ready
+- `OCIRepository/gitops` is Ready
+- `Kustomization/gitops` is Ready
 
 The local development task waits for source and Kustomization readiness during `dev:create`.
-Use `mise run dev:status` to inspect an existing environment: `Kustomization/flux` waits for the
+Use `mise run dev:status` to inspect an existing environment: `Kustomization/gitops` waits for the
 controller Deployments before it reports Ready.

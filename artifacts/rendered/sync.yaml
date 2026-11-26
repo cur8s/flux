@@ -5,7 +5,7 @@
 # Flux continuously reconciles its OWN install from the published OCI artifact:
 # bumping the artifact tag is how Flux upgrades itself.
 #
-# The OCIRepository named `flux` it sources from is environment-specific (dev =
+# The OCIRepository named `gitops` it sources from is environment-specific (dev =
 # local k3d registry, prod = ghcr.io) and is applied alongside this file — by
 # the dev:create task in dev, by the cluster's composition in production.
 # This file ships INSIDE the artifact (artifacts/rendered/sync.yaml) so the artifact is
@@ -19,7 +19,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: flux
+  name: gitops
   namespace: flux-system
   annotations:
     cur8s.io/docs: https://github.com/cur8s/flux
@@ -31,4 +31,4 @@ spec:
   wait: true
   sourceRef:
     kind: OCIRepository
-    name: flux
+    name: gitops

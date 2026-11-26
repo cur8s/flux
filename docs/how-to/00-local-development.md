@@ -21,7 +21,7 @@ Expected result: mise installs the locked toolchain, Docker responds, and mise l
 tasks. [`mise.toml`](../../mise.toml) owns tool selections and environment values;
 [`mise.lock`](../../mise.lock) records the tool downloads and checksums.
 
-The repository has two local k3d clusters: `dev` (`flux-dev`) and `verify` (`flux-verify`). All
+The repository has two local k3d clusters: `dev` (`gitops-dev`) and `verify` (`gitops-verify`). All
 `dev:*` tasks target `dev`; `verify:*` tasks own `verify`. Their contexts live in the repository's
 ignored `.kube/config`. Use `mise run` for tasks, or `mise exec -- kubectl ...` and
 `mise exec -- flux ...` for direct inspection, so the repository's environment is loaded.
@@ -62,8 +62,8 @@ mise run dev:status
 ```
 
 Expected result: `artifacts/rendered/` is regenerated, Flux's controllers become available, the
-payload is pushed to the new cluster's local registry, and `OCIRepository/flux` and
-`Kustomization/flux` report Ready.
+payload is pushed to the new cluster's local registry, and `OCIRepository/gitops` and
+`Kustomization/gitops` report Ready.
 
 After further edits under `src/config/`, push the regenerated payload to the running `dev` cluster
 and reconcile immediately:
@@ -78,7 +78,7 @@ targets only this component's Kustomization and its source). For continuous obse
 context through mise:
 
 ```sh
-mise exec -- kubectl --context k3d-flux-dev -n flux-system get deployments
+mise exec -- kubectl --context k3d-gitops-dev -n flux-system get deployments
 ```
 
 When finished, remove the environment and its local registry:
@@ -124,7 +124,7 @@ If the cluster stage fails, the environment is retained for inspection. Diagnose
 verify context, then remove it explicitly:
 
 ```sh
-mise exec -- flux --context k3d-flux-verify get all -A
+mise exec -- flux --context k3d-gitops-verify get all -A
 mise run verify:clean
 ```
 

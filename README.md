@@ -1,9 +1,10 @@
-# flux — the Cur8s GitOps engine package
+# flux — the Cur8s GitOps package
 
-This repository renders Cur8s' constrained [Flux](https://fluxcd.io) installation once and
-publishes it as an immutable OCI artifact. The installation includes only the source, kustomize,
-and notification controllers, so clusters reconcile static manifests instead of templates resolved
-at runtime.
+This repository builds the Cur8s `gitops` capability package (`ghcr.io/cur8s/gitops`),
+rendering a constrained [Flux](https://fluxcd.io) installation once and publishing it as an
+immutable, independently versioned OCI artifact. The installation includes only the source,
+kustomize, and notification controllers, so clusters reconcile static manifests instead of
+templates resolved at runtime.
 
 ## Prerequisites
 

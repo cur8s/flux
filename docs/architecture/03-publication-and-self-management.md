@@ -15,7 +15,7 @@ A release has two matching distribution forms:
 
 | Form | Contract | Current repository implementation |
 | --- | --- | --- |
-| OCI artifact | The versioned payload at `oci://ghcr.io/cur8s/flux:<version>`, consumed during normal reconciliation. | The publication task pushes the existing rendered tree, defaulting to the production registry and configured package version. |
+| OCI artifact | The versioned payload at `oci://ghcr.io/cur8s/gitops:<version>`, consumed during normal reconciliation. | The publication task pushes the existing rendered tree to `RELEASE_REGISTRY` under `CUR8S_COMPONENT` (`gitops`) at `CUR8S_TAG`. |
 | `install.yaml` release asset | Static controller installation for bootstrap or recovery before Flux can reconcile itself. | The rendered installation is available locally as `artifacts/rendered/deploy/flux.yaml`; the publication task does not attach it to a GitHub release. |
 
 Both forms must use the same generated controller installation bytes. Publication must not render
@@ -23,7 +23,7 @@ a separate installation for each channel. Their packaging differs, but the resou
 installs must be the resources Flux subsequently reconciles.
 
 [`release:publish`](../../.mise/tasks/release/publish) requires a clean working tree and publishes
-the existing rendered tree to `RELEASE_REGISTRY` at `CUR8S_VERSION` (with no tag override). It does
+the existing rendered tree to `RELEASE_REGISTRY` at `CUR8S_TAG` (with no tag override). It does
 not fetch or render inputs, run `verify:run`, or check whether that version already
 exists in either distribution channel. There is currently no live GitHub Actions workflow in the
 repository; the verification gates run locally.
@@ -34,16 +34,39 @@ automatic enforcement does not remove the acceptance requirement.
 
 ## Version identity and immutable publication
 
-The current configuration derives the package version from the selected upstream Flux release and
-a Cur8s configuration revision. `release:publish` uses that derived value as the OCI tag.
+Cur8s distributes each capability as an independently versioned OCI package under
+`ghcr.io/cur8s/<name>`, using short capability names rather than upstream product names so Cur8s
+package tags are not confused with upstream versions. The eight agreed Cur8s capability package
+names are:
 
-The intended versioning contract gives the Cur8s package an independent Semantic Version that
-describes its compatibility contract, while recording upstream versions as dependency metadata.
-That versioning change has not been implemented in the current configuration.
+| Package (`ghcr.io/cur8s/<name>`) | Capability area |
+| --- | --- |
+| `gitops` | GitOps reconciliation engine (this package, backed by Flux) |
+| `certificates` | Certificate management |
+| `secrets` | Secrets management |
+| `gateway` | Cluster ingress and gateway |
+| `postgres` | PostgreSQL database |
+| `metrics` | Metrics collection and storage |
+| `logging` | Log collection and storage |
+| `grafana` | Dashboards and visualization |
+
+Each capability package carries its own independent `MAJOR.MINOR.PATCH` Semantic Version authored
+as `CUR8S_VERSION` in [`mise.toml`](../../mise.toml) and validated by `CUR8S_TAG`. Upstream
+software versions remain separate provenance metadata (`UPSTREAM_VERSION` / `UPSTREAM_TAG`,
+`cur8s.yaml`, and `cur8s.io/upstream-version` OCI annotations). A Cur8s platform release versions a
+tested combination of exact capability versions independently through a bill of materials (BOM).
+
+Apply SemVer increments to the Cur8s package's compatibility contract across both upstream and
+Cur8s-owned changes:
+
+- **MAJOR:** An incompatible change to the package's documented behavior or interfaces.
+- **MINOR:** Backward-compatible new functionality or capabilities.
+- **PATCH:** Backward-compatible fixes, packaging corrections, or dependency updates that do not
+  introduce new functionality or incompatibility.
 
 Once a production version is published, it must keep identifying the same content. Development
 tags such as `dev` and `verify` serve local workflows via `.mise/cluster/push-artifact.sh`; `release:publish` only
-targets `RELEASE_REGISTRY` at `CUR8S_VERSION`, though it does not yet refuse an existing production
+targets `RELEASE_REGISTRY` at `CUR8S_TAG`, though it does not yet refuse an existing production
 version.
 
 The intended publication path also requires one packaged OCI artifact to be tested and promoted

@@ -10,10 +10,11 @@ self-management boundary where implementation still needs to change.
 
 ## One reusable installation
 
-This repository produces one release unit: the Cur8s Flux installation. Its upstream inputs and
-authored configuration determine the controller installation before it reaches a cluster. The
-rendered installation is committed as a reviewable deployment payload, then distributed through
-an OCI registry.
+This repository produces one release unit: the Cur8s `gitops` capability package
+(`ghcr.io/cur8s/gitops`), which delivers Cur8s' constrained Flux installation under an independent
+Semantic Version. Its upstream inputs and authored configuration determine the controller
+installation before it reaches a cluster. The rendered installation is committed as a reviewable
+deployment payload, then distributed through an OCI registry.
 
 The package installs the source, kustomize, and notification controllers. Their selected roles and
 the broader APIs they install are defined in [the package's opinion](../product/02-the-opinion.md).

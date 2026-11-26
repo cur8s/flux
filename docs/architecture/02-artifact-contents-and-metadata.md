@@ -26,7 +26,7 @@ artifacts/rendered/
 | [`sync.yaml`](../../artifacts/rendered/sync.yaml) | Current package-owned self-management Kustomization, copied into the rendered tree. | Applied separately after bootstrap to select the declared OCI source and `./deploy` path. |
 | [`cur8s.yaml`](../../artifacts/rendered/cur8s.yaml) | Release identity for readers and tooling. | Read as metadata; it is not a Kubernetes resource and is not applied. |
 
-The self-management Kustomization references `OCIRepository/flux` in `flux-system`. The consuming
+The self-management Kustomization references `OCIRepository/gitops` in `flux-system`. The consuming
 cluster supplies that source. Its `path: ./deploy` selects installation content, leaving the
 descriptor and the sync file outside the content that Flux applies through that Kustomization.
 The [overview](00-overview.md#intended-self-management-boundary) distinguishes this current layout
@@ -34,15 +34,15 @@ from the intended consumer ownership of both self-management resources.
 
 ## Render-time release descriptor
 
-[`build:render`](../../.mise/tasks/build/render) generates `cur8s.yaml` from component identity,
-derived versions, and the captured upstream file. The current schema is
+[`build:render`](../../.mise/tasks/build/render) generates `cur8s.yaml` from capability identity,
+the independent package version, and the captured upstream file. The current schema is
 `cur8s.io/release-descriptor/v1`.
 
 | Field | Render-time source | Meaning |
 | --- | --- | --- |
 | `schema` | Literal schema identifier in the render script. | Format of this descriptor. |
-| `component` | `CUR8S_COMPONENT`. | Cur8s component identity. |
-| `version` | `CUR8S_VERSION`. | Package version derived by the current configuration. |
+| `component` | `CUR8S_COMPONENT` (`gitops`). | Cur8s capability package identity. |
+| `version` | `CUR8S_VERSION`. | Independent Cur8s package Semantic Version. |
 | `upstream.project` | `UPSTREAM_PROJECT`. | Upstream project identity. |
 | `upstream.version` | `UPSTREAM_TAG`. | Selected upstream release. |
 | `upstream.digest` | SHA-256 of the captured `upstream/flux.yaml` bytes. | Identity of the captured installation input before the authored overlay is applied. |
@@ -87,11 +87,11 @@ tree so remote releases match the recorded commit.
 
 The destination tag is passed explicitly to `.mise/cluster/push-artifact.sh`. Local `dev` and `verify` pushes
 use `dev` and `verify` while the descriptor still records the configured package version.
-`release:publish` always tags with `CUR8S_VERSION` and exposes no tag override.
+`release:publish` always tags with `CUR8S_TAG` (validated from `CUR8S_VERSION`) and exposes no tag override.
 
 ## Cluster-side identification
 
-The deploy overlay adds `cur8s.io/component: flux` to installation resources. The self-management
+The deploy overlay adds `cur8s.io/component: gitops` to installation resources. The self-management
 Kustomization carries `cur8s.io/docs` and `cur8s.io/upstream` annotations. These are stable component
 markers, rather than version-bearing records.
 

@@ -14,12 +14,12 @@ resources:
 
 # Mark every object as cur8s-installed so the cluster answers
 # "what did cur8s put here" with one selector:
-#   kubectl get all -A -l cur8s.io/component=flux
+#   kubectl get all -A -l cur8s.io/component=gitops
 # Metadata only (no selectors, no pod templates) — upstream's own
 # app.kubernetes.io/{instance,part-of,version} labels carry the rest.
 labels:
   - pairs:
-      cur8s.io/component: flux
+      cur8s.io/component: gitops
 
 sortOptions:
   order: fifo
