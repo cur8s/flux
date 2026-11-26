@@ -321,3 +321,6 @@ those documents during the lifecycle design todo.
   `REGISTRY` → `RELEASE_REGISTRY` in `mise.toml` and `release:publish` (plus architecture docs),
   and renamed `cluster.sh` internals from `name`/`context`/`registry` to `cluster_name`,
   `kube_context`, and `registry_container`.
+- Renamed `artifact_url` → `oci_repository_url` in `.mise/cluster/install-component.sh`
+  (2026-11-26) to distinguish the untagged `OCIRepository` URL from the tagged `artifact_url`
+  (`...:<tag>`) in `.mise/cluster/push-artifact.sh`.
