@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 #MISE description="Check drift and run the end-to-end cluster verification"
 set -euo pipefail
-tracked_paths=(artifacts/rendered upstream)
-context="$(.mise/cluster/cluster.sh context verify)"
+kube_context="$(.mise/cluster/cluster.sh context verify)"
 
 # Refuse to start if a leftover verify cluster exists from an earlier failed run.
 if .mise/cluster/cluster.sh status verify >/dev/null 2>&1; then
-  echo "❌ verify cluster already exists ($context) — inspect it or run 'mise run verify:clean' first" >&2
+  echo "❌ verify cluster already exists ($kube_context) — inspect it or run 'mise run verify:clean' first" >&2
   exit 1
 fi
 
@@ -15,6 +14,7 @@ fi
 # re-render before running verification.
 mise run upstream:fetch
 mise run build:render
+tracked_paths=(artifacts/rendered upstream)
 if [[ -n "$(git status --porcelain -- "${tracked_paths[@]}")" ]]; then
   git status --short -- "${tracked_paths[@]}"
   git --no-pager diff -- "${tracked_paths[@]}" | head -n 100 || true
@@ -24,15 +24,15 @@ fi
 echo "✅ committed tree matches the render"
 
 # End-to-end cluster verification: deleted on pass, kept on failure.
-if .mise/cluster/cluster.sh create verify && .mise/cluster/install-component.sh verify e2e && flux --context "$context" get all -A; then
+if .mise/cluster/cluster.sh create verify && .mise/cluster/install-component.sh verify e2e && flux --context "$kube_context" get all -A; then
   echo "✅ verification passed — deleting the verify cluster"
   .mise/cluster/cluster.sh delete verify
 else
   exit_code=$?
-  echo "❌ verification failed (exit $exit_code) — verify cluster preserved ($context)"
-  flux --context "$context" get all -A || true
-  echo "  mise exec -- flux --context $context get all -A"
-  echo "  mise exec -- kubectl --context $context -n flux-system get pods"
+  echo "❌ verification failed (exit $exit_code) — verify cluster preserved ($kube_context)"
+  flux --context "$kube_context" get all -A || true
+  echo "  mise exec -- flux --context $kube_context get all -A"
+  echo "  mise exec -- kubectl --context $kube_context -n flux-system get pods"
   echo "  mise run verify:clean   # when done"
   exit "$exit_code"
 fi

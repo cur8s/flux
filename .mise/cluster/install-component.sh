@@ -17,32 +17,31 @@ if [[ $# -ne 2 ]]; then
   exit 1
 fi
 
-# Resolve target cluster role, OCI tag, component name, and kubectl context.
-cluster="$1"
-tag="$2"
-component="$CUR8S_COMPONENT"
-context="$(.mise/cluster/cluster.sh context "$cluster")"
+# Parse target cluster (dev|verify) and OCI artifact tag.
+target_cluster="$1"
+artifact_tag="$2"
 
 # Bootstrap Flux; server-side apply handles the large CRDs cleanly.
-kubectl --context "$context" apply --server-side -f "$FLUX_BOOTSTRAP_MANIFEST"
-kubectl --context "$context" -n flux-system wait deploy --all --for=condition=Available --timeout=3m
+kube_context="$(.mise/cluster/cluster.sh context "$target_cluster")"
+kubectl --context "$kube_context" apply --server-side -f "$FLUX_BOOTSTRAP_MANIFEST"
+kubectl --context "$kube_context" -n flux-system wait deploy --all --for=condition=Available --timeout=3m
 
 # Push the rendered artifact from the host to the cluster's local registry
 # before creating the OCIRepository so Flux finds it immediately.
-.mise/cluster/push-artifact.sh local "$cluster" "$tag"
+.mise/cluster/push-artifact.sh local "$target_cluster" "$artifact_tag"
 
 # Point Flux (inside the cluster) at the same local registry via its in-cluster
 # hostname, then apply the repo's declarative sync manifests.
-registry="$(.mise/cluster/cluster.sh in-cluster-registry "$cluster")"
-artifact_url="oci://${registry}/${component}"
-flux --context "$context" create source oci "$component" \
+in_cluster_registry="$(.mise/cluster/cluster.sh in-cluster-registry "$target_cluster")"
+artifact_url="oci://${in_cluster_registry}/${CUR8S_COMPONENT}"
+flux --context "$kube_context" create source oci "$CUR8S_COMPONENT" \
   --url "$artifact_url" \
-  --tag "$tag" --insecure --interval 1m
-kubectl --context "$context" apply -f "$FLUX_SYNC_MANIFESTS"
+  --tag "$artifact_tag" --insecure --interval 1m
+kubectl --context "$kube_context" apply -f "$FLUX_SYNC_MANIFESTS"
 
 # Wait for every source and Kustomization in this disposable cluster to converge.
-kubectl --context "$context" -n flux-system wait ocirepository --all \
+kubectl --context "$kube_context" -n flux-system wait ocirepository --all \
   --for=condition=Ready --timeout=5m
-kubectl --context "$context" -n flux-system wait kustomization --all \
+kubectl --context "$kube_context" -n flux-system wait kustomization --all \
   --for=condition=Ready --timeout=5m
-echo "✅ $component installed on $cluster ($context)"
+echo "✅ $CUR8S_COMPONENT installed on $target_cluster ($kube_context)"

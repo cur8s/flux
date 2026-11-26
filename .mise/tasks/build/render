@@ -10,7 +10,6 @@ if [[ ! -f "$input" ]]; then
 fi
 
 echo "🔨 Rendering opinionated config → artifacts/rendered/ ..."
-digest="sha256:$(openssl dgst -sha256 "$input" | awk '{print $NF}')"
 mkdir -p artifacts/rendered/deploy
 kustomize build --load-restrictor=LoadRestrictionsNone \
   src/config/overlays/deploy > artifacts/rendered/deploy/flux.yaml
@@ -21,6 +20,7 @@ cp src/config/sync.yaml artifacts/rendered/sync.yaml
 # Deliberately free of anything unknowable at render time (no git revision,
 # no timestamp) so the committed tree regenerates byte-for-byte — source and
 # revision are attached by .mise/cluster/push-artifact.sh as OCI annotations instead.
+digest="sha256:$(openssl dgst -sha256 "$input" | awk '{print $NF}')"
 cat > artifacts/rendered/cur8s.yaml <<DESCRIPTOR
 # Cur8s release descriptor — the artifact asserts its own identity.
 # Inert: read by humans and tooling, never applied to a cluster.

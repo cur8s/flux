@@ -242,8 +242,10 @@ those documents during the lifecycle design todo.
     in `.mise/oci-push.sh`.
 - Standardized bash style and comments (2026-11-25):
   - Always use `[[ ... ]]` (never `[ ... ]`), one statement per line (no semicolon-packed
-    assignments or inline `{ ...; exit 1; }` blocks), and full readable variable names (`input`,
-    `output`, `component`, `context`, `exit_code`, `artifact_dir`, `tracked_paths`).
+    assignments or inline `{ ...; exit 1; }` blocks), introduce derived variables just in time
+    where they are first used, and use full readable variable names (`input`, `output`,
+    `target_cluster`, `artifact_tag`, `kube_context`, `in_cluster_registry`, `exit_code`,
+    `artifact_dir`, `tracked_paths`).
   - Helpers open with purpose, callers, and usage comments; every task script opens with a short
     contract/precondition comment after `set -euo pipefail` (without narrating obvious commands).
   - Wrapped multi-step guidance in `upstream:check` into a readable heredoc.
