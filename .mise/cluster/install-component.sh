@@ -27,14 +27,14 @@ kubectl --context "$kube_context" apply --server-side -f "$FLUX_BOOTSTRAP_MANIFE
 kubectl --context "$kube_context" -n flux-system wait deploy --all --for=condition=Available --timeout=3m
 
 # Push the rendered artifact from the host to the cluster's local registry
-# before creating the OCIRepository so Flux finds it immediately.
-host_registry="$(.mise/cluster/cluster.sh host-registry "$target_cluster")"
-.mise/cluster/push-artifact.sh "$host_registry" "$artifact_tag"
+# (localhost:<port>) before creating the OCIRepository so Flux finds it immediately.
+registry_host_address="$(.mise/cluster/cluster.sh registry-host-address "$target_cluster")"
+.mise/cluster/push-artifact.sh "$registry_host_address" "$artifact_tag"
 
-# Point Flux (inside the cluster) at the same local registry via its in-cluster
-# hostname, then apply the repo's declarative sync manifests.
-in_cluster_registry="$(.mise/cluster/cluster.sh in-cluster-registry "$target_cluster")"
-artifact_url="oci://${in_cluster_registry}/${CUR8S_COMPONENT}"
+# Point Flux (inside the cluster) at that same local registry via its in-cluster
+# address (<cluster>-registry:5000), then apply the repo's declarative sync manifests.
+registry_cluster_address="$(.mise/cluster/cluster.sh registry-cluster-address "$target_cluster")"
+artifact_url="oci://${registry_cluster_address}/${CUR8S_COMPONENT}"
 flux --context "$kube_context" create source oci "$CUR8S_COMPONENT" \
   --url "$artifact_url" \
   --tag "$artifact_tag" --insecure --interval 1m

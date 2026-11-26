@@ -4,10 +4,10 @@
 set -euo pipefail
 # Requires a running dev cluster; pushes the rendered artifact, applies
 # FLUX_SYNC_MANIFESTS, and triggers immediate reconciliation.
-if ! host_registry="$(.mise/cluster/cluster.sh host-registry dev 2>/dev/null)"; then
+if ! registry_host_address="$(.mise/cluster/cluster.sh registry-host-address dev 2>/dev/null)"; then
   echo "❌ dev cluster is not running — run 'mise run dev:create' first" >&2
   exit 1
 fi
-.mise/cluster/push-artifact.sh "$host_registry" dev
+.mise/cluster/push-artifact.sh "$registry_host_address" dev
 kubectl --context "$(.mise/cluster/cluster.sh context dev)" apply -f "$FLUX_SYNC_MANIFESTS"
 mise run dev:reconcile

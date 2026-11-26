@@ -3,7 +3,7 @@
 # Tasks run this helper; it is not a mise task. Clusters are named from
 # CUR8S_COMPONENT and the target: <component>-dev and <component>-verify.
 #
-#   .mise/cluster/cluster.sh create|delete|status|host-registry|in-cluster-registry|context dev|verify
+#   .mise/cluster/cluster.sh create|delete|status|registry-host-address|registry-cluster-address|context dev|verify
 #
 # Each cluster gets its own local OCI registry: container <name>-registry,
 # reached in-cluster as <name>-registry:5000 and from the host on a port k3d
@@ -14,7 +14,7 @@ set -euo pipefail
 : "${KUBECONFIG:?must be set (mise.toml [env]); run through mise}"
 
 usage() {
-  echo "usage: $0 create|delete|status|host-registry|in-cluster-registry|context dev|verify" >&2
+  echo "usage: $0 create|delete|status|registry-host-address|registry-cluster-address|context dev|verify" >&2
   exit 1
 }
 [[ $# -eq 2 ]] || usage
@@ -23,7 +23,7 @@ name="$CUR8S_COMPONENT-$2"
 context="k3d-$name"
 registry="$name-registry"
 
-host_registry() {
+registry_host_address() {
   local port
   port="$(docker inspect -f '{{(index .NetworkSettings.Ports "5000/tcp" 0).HostPort}}' "$registry")"
   echo "localhost:$port"
@@ -34,10 +34,10 @@ host_registry() {
 # k3d fails on an existing name.
 create() {
   k3d cluster create "$name" --config .mise/cluster/k3d-config.yaml --registry-create "$registry"
-  local endpoint
-  endpoint="$(host_registry)"
-  curl -sf --retry 30 --retry-delay 2 --retry-all-errors "http://$endpoint/v2/" >/dev/null
-  echo "✅ cluster $name (context $context), registry $endpoint (in-cluster $registry:5000)"
+  local address
+  address="$(registry_host_address)"
+  curl -sf --retry 30 --retry-delay 2 --retry-all-errors "http://$address/v2/" >/dev/null
+  echo "✅ cluster $name (context $context), registry $address (in-cluster $registry:5000)"
 }
 
 # Succeeds when the cluster is already gone; k3d removes its registry too.
@@ -54,9 +54,9 @@ status() {
   else
     echo "api: unreachable"
   fi
-  local endpoint
-  if endpoint="$(host_registry 2>/dev/null)"; then
-    echo "registry: $endpoint (in-cluster $registry:5000)"
+  local address
+  if address="$(registry_host_address 2>/dev/null)"; then
+    echo "registry: $address (in-cluster $registry:5000)"
   else
     echo "registry: not running"
   fi
@@ -66,8 +66,8 @@ case "$1" in
   create) create ;;
   delete) delete ;;
   status) status ;;
-  host-registry) host_registry ;;
-  in-cluster-registry) echo "$registry:5000" ;;
+  registry-host-address) registry_host_address ;;
+  registry-cluster-address) echo "$registry:5000" ;;
   context) echo "$context" ;;
   *) usage ;;
 esac
