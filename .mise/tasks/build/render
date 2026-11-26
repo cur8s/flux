@@ -13,7 +13,6 @@ echo "🔨 Rendering opinionated config → artifacts/rendered/ ..."
 mkdir -p artifacts/rendered/deploy
 kustomize build --load-restrictor=LoadRestrictionsNone \
   src/config/overlays/deploy > artifacts/rendered/deploy/flux.yaml
-cp src/config/sync.yaml artifacts/rendered/sync.yaml
 
 # Generate cur8s.yaml metadata for this render. Omit git revision and timestamps
 # so re-rendering produces byte-identical output (push-artifact.sh attaches git
@@ -35,5 +34,4 @@ docs: ${CUR8S_DOCS}
 DESCRIPTOR
 
 echo "   ✅ artifacts/rendered/deploy/flux.yaml"
-echo "   ✅ artifacts/rendered/sync.yaml"
 echo "   ✅ artifacts/rendered/cur8s.yaml"

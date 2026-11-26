@@ -5,8 +5,8 @@
 > cluster definition, and the controllers that reconcile the installation.
 
 The [product documents](../product/README.md) explain the package's purpose and operating model.
-This overview describes how the current implementation supports them and identifies the intended
-self-management boundary where implementation still needs to change.
+This overview describes how the package separates reusable controller installation content from
+consumer-owned self-management.
 
 ## One reusable installation
 
@@ -19,13 +19,13 @@ deployment payload, then distributed through an OCI registry.
 The package installs the source, kustomize, and notification controllers. Their selected roles and
 the broader APIs they install are defined in [the package's opinion](../product/02-the-opinion.md).
 
-| Responsibility | Current owner | Implementation |
+| Responsibility | Owner | Implementation |
 | --- | --- | --- |
 | Upstream and package identity | Package repository | Version and identity declarations in [`mise.toml`](../../mise.toml). |
 | Controller installation | Package repository | Captured upstream manifests composed with [`source configuration`](../../src/config/overlays/deploy/kustomization.yaml). |
 | Rendered deployment payload | Package repository | The committed [`artifacts/rendered/`](../../artifacts/rendered/) tree. |
 | Artifact location, version selection, and credentials | Consuming cluster definition | The `OCIRepository` used by that cluster. |
-| Self-management Kustomization | Package repository, applied by the consumer | [`sync.yaml`](../../src/config/sync.yaml), which references the consumer's source. |
+| Self-management Kustomization | Consuming cluster definition | A Flux `Kustomization` referencing that source and the package's `./deploy` path (see the [user guide](../user-guide.md)). |
 | Integration with other components | Consuming cluster definition | Its composition, ordering, and integration verification. |
 
 Cluster-specific source selection stays outside the reusable installation. The same package can
@@ -56,24 +56,24 @@ that installation from the declared artifact. Version changes flow through the c
 source selection. Reapplying matching bootstrap content is also the recovery path when Flux itself
 is unavailable.
 
-The current artifact includes `deploy/flux.yaml`, the controller installation; `sync.yaml`, the
-self-management Kustomization; and `cur8s.yaml`, an inert release descriptor. The Kustomization
-selects the artifact's `deploy/` directory, so the descriptor and self-management file are not
-applied as controller installation content.
+The artifact includes `deploy/flux.yaml`, the controller installation, and `cur8s.yaml`, an inert
+release descriptor. The consumer's self-management `Kustomization` selects the artifact's `deploy/`
+directory, so the descriptor is not applied as controller installation content.
 
 The repository's OCI publication script does not automate attaching
 the matching installation YAML to a GitHub release. That publication requirement must remain
 distinct from what the script currently performs.
 
-## Intended self-management boundary
+## Self-management boundary
 
-The intended boundary places both the `OCIRepository` and self-management `Kustomization` in the
-consuming repository. Each consumer then declares its source, version, reconciliation path, and
-other self-management settings together, while this package provides the reusable installation.
+Both the `OCIRepository` and the self-management `Kustomization` belong to the consuming
+repository. Each consumer declares its source coordinates, version, credentials, reconciliation
+path (`./deploy`), and other self-management settings together, while this package provides only
+the reusable controller installation and release descriptor.
 
-The current implementation still ships `sync.yaml` inside the package. Moving self-management
-configuration to consumers remains implementation work; the ownership table above describes the
-current artifact, rather than claiming that transition has happened.
+This repository keeps its own local [`test/sync.yaml`](../../test/sync.yaml) fixture outside `src/`
+and `artifacts/rendered/` so disposable `dev` and `verify` clusters can exercise self-management
+without packaging consumer configuration into the published OCI artifact.
 
 ## Verification responsibilities
 

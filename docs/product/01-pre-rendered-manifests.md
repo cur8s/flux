@@ -63,9 +63,9 @@ structure or select undeclared dependencies. Inspecting the artifact alone is in
 it uses substitution; the referenced declarations are part of its inputs too. A change to those
 inputs changes the intended state even when the artifact version stays the same.
 
-The Flux package's own controller installation is fully rendered before publication. Its
-self-management resource applies those manifests without environment substitution; the consuming
-cluster separately declares the artifact source and version. The
+The Flux package's own controller installation is fully rendered before publication. The consuming
+cluster declares the artifact source, version, and self-management `Kustomization`, which reconciles
+those manifests without environment substitution. The
 [architecture overview](../architecture/00-overview.md) explains that package boundary and handoff.
 
 ## What operators gain

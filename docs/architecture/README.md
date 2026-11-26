@@ -8,7 +8,7 @@ Read the overview first, then consult the explanation that owns the mechanism yo
 
 | Order | Document | What it explains |
 | --- | --- | --- |
-| 1 | [Overview](00-overview.md) | Package and consumer responsibilities, bootstrap, and current versus intended self-management ownership. |
+| 1 | [Overview](00-overview.md) | Package and consumer responsibilities, bootstrap, and the self-management boundary. |
 | 2 | [From source to artifact](01-source-to-artifact.md) | Pinned inputs, explicit upstream capture, rendering, committed output, and verification boundaries. |
 | 3 | [Artifact contents and metadata](02-artifact-contents-and-metadata.md) | Installation content, descriptor fields, publication annotations, and file versus OCI identity. |
 | 4 | [Publication and self-management](03-publication-and-self-management.md) | The release contract, current automation, bootstrap readiness, normal operation, and remaining publication work. |

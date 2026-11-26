@@ -1,36 +1,33 @@
 # Artifact contents and metadata
 
 > [!NOTE]
-> Read this document to distinguish the installation payload, self-management configuration,
-> release descriptor, and OCI publication metadata, including what each identity refers to.
+> Read this document to distinguish the installation payload, release descriptor, and OCI
+> publication metadata, including what each identity refers to.
 
 [From source to artifact](01-source-to-artifact.md) explains how rendering produces the committed
 tree. This document describes that tree and the metadata added when it is published.
 
 ## Applied content and inert metadata
 
-The current rendered tree contains three files. Publication packages their paths relative to
+The rendered tree contains two files. Publication packages their paths relative to
 `artifacts/rendered/`, so the local prefix is absent inside the OCI artifact:
 
 ```text
 artifacts/rendered/
 ├── cur8s.yaml
-├── deploy/
-│   └── flux.yaml
-└── sync.yaml
+└── deploy/
+    └── flux.yaml
 ```
 
 | File | Purpose | How it is used |
 | --- | --- | --- |
 | [`deploy/flux.yaml`](../../artifacts/rendered/deploy/flux.yaml) | Complete controller installation: namespace, CRDs, permissions, Services, and Deployments. | Applied directly for bootstrap and reconciled from the artifact's `deploy/` directory. |
-| [`sync.yaml`](../../artifacts/rendered/sync.yaml) | Current package-owned self-management Kustomization, copied into the rendered tree. | Applied separately after bootstrap to select the declared OCI source and `./deploy` path. |
 | [`cur8s.yaml`](../../artifacts/rendered/cur8s.yaml) | Release identity for readers and tooling. | Read as metadata; it is not a Kubernetes resource and is not applied. |
 
-The self-management Kustomization references `OCIRepository/gitops` in `flux-system`. The consuming
-cluster supplies that source. Its `path: ./deploy` selects installation content, leaving the
-descriptor and the sync file outside the content that Flux applies through that Kustomization.
-The [overview](00-overview.md#intended-self-management-boundary) distinguishes this current layout
-from the intended consumer ownership of both self-management resources.
+Consuming clusters supply both the `OCIRepository` and the self-management `Kustomization`
+selecting `path: ./deploy`, leaving `cur8s.yaml` outside the manifests Flux applies. The
+[overview](00-overview.md#self-management-boundary) defines that ownership boundary; the
+[user guide](../user-guide.md) shows the production manifests.
 
 ## Render-time release descriptor
 
@@ -91,9 +88,11 @@ use `dev` and `verify` while the descriptor still records the configured package
 
 ## Cluster-side identification
 
-The deploy overlay adds `cur8s.io/component: gitops` to installation resources. The self-management
-Kustomization carries `cur8s.io/docs` and `cur8s.io/upstream` annotations. These are stable component
-markers, rather than version-bearing records.
+The deploy overlay adds `cur8s.io/component: gitops` to installation resources. Consuming
+repositories may also place `cur8s.io/docs` and `cur8s.io/upstream` annotations on their
+self-management `Kustomization` (as shown in the [user guide](../user-guide.md) and used by this
+repository's local [`test/sync.yaml`](../../test/sync.yaml)). These are stable component markers,
+rather than version-bearing records.
 
 Upstream `app.kubernetes.io/*` labels remain on the generated installation. The package does not
 use those labels as a substitute for its descriptor or registry metadata. Rendered resources,

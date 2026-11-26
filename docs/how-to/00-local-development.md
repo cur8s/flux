@@ -61,9 +61,10 @@ mise run dev:create
 mise run dev:status
 ```
 
-Expected result: `artifacts/rendered/` is regenerated, Flux's controllers become available, the
-payload is pushed to the new cluster's local registry, and `OCIRepository/gitops` and
-`Kustomization/gitops` report Ready.
+Expected result: `artifacts/rendered/` is regenerated, Flux's CRDs become `Established` and its
+controllers become `Available`, the payload is pushed to the new cluster's local registry, the
+repo-local [`test/sync.yaml`](../../test/sync.yaml) fixture is applied, and `OCIRepository/gitops`
+and `Kustomization/gitops` report Ready.
 
 After further edits under `src/config/`, push the regenerated payload to the running `dev` cluster
 and reconcile immediately:

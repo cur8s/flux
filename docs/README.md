@@ -52,7 +52,7 @@ repository README and other documents.
 | [The package's opinion](product/02-the-opinion.md) | Controller selection, source recommendations, exclusions, and the unresolved Receiver webhook contract. |
 | [User guide](user-guide.md) | Bootstrap, operation, upgrades, recovery, and their verification. |
 | [Local development](how-to/00-local-development.md) | Toolchain setup, rendering, candidate environments, committed-tree verification, and lockfile refresh. |
-| [Architecture overview](architecture/00-overview.md) | Package and consumer responsibilities, bootstrap, and the current and intended self-management boundaries. |
+| [Architecture overview](architecture/00-overview.md) | Package and consumer responsibilities, bootstrap, and the self-management boundary. |
 | [From source to artifact](architecture/01-source-to-artifact.md) | Pinned inputs, explicit upstream capture, rendering, committed output, and verification boundaries. |
 | [Artifact contents and metadata](architecture/02-artifact-contents-and-metadata.md) | Applied content, descriptor fields, publication annotations, and file versus OCI identity. |
 | [Publication and self-management](architecture/03-publication-and-self-management.md) | The release contract, current automation, bootstrap readiness, self-management, and verification scope. |

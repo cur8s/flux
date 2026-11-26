@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Install Flux and this component into an existing local cluster from artifacts/rendered/.
-# Bootstraps Flux from FLUX_BOOTSTRAP_MANIFEST, pushes the rendered artifact to the
-# cluster's local OCI registry, applies FLUX_SYNC_MANIFESTS, and waits until all Flux
-# sources and Kustomizations in flux-system report Ready.
+# Bootstraps Flux from FLUX_BOOTSTRAP_MANIFEST, waits for Flux CRDs and controller
+# Deployments to become ready, pushes the rendered artifact to the cluster's local OCI
+# registry, applies FLUX_SYNC_MANIFESTS, and waits until all Flux sources and
+# Kustomizations in flux-system report Ready.
 # Run by dev:create and verify:run after .mise/cluster/cluster.sh create; not a mise task.
 #
 #   .mise/cluster/install-component.sh dev|verify
@@ -22,9 +23,14 @@ target_cluster="$1"
 artifact_tag="$target_cluster"
 
 # Bootstrap Flux; server-side apply handles the large CRDs cleanly.
+# Wait for Flux CRDs to be Established and controller Deployments Available
+# before creating any Flux custom resources.
 kube_context="$(.mise/cluster/cluster.sh context "$target_cluster")"
 kubectl --context "$kube_context" apply --server-side -f "$FLUX_BOOTSTRAP_MANIFEST"
-kubectl --context "$kube_context" -n flux-system wait deploy --all --for=condition=Available --timeout=3m
+kubectl --context "$kube_context" wait crd -l app.kubernetes.io/part-of=flux \
+  --for=condition=Established --timeout=2m
+kubectl --context "$kube_context" -n flux-system \
+  wait deploy --all --for=condition=Available --timeout=3m
 
 # Push the rendered artifact from the host to the cluster's local registry
 # (localhost:<port>) before creating the OCIRepository so Flux finds it immediately.

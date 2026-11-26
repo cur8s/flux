@@ -43,7 +43,7 @@ RELEASE_REGISTRY = "ghcr.io/cur8s"
 # - FLUX_BOOTSTRAP_MANIFEST: installs the Flux controllers into a fresh cluster.
 # - FLUX_SYNC_MANIFESTS: file or directory of Flux manifests (e.g. Kustomizations) applied after bootstrap.
 FLUX_BOOTSTRAP_MANIFEST = "artifacts/rendered/deploy/flux.yaml"
-FLUX_SYNC_MANIFESTS = "artifacts/rendered/sync.yaml"
+FLUX_SYNC_MANIFESTS = "test/sync.yaml"
 # Repo-local, git-ignored kubeconfig: k3d writes this repo's clusters
 # here, and kubectl and flux read only it, so no task can reach a
 # cluster this repo did not create.

@@ -1,19 +1,13 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# Self-management Kustomization.
+# Repo-local self-management Kustomization for dev and verify clusters.
 #
-# Applied once at bootstrap (after the controllers are running). From then on
-# Flux continuously reconciles its OWN install from the published OCI artifact:
-# bumping the artifact tag is how Flux upgrades itself.
+# Applied by .mise/cluster/install-component.sh and dev:update after Flux's
+# CRDs are Established and controllers are Available. From then on Flux
+# reconciles its own install from the local k3d registry's OCI artifact.
 #
-# The OCIRepository named `gitops` it sources from is environment-specific (dev =
-# local k3d registry, prod = ghcr.io) and is applied alongside this file — by
-# the dev:create task in dev, by the cluster's composition in production.
-# This file ships INSIDE the artifact (artifacts/rendered/sync.yaml) so the artifact is
-# self-describing.
-#
-# The cur8s.io/* annotations are the component's cluster-side calling card.
-# They are constants; version-bearing facts live in the artifact's cur8s.yaml
-# descriptor and its OCI manifest annotations.
+# This manifest is a test/dev fixture for this repository, not part of the
+# published package. Consuming clusters own their own OCIRepository and
+# self-management Kustomization (see docs/user-guide.md).
 # ─────────────────────────────────────────────────────────────────────────────
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1

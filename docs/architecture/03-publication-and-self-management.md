@@ -92,8 +92,8 @@ declared OCI source.
 | Stage | Required state | Current local operation |
 | --- | --- | --- |
 | Install controllers | The selected Flux installation resources exist in the cluster. | [`.mise/cluster/install-component.sh`](../../.mise/cluster/install-component.sh) (called by [`dev:create`](../../.mise/tasks/dev/create) and [`verify:run`](../../.mise/tasks/verify/run) after `.mise/cluster/cluster.sh create`) applies the locally rendered installation with server-side apply. |
-| Establish readiness | Required CRDs and controllers are usable before Flux custom resources are applied. | `.mise/cluster/install-component.sh` waits for controller Deployments to be Available; it does not issue a separate CRD Established wait. |
-| Declare self-management | A source selects the artifact and a Kustomization selects its installation content. | `.mise/cluster/install-component.sh` creates the local OCI source and applies the package's sync file after controller availability and local publication. |
+| Establish readiness | Required CRDs and controllers are usable before Flux custom resources are applied. | `.mise/cluster/install-component.sh` waits for Flux CRDs (`app.kubernetes.io/part-of=flux`) to be `Established` and controller Deployments to be `Available`. |
+| Declare self-management | A source selects the artifact and a Kustomization selects its installation content. | `.mise/cluster/install-component.sh` creates the local OCI source and applies the repo-local [`test/sync.yaml`](../../test/sync.yaml) fixture (`FLUX_SYNC_MANIFESTS`) after CRD and controller readiness and local publication. |
 | Verify convergence | The declared artifact is acquired and its installation is healthy. | The development task waits for the source and Kustomization to report Ready. |
 
 The local source uses the disposable cluster's registry and selected test tag. Production source
@@ -101,11 +101,12 @@ coordinates, credentials, and the selected release version belong to the consumi
 definition. Neither endpoint selection nor registry credentials are embedded in the reusable
 controller installation.
 
-The current package ships `sync.yaml`; its Kustomization references the consumer-provided source
-and applies `./deploy` with pruning and health waiting enabled. The intended boundary gives the
-consumer ownership of both source and Kustomization, as explained in the
-[overview](00-overview.md#intended-self-management-boundary). That ownership transition remains
-implementation work.
+Consuming repositories own both the `OCIRepository` and the self-management `Kustomization`
+selecting `path: ./deploy` with pruning and health waiting enabled, as explained in the
+[overview](00-overview.md#self-management-boundary) and documented in the
+[user guide](../user-guide.md). This package does not ship a self-management manifest; its own
+[`test/sync.yaml`](../../test/sync.yaml) fixture is used only by disposable `dev` and `verify`
+clusters.
 
 ## Operation and recovery after the handoff
 
@@ -128,9 +129,9 @@ Ready conditions. A successful run deletes the cluster; a failed cluster run pre
 The test establishes fresh installation and self-management on its selected Kubernetes runtime.
 It does not exercise version upgrades, rollback, or recovery from a failed GitOps engine.
 
-The current verification path checks controller availability during bootstrap and source and
-Kustomization readiness after the handoff. Package verification does not cover every consuming
-repository's composition or integration with other components.
+The current verification path checks Flux CRD `Established` status and controller availability
+during bootstrap, and source and Kustomization readiness after the handoff. Package verification
+does not cover every consuming repository's composition or integration with other components.
 
 The publication contract still requires implementation and verification of:
 
