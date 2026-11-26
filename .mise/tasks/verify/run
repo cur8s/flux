@@ -9,9 +9,8 @@ if .mise/cluster/cluster.sh status verify >/dev/null 2>&1; then
   exit 1
 fi
 
-# Drift: the committed artifacts/rendered/ tree is the review surface, so a fresh fetch +
-# render must leave it (and the fetched input) unchanged. Commit a
-# re-render before running verification.
+# Drift check: re-fetch upstream and re-render, then fail if upstream/ or
+# artifacts/rendered/ differs from what is committed.
 mise run upstream:fetch
 mise run build:render
 tracked_paths=(artifacts/rendered upstream)

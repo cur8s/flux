@@ -29,9 +29,9 @@ registry_host_address() {
   echo "localhost:$port"
 }
 
-# Returns once the API server accepts requests (k3d's wait: true) and the
-# registry answers (k3d starts it after the server and does not wait for it).
-# k3d fails on an existing name.
+# Create the cluster and wait until both the API server and local registry
+# respond (k3d waits for the API server, but not for the registry).
+# Fails if a cluster with the same name already exists.
 create() {
   k3d cluster create "$cluster_name" --config .mise/cluster/k3d-config.yaml --registry-create "$registry_container"
   local address

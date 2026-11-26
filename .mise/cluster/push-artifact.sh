@@ -43,11 +43,9 @@ fi
 revision="${ref}@sha1:$(git rev-parse HEAD)"
 
 echo "📦 $artifact_url"
-# The same identity facts the descriptor asserts, readable from the
-# registry without pulling the artifact; see
-# docs/architecture/02-artifact-contents-and-metadata.md. Source and
-# revision ride flux push's standard OCI annotations — they are
-# push-time facts, deliberately absent from the committed descriptor.
+# Push artifacts/rendered/ with OCI manifest metadata so the artifact can be
+# inspected in the registry without pulling it: --source/--revision record git
+# provenance at push time, and cur8s.io/* mirrors cur8s.yaml.
 flux push artifact "$artifact_url" \
   --path="$artifact_dir" \
   --source="$(git config --get remote.origin.url || echo unknown)" \

@@ -15,11 +15,9 @@ kustomize build --load-restrictor=LoadRestrictionsNone \
   src/config/overlays/deploy > artifacts/rendered/deploy/flux.yaml
 cp src/config/sync.yaml artifacts/rendered/sync.yaml
 
-# The release descriptor: the artifact asserting its own identity, documented
-# in docs/architecture/02-artifact-contents-and-metadata.md.
-# Deliberately free of anything unknowable at render time (no git revision,
-# no timestamp) so the committed tree regenerates byte-for-byte — source and
-# revision are attached by .mise/cluster/push-artifact.sh as OCI annotations instead.
+# Generate cur8s.yaml metadata for this render. Omit git revision and timestamps
+# so re-rendering produces byte-identical output (push-artifact.sh attaches git
+# provenance as OCI annotations at push time).
 upstream_digest="sha256:$(openssl dgst -sha256 "$upstream_manifest" | awk '{print $NF}')"
 cat > artifacts/rendered/cur8s.yaml <<DESCRIPTOR
 # Cur8s release descriptor — the artifact asserts its own identity.

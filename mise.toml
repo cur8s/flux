@@ -5,8 +5,6 @@
 # Tasks live as executable scripts under .mise/tasks/<namespace>/<action>
 # (run `mise tasks` to list them). Supporting helpers and config live under
 # .mise/cluster/ so they are never discovered as tasks; see .mise/README.md.
-# Only upstream:fetch and build:render are component-specific; the rest are
-# meant to be identical across Cur8s component repos.
 
 [settings]
 # mise.lock records each tool's download URL and checksum per platform;
@@ -33,21 +31,17 @@ CUR8S_REVISION = "1"
 # Derived, with validation: a malformed value stops every mise command.
 UPSTREAM_TAG = '{% if env.UPSTREAM_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="UPSTREAM_VERSION must be a stable SemVer (for example 2.9.0)") }}{% endif %}v{{ env.UPSTREAM_VERSION }}'
 CUR8S_VERSION = '{% if env.CUR8S_REVISION is not matching(pat="^[1-9][0-9]*$") %}{{ throw(message="CUR8S_REVISION must be a positive integer") }}{% endif %}{{ env.UPSTREAM_TAG }}{% if env.CUR8S_REVISION != "1" %}-{{ env.CUR8S_REVISION }}{% endif %}'
-# Component identity facts — the single authoring point for
-# self-description (docs/architecture/02-artifact-contents-and-metadata.md).
-# build:render writes them into the cur8s.yaml descriptor;
-# .mise/cluster/push-artifact.sh attaches them as cur8s.io/* OCI annotations.
+# Component metadata written into cur8s.yaml by build:render and attached
+# as cur8s.io/* OCI annotations by .mise/cluster/push-artifact.sh.
 CUR8S_COMPONENT = "flux"
 CUR8S_SOURCE = "https://github.com/cur8s/flux"
 CUR8S_DOCS = "https://github.com/cur8s/flux"
 # Production release registry (release:publish targets this registry; dev and
 # verify pushes go to the k3d cluster's local registry via .mise/cluster/push-artifact.sh).
 RELEASE_REGISTRY = "ghcr.io/cur8s"
-# Component-specific declarative inputs for the shared .mise/cluster/install-component.sh and
-# dev:update scripts: Flux bootstrap YAML (local render here; pinned published
-# Cur8s Flux install.yaml in other component repos) and local cluster Flux
-# manifests (file or directory of Kustomizations, test ConfigMaps, and any
-# pinned prerequisite OCIRepositories).
+# Manifests applied by install-component.sh and dev:update:
+# - FLUX_BOOTSTRAP_MANIFEST: installs the Flux controllers into a fresh cluster.
+# - FLUX_SYNC_MANIFESTS: file or directory of Flux manifests (e.g. Kustomizations) applied after bootstrap.
 FLUX_BOOTSTRAP_MANIFEST = "artifacts/rendered/deploy/flux.yaml"
 FLUX_SYNC_MANIFESTS = "artifacts/rendered/sync.yaml"
 # Repo-local, git-ignored kubeconfig: k3d writes this repo's clusters
