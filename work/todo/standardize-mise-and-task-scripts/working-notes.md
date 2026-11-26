@@ -81,8 +81,6 @@ These decisions supersede that and need reconciling there.
   the other's cluster. Options: a checkout-specific name suffix, or refusing to delete a cluster
   whose context is not in this checkout's `KUBECONFIG`. Two different components coexist without
   conflict (observed: separate containers, networks, host ports, and kubeconfigs).
-- The zot pull-through mirror at `host.k3d.internal:5051` in `.mise/k3d-config.yaml`: keep, make
-  opt-in, or move to user-level configuration.
 - Kubernetes runtime pinning stays with the implementation planning todo.
 
 ### Flux bootstrap (`flux:boot` removed)
@@ -288,8 +286,8 @@ those documents during the lifecycle design todo.
 **Applied:**
 
 - Trimmed `mise.toml` header comment from 49 lines to 10 lines.
-- Generalized `.mise/k3d-config.yaml` header and set `switchCurrentContext: false` (left the
-  optional `host.k3d.internal:5051` zot mirror block intact).
+- Generalized `.mise/k3d-config.yaml` header, set `switchCurrentContext: false`, and removed the
+  workstation-specific `host.k3d.internal:5051` zot pull-through mirror block (2026-11-25).
 - Added `jq` to the host utilities list in
   [00-local-development.md](../../../docs/how-to/00-local-development.md).
 

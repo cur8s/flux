@@ -1,40 +1,10 @@
-# k3d cluster template shared by headless Cur8s component repos.
+# Local k3d cluster template.
 # Single server, no agents, Traefik disabled, and no host ports mapped so
 # local clusters coexist without port conflicts.
 apiVersion: k3d.io/v1alpha5
 kind: Simple
 servers: 1
 agents: 0
-# Optional pull-through cache: image pulls try a zot registry on the host at
-# port 5051 first, laid out with one path prefix per upstream (Docker Hub at the
-# root). Without it, containerd falls back to the upstream registry. Rewrites
-# prefix-match "^" because k3d expands $VARS in this file, which would blank a $1.
-registries:
-  config: |
-    mirrors:
-      docker.io:
-        endpoint: ["http://host.k3d.internal:5051"]
-      ghcr.io:
-        endpoint: ["http://host.k3d.internal:5051"]
-        rewrite: {"^": "ghcr.io/"}
-      quay.io:
-        endpoint: ["http://host.k3d.internal:5051"]
-        rewrite: {"^": "quay.io/"}
-      registry.k8s.io:
-        endpoint: ["http://host.k3d.internal:5051"]
-        rewrite: {"^": "registry.k8s.io/"}
-      public.ecr.aws:
-        endpoint: ["http://host.k3d.internal:5051"]
-        rewrite: {"^": "public.ecr.aws/"}
-      mcr.microsoft.com:
-        endpoint: ["http://host.k3d.internal:5051"]
-        rewrite: {"^": "mcr.microsoft.com/"}
-      gcr.io:
-        endpoint: ["http://host.k3d.internal:5051"]
-        rewrite: {"^": "gcr.io/"}
-      registry.gitlab.com:
-        endpoint: ["http://host.k3d.internal:5051"]
-        rewrite: {"^": "registry.gitlab.com/"}
 options:
   k3d:
     wait: true
