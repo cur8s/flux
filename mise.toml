@@ -52,16 +52,14 @@ FLUX_SYNC_PATH = "test/sync.yaml"
 # ------------------------------------------------------------------------------
 # Derived environment variables
 #
-# Computed from the authored inputs above or from mise's config_root. Version
-# templates validate their inputs with throw(...) so a malformed value stops
-# every mise command immediately. Do not edit these directly unless changing
-# the derivation format (for example, the k3s packaging revision suffix).
+# Computed from the authored inputs above or from mise's config_root. Do not
+# edit these directly unless changing the derivation format (for example, the
+# k3s packaging revision suffix).
 # ------------------------------------------------------------------------------
 
-COMPONENT_TAG = '{% if env.COMPONENT_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="COMPONENT_VERSION must be a stable SemVer (for example 0.1.0)") }}{% endif %}{{ env.COMPONENT_VERSION }}'
-UPSTREAM_TAG = '{% if env.UPSTREAM_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="UPSTREAM_VERSION must be a stable SemVer (for example 2.9.0)") }}{% endif %}v{{ env.UPSTREAM_VERSION }}'
+UPSTREAM_TAG = "v{{ env.UPSTREAM_VERSION }}"
 # `k3s1` is the k3s packaging revision, not a second Kubernetes version.
-K3S_IMAGE = '{% if env.KUBERNETES_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-9]+$") %}{{ throw(message="KUBERNETES_VERSION must be a stable SemVer (for example 1.36.6)") }}{% endif %}rancher/k3s:v{{ env.KUBERNETES_VERSION }}-k3s1'
+K3S_IMAGE = "rancher/k3s:v{{ env.KUBERNETES_VERSION }}-k3s1"
 
 # Repo-local, git-ignored kubeconfig: k3d writes this repo's clusters
 # here, and kubectl and flux read only it, so no task can reach a

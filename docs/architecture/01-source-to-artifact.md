@@ -20,7 +20,7 @@ implicitly capturing it again.
 
 `UPSTREAM_VERSION` selects the upstream Flux release (provenance metadata) alongside the pinned
 Flux CLI. `COMPONENT_VERSION` is authored independently as a `MAJOR.MINOR.PATCH` Semantic Version for
-this component package and validated by `COMPONENT_TAG`. `COMPONENT_NAME` sets the capability package
+this component package. `COMPONENT_NAME` sets the capability package
 identity (`gitops`). Together these feed the rendered descriptor and OCI metadata independently of
 how manifests are captured and transformed.
 

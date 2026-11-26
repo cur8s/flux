@@ -84,7 +84,7 @@ tree so remote releases match the recorded commit.
 
 The destination tag is passed explicitly to `.mise/cluster/push-artifact.sh`. Local `dev` and `verify` pushes
 use `dev` and `verify` while the descriptor still records the configured package version.
-`release:publish` always tags with `COMPONENT_TAG` (validated from `COMPONENT_VERSION`) and exposes no tag override.
+`release:publish` always tags with `COMPONENT_VERSION` and exposes no tag override.
 
 ## Cluster-side identification
 

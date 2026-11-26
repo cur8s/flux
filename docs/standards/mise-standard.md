@@ -57,12 +57,16 @@ Apply every applicable convention in this section.
 
 ---
 
-### MISE-004: Validate authored `[env]` inputs in derived templates
+### MISE-004: Keep derived `[env]` templates simple and grouped at the bottom
 
 **Applies to:** `[env]` in `mise.toml`.
 
-**Rule:** Validate authored version or identifier inputs inside derived templates with `throw(...)`
-so malformed values fail every mise command immediately.
+**Rule:**
+
+- Group authored raw inputs linearly at the top of `[env]` and derived variables at the bottom
+  under a clear comment separator.
+- Use plain `{{ ... }}` interpolation in derived `[env]` variables (for example,
+  `"v{{ env.UPSTREAM_VERSION }}"`) rather than inline Tera `throw(...)` conditionals.
 
 ---
 

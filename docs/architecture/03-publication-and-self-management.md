@@ -15,7 +15,7 @@ A release has two matching distribution forms:
 
 | Form | Contract | Current repository implementation |
 | --- | --- | --- |
-| OCI artifact | The versioned payload at `oci://ghcr.io/cur8s/gitops:<version>`, consumed during normal reconciliation. | The publication task pushes the existing rendered tree to `CUR8S_REGISTRY` under `COMPONENT_NAME` (`gitops`) at `COMPONENT_TAG`. |
+| OCI artifact | The versioned payload at `oci://ghcr.io/cur8s/gitops:<version>`, consumed during normal reconciliation. | The publication task pushes the existing rendered tree to `CUR8S_REGISTRY` under `COMPONENT_NAME` (`gitops`) at `COMPONENT_VERSION`. |
 | `install.yaml` release asset | Static controller installation for bootstrap or recovery before Flux can reconcile itself. | The rendered installation is available locally as `artifacts/rendered/deploy/flux.yaml`; the publication task does not attach it to a GitHub release. |
 
 Both forms must use the same generated controller installation bytes. Publication must not render
@@ -23,7 +23,7 @@ a separate installation for each channel. Their packaging differs, but the resou
 installs must be the resources Flux subsequently reconciles.
 
 [`release:publish`](../../.mise/tasks/release/publish) requires a clean working tree and publishes
-the existing rendered tree to `CUR8S_REGISTRY` at `COMPONENT_TAG` (with no tag override). It does
+the existing rendered tree to `CUR8S_REGISTRY` at `COMPONENT_VERSION` (with no tag override). It does
 not fetch or render inputs, run `verify:run`, or check whether that version already
 exists in either distribution channel. There is currently no live GitHub Actions workflow in the
 repository; the verification gates run locally.
@@ -51,7 +51,7 @@ names are:
 | `grafana` | Dashboards and visualization |
 
 Each capability package carries its own independent `MAJOR.MINOR.PATCH` Semantic Version authored
-as `COMPONENT_VERSION` in [`mise.toml`](../../mise.toml) and validated by `COMPONENT_TAG`. Upstream
+as `COMPONENT_VERSION` in [`mise.toml`](../../mise.toml). Upstream
 software versions remain separate provenance metadata (`UPSTREAM_VERSION` / `UPSTREAM_TAG`,
 `cur8s.yaml`, and `cur8s.io/upstream-version` OCI annotations). A Cur8s platform release versions a
 tested combination of exact capability versions independently through a bill of materials (BOM).
@@ -71,7 +71,7 @@ rejected alternatives and trade-offs behind this model.
 
 Once a production version is published, it must keep identifying the same content. Development
 tags such as `dev` and `verify` serve local workflows via `.mise/cluster/push-artifact.sh`; `release:publish` only
-targets `CUR8S_REGISTRY` at `COMPONENT_TAG`, though it does not yet refuse an existing production
+targets `CUR8S_REGISTRY` at `COMPONENT_VERSION`, though it does not yet refuse an existing production
 version.
 
 The intended publication path also requires one packaged OCI artifact to be tested and promoted
