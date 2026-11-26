@@ -35,6 +35,8 @@ if [[ "$registry" == localhost:* ]]; then
   trap 'rm -rf "$DOCKER_CONFIG"' EXIT
 fi
 
+# Build the destination OCI reference and Flux's "<ref>@sha1:<commit>" revision
+# string (using the current branch, or an exact git tag / "HEAD" when detached).
 artifact_url="oci://${registry}/${CUR8S_COMPONENT}:${artifact_tag}"
 ref="$(git branch --show-current)"
 if [[ -z "$ref" ]]; then
