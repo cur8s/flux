@@ -1,4 +1,4 @@
-# flux — the Cur8s GitOps package
+# gitops — the Cur8s GitOps package
 
 This repository builds the Cur8s `gitops` capability package (`ghcr.io/cur8s/gitops`),
 rendering a constrained [Flux](https://fluxcd.io) installation once and publishing it as an

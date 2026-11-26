@@ -31,7 +31,7 @@ Install the GitOps engine by applying the release manifest:
 
 ```sh
 kubectl apply --server-side -f \
-  https://github.com/cur8s/flux/releases/download/<version>/install.yaml
+  https://github.com/cur8s/gitops/releases/download/<version>/install.yaml
 ```
 
 After the controllers have started:

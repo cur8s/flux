@@ -34,8 +34,8 @@ CUR8S_TAG = '{% if env.CUR8S_VERSION is not matching(pat="^[0-9]+[.][0-9]+[.][0-
 # Component metadata written into cur8s.yaml by build:render and attached
 # as cur8s.io/* OCI annotations by .mise/cluster/push-artifact.sh.
 CUR8S_COMPONENT = "gitops"
-CUR8S_SOURCE = "https://github.com/cur8s/flux"
-CUR8S_DOCS = "https://github.com/cur8s/flux"
+CUR8S_SOURCE = "https://github.com/cur8s/gitops"
+CUR8S_DOCS = "https://github.com/cur8s/gitops"
 # Production release registry (release:publish targets this registry; dev and
 # verify pushes go to the k3d cluster's local registry via .mise/cluster/push-artifact.sh).
 RELEASE_REGISTRY = "ghcr.io/cur8s"

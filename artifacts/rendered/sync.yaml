@@ -22,7 +22,7 @@ metadata:
   name: gitops
   namespace: flux-system
   annotations:
-    cur8s.io/docs: https://github.com/cur8s/flux
+    cur8s.io/docs: https://github.com/cur8s/gitops
     cur8s.io/upstream: fluxcd/flux2
 spec:
   interval: 10m

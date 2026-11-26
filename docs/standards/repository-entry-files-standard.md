@@ -78,7 +78,7 @@ development guide rather than copying its setup steps.
 - Link each concept to an authoritative introduction.
 - In the second column, say how the concept applies to this repository, not only what it is.
 
-**Example:** The flux repository lists GitOps, naming Flux as the engine the package installs, and
+**Example:** The gitops repository lists GitOps, naming Flux as the engine the package installs, and
 OCI artifacts. It does not list pre-rendered manifests, which its product documentation teaches.
 
 ---

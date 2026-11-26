@@ -8,5 +8,5 @@ upstream:
   project: fluxcd/flux2
   version: v2.9.0
   digest: sha256:69cc8ec55f6caa8723a2912b8cdcaa80eb2e32c1bf20207e240e95e46e4c308f
-source: https://github.com/cur8s/flux
-docs: https://github.com/cur8s/flux
+source: https://github.com/cur8s/gitops
+docs: https://github.com/cur8s/gitops
