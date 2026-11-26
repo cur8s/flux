@@ -22,6 +22,9 @@ if [[ ! -d "$artifact_dir" ]]; then
   exit 1
 fi
 
+# Resolve the target registry endpoint, artifact tag, and auth mode:
+#   local  - push anonymously to a dev/verify cluster's local k3d registry
+#   remote - push to the production REGISTRY using existing Docker credentials
 case "${1:-}" in
   local)
     [[ $# -eq 3 ]] || usage
